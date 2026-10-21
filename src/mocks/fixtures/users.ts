@@ -1,9 +1,7 @@
 import { artImage } from "@/mocks/fixtures/art";
 import type { DbCartItem, DbFavorite, DbOrder, DbUser, DbWallet } from "@/mocks/db/types";
 
-// Two collectors with distinct favorites, carts, wallets and orders: this is
-// what makes data isolation between users observable. Passwords are stored as
-// salted SHA-256 hashes only; the plain test credentials live in the README.
+// Passwords stored as salted SHA-256 only; test credentials are in the README
 
 export const fixtureUsers: DbUser[] = [
   {
@@ -132,7 +130,6 @@ export const fixtureWallets: DbWallet[] = [
   },
 ];
 
-/** One confirmed purchase per collector, as frozen receipts. */
 export const fixtureOrders: DbOrder[] = [
   {
     id: "order_c_0001",

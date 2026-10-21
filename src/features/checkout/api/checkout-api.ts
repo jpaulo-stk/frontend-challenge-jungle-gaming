@@ -11,7 +11,6 @@ import type { AppError } from "@/shared/api/errors";
 import { parseContract } from "@/shared/api/parse-contract";
 import type { OrderAttempt } from "@/shared/checkout/checkout-draft";
 
-/** Simulated provider handshake: connected, or refused by the wallet. */
 export function useConnectWallet() {
   return useMutation<WalletConnection, AppError, WalletConnectionRequest>({
     mutationFn: async (input) =>
@@ -27,11 +26,7 @@ export function useDisconnectWallet() {
   });
 }
 
-/**
- * Sends an order attempt. Never retried automatically (the global mutation
- * default): resending is an explicit user action with the same key and body,
- * which the API answers with the same order.
- */
+// No automatic retry: resending is explicit and reuses the same Idempotency-Key
 export function useCreateOrder() {
   return useMutation<Order, AppError, OrderAttempt>({
     mutationFn: async ({ key, body }) =>

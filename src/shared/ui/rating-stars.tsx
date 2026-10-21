@@ -9,7 +9,6 @@ type RatingStarsProps = {
 
 const formatAverage = (value: number) => value.toFixed(1).replace(".", ",");
 
-/** Five stars plus the text equivalent, so the rating never depends on the icons alone. */
 export function RatingStars({ average, count, className }: RatingStarsProps) {
   const filled = Math.floor(average);
   return (

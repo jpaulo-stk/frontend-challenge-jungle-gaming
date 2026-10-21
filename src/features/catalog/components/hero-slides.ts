@@ -1,12 +1,7 @@
-// Editorial copy of the hero, taken from the Figma frames (desktop slide,
-// mobile slide and the "Lançamentos gênesis" banner). Artwork is a static
-// brand asset, not catalog data.
-
 export type HeroSlide = {
   eyebrow: string;
   title: string;
   text: string;
-  /** Shorter copy of the mobile frame, when it differs. */
   mobile?: { title: string; text: string };
   image: { src: string; srcSet: string; alt: string };
 };

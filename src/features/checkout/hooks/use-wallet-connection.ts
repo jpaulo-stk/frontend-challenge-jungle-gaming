@@ -8,10 +8,7 @@ type Target = { walletId: string | null; provider: WalletProvider | null; networ
 
 export type ConnectionStatus = "idle" | "connecting" | "connected" | "refused";
 
-/**
- * Simulated wallet connection. A connection only counts for the wallet,
- * provider and network it was made with: changing any of them disconnects.
- */
+// A connection only counts for the wallet, provider and network it was made with
 export function useWalletConnection(target: Target) {
   const connect = useConnectWallet();
   const disconnect = useDisconnectWallet();

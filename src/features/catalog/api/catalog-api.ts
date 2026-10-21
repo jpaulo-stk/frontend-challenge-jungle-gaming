@@ -6,17 +6,12 @@ import { nftListResponseSchema } from "@/shared/api/contracts/nft";
 import { parseContract } from "@/shared/api/parse-contract";
 import { nftKeys } from "@/shared/api/query-keys";
 
-/**
- * Catalog page for exactly these parameters. The key mirrors what is sent, so
- * a late response for older filters can never land in the current list, and
- * the AbortSignal cancels the superseded request.
- */
+// Key mirrors the params, so a late response for old filters can't land in the current list
 export const nftListQueryOptions = (params: NftListParams) =>
   queryOptions({
     queryKey: nftKeys.list(params),
     queryFn: async ({ signal }) =>
       parseContract(nftListResponseSchema, (await http.get("/nfts", { params, signal })).data),
-    // Keep showing the previous page while the next one loads (no skeleton flash).
     placeholderData: keepPreviousData,
   });
 
@@ -24,17 +19,12 @@ export const facetsQueryOptions = queryOptions({
   queryKey: nftKeys.facets(),
   queryFn: async ({ signal }) =>
     parseContract(facetsResponseSchema, (await http.get("/facets", { signal })).data),
-  // Counters barely move; a few minutes of staleness is fine.
   staleTime: 5 * 60_000,
 });
 
 const featuredParams = { sort: "trending", perPage: 1 } as const;
 
-/**
- * "NFT em destaque": the top trending piece. The cache keeps the list response
- * (every nftKeys.list entry has that shape, which realtime updates rely on);
- * the card selects its first item.
- */
+// Keeps the list shape (realtime patches list keys); the card selects the first item
 export const featuredQueryOptions = queryOptions({
   queryKey: nftKeys.list(featuredParams),
   queryFn: async ({ signal }) =>

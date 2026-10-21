@@ -10,7 +10,6 @@ import { CartSummarySkeleton } from "@/shared/ui/skeleton/cart-summary-skeleton"
 
 type CheckoutSummaryProps = {
   state: ReturnType<typeof useCartQuote>;
-  /** Locks the item toggles while an order is being sent. */
   locked: boolean;
 };
 
@@ -23,7 +22,6 @@ function issueText(issue: QuoteIssue): string | null {
   return null;
 }
 
-/** "Seus NFTs": the lines of this purchase, what is left for later and the totals. */
 export function CheckoutSummary({ state, locked }: CheckoutSummaryProps) {
   const { allItems, items, totals, estimating, quote, issuesOf } = state;
   const excluded = useCheckoutDraft((draft) => draft.excludedItemIds);
@@ -108,7 +106,6 @@ function SummaryLine({ item, issues, excluded, locked, onToggle }: SummaryLinePr
         problems.length > 0 && !excluded && "outline-[1.5px] outline-danger outline-solid",
       )}
     >
-      {/* Narrow screens: quantity and subtotal go to a second line, so the name fits. */}
       <div
         className={cn(
           "grid grid-cols-[70px_minmax(0,1fr)_auto] items-center gap-x-3 p-1 pr-3 sm:grid-cols-[70px_minmax(0,1fr)_auto_auto]",

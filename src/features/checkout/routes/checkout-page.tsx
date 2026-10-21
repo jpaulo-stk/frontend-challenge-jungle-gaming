@@ -211,8 +211,7 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
       setGate("Aguarde o resumo terminar de atualizar.");
       return;
     }
-    // Revalidated against what the collector saw, not against a quote that
-    // changed underneath: any difference opens the review.
+    // Compare with what the user saw, not with a quote that changed underneath
     void submit.confirm(acknowledged.seen, {
       walletId: wallet.id,
       connectionId: connection.connection.id,
@@ -319,7 +318,6 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
   );
 }
 
-/** Why the purchase cannot go on, or what happened to the last send. */
 function SendStatus({ submit, gate }: { submit: CheckoutSubmit; gate: string | null }) {
   const message =
     submit.problem?.message ??

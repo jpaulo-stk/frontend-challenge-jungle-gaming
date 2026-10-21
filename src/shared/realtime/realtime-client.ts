@@ -14,11 +14,9 @@ import { createRealtimeSocket } from "@/shared/realtime/socket";
 export type RealtimeStatus = "connecting" | "online" | "offline";
 export type RealtimeState = {
   status: RealtimeStatus;
-  /** True once a connection failed or dropped; the UI stays quiet before that. */
   interrupted: boolean;
 };
 
-/** Data kept on screen by the API: refetched from REST after a reconnection. */
 const reconciledRoots = new Set<unknown>([
   nftKeys.all[0],
   cartKeys.all[0],
@@ -26,20 +24,13 @@ const reconciledRoots = new Set<unknown>([
   favoriteKeys.all[0],
 ]);
 
-/**
- * The app's single Socket.IO connection, outside React. It connects once the
- * identity is known (visitor or collector), reconnects with the new identity
- * when it changes, keeps one server subscription per NFT on screen (reference
- * counted, so StrictMode and repeated mounts are harmless) and hands events to
- * the event applier.
- */
+// Single socket outside React: reconnects on identity change, ref-counted rooms
 export function createRealtimeClient(queryClient: QueryClient) {
   const applier = createEventApplier(queryClient);
   const rooms = new Map<string, number>();
   const stateListeners = new Set<() => void>();
   let state: RealtimeState = { status: "connecting", interrupted: false };
   let socket: Socket | null = null;
-  // Identity of the current connection; undefined before the first connect.
   let identity: string | null | undefined;
   let generation = 0;
 
@@ -57,7 +48,6 @@ export function createRealtimeClient(queryClient: QueryClient) {
     if (socket?.connected && ids.length > 0) socket.emit(event, { resource: "nft", ids });
   };
 
-  /** Events received while away are not trusted: what is on screen is fetched again. */
   const reconcile = () =>
     queryClient.invalidateQueries({
       predicate: (query) => reconciledRoots.has(query.queryKey[0]),
@@ -65,8 +55,7 @@ export function createRealtimeClient(queryClient: QueryClient) {
 
   function wire(next: Socket, owner: string | null) {
     let connectedBefore = false;
-    // An event for another identity (a connection about to be replaced) never
-    // reaches the cache of the collector now signed in.
+    // Drop events from a connection that is about to be replaced
     const forThisIdentity = () => currentUserId() === owner;
 
     next.on("connect", () => {
@@ -107,7 +96,6 @@ export function createRealtimeClient(queryClient: QueryClient) {
   }
 
   return {
-    /** Idempotent: connecting again with the same identity keeps the connection. */
     connect(userId: string | null, token: string | null) {
       if (identity === userId && socket) return;
       disconnect();
@@ -128,7 +116,6 @@ export function createRealtimeClient(queryClient: QueryClient) {
 
     disconnect,
 
-    /** Joins the NFT rooms while the returned cleanup is not called. */
     subscribeNfts(ids: readonly string[]): () => void {
       const added = [...new Set(ids)];
       const fresh = added.filter((id) => !rooms.has(id));

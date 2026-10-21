@@ -11,7 +11,6 @@ import { fetchQuote } from "@/shared/cart/quote-api";
 
 type CartContext = { previous: Cart | undefined };
 
-/** Optimistically rewrites the cached cart and returns the snapshot for rollback. */
 function useOptimisticCart() {
   const queryClient = useQueryClient();
   return {
@@ -38,7 +37,6 @@ export function useUpdateCartItem() {
   return useMutation<Cart, AppError, { itemId: string; quantity: number }, CartContext>({
     mutationFn: async ({ itemId, quantity }) =>
       parseContract(cartSchema, (await http.patch(`/cart/items/${itemId}`, { quantity })).data),
-    // Immediate feedback: the row total follows the stepper while the API answers.
     onMutate: ({ itemId, quantity }) =>
       cart.apply((current) =>
         recount({
@@ -82,7 +80,6 @@ export function useRemoveCartItem() {
   });
 }
 
-/** Validates a coupon against the API before it is applied to the cart. */
 export function useApplyCoupon() {
   return useMutation<Quote, AppError, string>({
     mutationFn: (couponCode) => fetchQuote({ couponCode }),

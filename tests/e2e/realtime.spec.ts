@@ -4,12 +4,8 @@ import { openApp } from "../fixtures/app.ts";
 import { openWithScenario } from "../fixtures/mock-api.ts";
 import { loginThroughDialog, signIn } from "../fixtures/session.ts";
 
-// Every event here starts in the simulated backend (window.__kurioMock changes
-// the mock database) and reaches the app through socket.io-client.
-
 const EMERALD = "emerald-ape-042";
 
-/** The app is listening to this NFT on the realtime server. */
 async function waitForRoom(page: Page, nftId: string): Promise<void> {
   await page.waitForFunction(
     (id) => window.__kurioMock?.realtimeClients().some((client) => client.rooms.includes(id)),
@@ -104,7 +100,6 @@ test.describe("tempo real", { tag: "@desktop" }, () => {
       .getByRole("link", { name: /^Carrinho/ })
       .click();
     await expect(page).toHaveURL("/carrinho");
-    // One connection left (the app's own), in no NFT room.
     await page.waitForFunction(() => {
       const clients = window.__kurioMock?.realtimeClients() ?? [];
       return clients.length === 1 && clients[0]?.rooms.length === 0;
@@ -126,7 +121,6 @@ test.describe("tempo real", { tag: "@desktop" }, () => {
     await expect(
       page.getByRole("status").filter({ hasText: "Conexão restabelecida" }),
     ).toBeVisible();
-    // The subscriptions are back on the new connection.
     await waitForRoom(page, EMERALD);
   });
 
@@ -181,12 +175,10 @@ test.describe("tempo real", { tag: "@desktop" }, () => {
     await page.getByRole("banner").getByRole("link", { name: "Entrar" }).click();
     await loginThroughDialog(page, "nova.sato@kurio.test");
 
-    // The previous connection is gone; the only one left is the new collector's.
     await page.waitForFunction(() => {
       const users = window.__kurioMock?.realtimeClients().map((client) => client.userId) ?? [];
       return users.length === 1 && users[0] === "user_nova";
     });
-    // The first collector's order settles now: its event has no connection to go to.
     await page.evaluate((id) => window.__kurioMock?.settleOrder(id, "confirmed"), orderId);
     await expect(page.getByText(/Pedido confirmado/)).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Carrinho, 1 item" })).toBeVisible();

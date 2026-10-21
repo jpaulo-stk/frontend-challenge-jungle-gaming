@@ -61,7 +61,6 @@ export const walletHandlers = [
       : apiError(404, "WALLET_NOT_FOUND", "Carteira não encontrada.");
   }),
 
-  // Simulated provider handshake (MetaMask / WalletConnect / Coinbase).
   http.post(`${API}/wallet-connections`, async ({ request }) => {
     const { user } = requireUser(request);
     const input = await readBody(request, walletConnectionRequestSchema);

@@ -11,19 +11,12 @@ import type { NftUpdatedEvent, OrderUpdatedEvent } from "@/shared/realtime/event
 
 type Versioned = { version: number };
 
-/**
- * The only place where realtime events touch the query cache. Every event goes
- * through a version guard: a duplicate (same version) or a stale event (lower
- * version) changes nothing and repeats no effect, and an event never creates
- * cache for something that was not loaded.
- */
+// Version guard: duplicates and stale events change nothing; never creates cache
 export function createEventApplier(queryClient: QueryClient) {
-  // Highest version applied per resource. Caches that carry no version (cart,
-  // quote) are refreshed from REST, and this keeps that from happening twice.
+  // Cart and quote have no version: track the last applied one so REST refreshes once
   const nftVersions = new Map<string, number>();
   const orderVersions = new Map<string, number>();
 
-  /** Highest version of this NFT known anywhere in the cache. */
   function knownNftVersion(id: string): number {
     const versions = [nftVersions.get(id) ?? 0];
     const detail = queryClient.getQueryData<Versioned>(nftKeys.detail(id));
@@ -53,7 +46,6 @@ export function createEventApplier(queryClient: QueryClient) {
     };
   }
 
-  /** Lines of the cart with this NFT: refreshed from REST, with a polite announcement. */
   function refreshCart(event: NftUpdatedEvent): void {
     const lines =
       queryClient
@@ -77,7 +69,6 @@ export function createEventApplier(queryClient: QueryClient) {
           : `${line.name}: restam ${String(edition.available)} unidades da edição ${edition.label}.`,
       );
     }
-    // Cart and quotes are recalculated by the API (and the checkout revalidates).
     void queryClient.invalidateQueries({ queryKey: cartKeys.all });
     if (messages.length > 0) announce(messages.join(" "));
   }
@@ -105,11 +96,7 @@ export function createEventApplier(queryClient: QueryClient) {
       return true;
     },
 
-    /**
-     * Orders are only for their owner: an event about an order that is not in
-     * this collector's cache is ignored. The event carries only the status, so
-     * the full order (transaction, receipt) is fetched again from REST.
-     */
+    // Only orders already in this user's cache; the event has just the status, so refetch
     orderUpdated(event: OrderUpdatedEvent): boolean {
       const order = queryClient.getQueryData<Order>(orderKeys.detail(event.id));
       if (!order) return false;

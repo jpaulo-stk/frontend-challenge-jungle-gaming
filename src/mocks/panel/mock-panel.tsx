@@ -19,7 +19,6 @@ import {
 const selectClassName =
   "h-10 w-full rounded-md border-[1.5px] border-border bg-surface px-3 text-sm text-text";
 
-/** Development panel of the simulated backend: scenario, reset and event triggers. */
 export function MockPanel() {
   const [scenario, setScenario] = useState<ScenarioId>(getConfig().scenario);
 

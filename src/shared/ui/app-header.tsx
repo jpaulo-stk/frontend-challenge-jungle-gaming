@@ -6,7 +6,6 @@ import { UnavailableAction } from "@/shared/ui/unavailable-action";
 
 type AppHeaderProps = {
   cartCount: number;
-  /** Signed-in collector, or null for visitors. */
   user: { name: string } | null;
   onLogout: () => void;
   loggingOut: boolean;

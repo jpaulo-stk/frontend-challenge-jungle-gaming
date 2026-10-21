@@ -1,7 +1,6 @@
 import type * as React from "react";
 
-// Brand marks of the social login buttons, traced from the Figma export
-// (design/screens/desktop-06-login.svg). Colors come from the @theme tokens.
+// Traced from the Figma export
 
 export function GoogleIcon(props: React.ComponentProps<"svg">) {
   return (

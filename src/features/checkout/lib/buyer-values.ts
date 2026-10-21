@@ -18,7 +18,6 @@ export const emptyBuyer: BuyerFormInput = {
   note: "",
 };
 
-/** Fields that come from the registered wallet chosen to pay with. */
 export const walletFields = (wallet: Wallet) => ({
   displayName: wallet.displayName,
   network: wallet.network,
@@ -31,7 +30,7 @@ export const walletFields = (wallet: Wallet) => ({
   ensName: wallet.ensName,
 });
 
-/** Keeps only stored values whose type matches the form's (the draft is untrusted storage). */
+// The draft comes from storage: keep only values with the expected type
 function restore(stored: Record<string, unknown> | null): Partial<BuyerFormInput> {
   if (!stored) return {};
   return Object.fromEntries(
@@ -41,7 +40,6 @@ function restore(stored: Record<string, unknown> | null): Partial<BuyerFormInput
   );
 }
 
-/** What the collector typed before (draft) wins; otherwise wallet and account fill it. */
 export function initialBuyer(
   stored: Record<string, unknown> | null,
   wallet: Wallet | null,

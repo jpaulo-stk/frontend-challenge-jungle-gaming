@@ -15,10 +15,7 @@ import {
 import { hashPassword, newId } from "@/mocks/lib/ids";
 import { loginRequestSchema, registerRequestSchema } from "@/features/auth/api/schemas";
 
-/**
- * Moves the visitor's cart into the collector's cart. Quantities of the same
- * NFT and edition add up, capped by what the edition still has available.
- */
+// Quantities add up, capped by availability
 function mergeVisitorCart(request: Request, userId: string): void {
   const visitorId = request.headers.get(VISITOR_HEADER);
   if (!visitorId) return;

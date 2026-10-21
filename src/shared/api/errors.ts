@@ -1,7 +1,6 @@
 import { isAxiosError, isCancel } from "axios";
 import { z } from "zod";
 
-/** Error envelope returned by every endpoint of the API. */
 export const apiErrorBodySchema = z.object({
   error: z.object({
     code: z.string(),
@@ -10,10 +9,6 @@ export const apiErrorBodySchema = z.object({
   }),
 });
 
-/**
- * Single source of user-facing error copy. Keys are either client-side codes
- * (network, timeout, contract) or codes sent by the API in `error.code`.
- */
 const errorMessages: Readonly<Record<string, string>> = {
   // Client-side
   NETWORK_ERROR: "Sem conexão com o servidor. Verifique sua internet e tente novamente.",
@@ -74,7 +69,6 @@ export class AppError extends Error {
   readonly code: string;
   readonly details: unknown;
   readonly status: number | undefined;
-  /** Field-level messages returned by the API, keyed by form field name. */
   readonly fields: Readonly<Record<string, string>>;
 
   constructor(code: string, details?: unknown, options: AppErrorOptions = {}) {
@@ -97,7 +91,6 @@ function codeFromStatus(status: number): string {
   return "UNKNOWN";
 }
 
-/** Normalizes anything thrown by the HTTP layer into an `AppError`. */
 export function toAppError(error: unknown): AppError {
   if (error instanceof AppError) return error;
   if (isCancel(error)) return new AppError("CANCELED", undefined, { cause: error });
@@ -131,7 +124,6 @@ export function toAppError(error: unknown): AppError {
 
 const transientCodes = new Set(["NETWORK_ERROR", "TIMEOUT", "SERVER_ERROR"]);
 
-/** Failures worth retrying automatically: the same request may succeed later. */
 export function isTransient(error: unknown): boolean {
   if (!(error instanceof AppError)) return false;
   if (transientCodes.has(error.code)) return true;

@@ -8,10 +8,8 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        // "RARO" tag on NFT art: solid accent, text in the page background color.
         default:
           "h-6 rounded-sm bg-primary px-2 text-xs font-bold tracking-wide text-primary-foreground uppercase",
-        // Neutral pill (edition, network, status).
         outline: "h-7 rounded-full border-[1.5px] border-border px-3 text-[13px] text-text-muted",
         success: "h-6 rounded-sm border-[1.5px] border-success px-2 text-xs font-bold text-success",
         danger: "h-6 rounded-sm border-[1.5px] border-danger px-2 text-xs font-bold text-danger",

@@ -1,6 +1,5 @@
 import { Skeleton } from "@/shared/ui/skeleton";
 
-/** Shown while a route resolves (e.g. the session check of a private page). */
 export function PagePending() {
   return (
     <div

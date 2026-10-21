@@ -8,7 +8,6 @@ type GuardArgs = {
   search: { redirect?: string | undefined };
 };
 
-/** Login and register are for visitors: a signed-in collector goes on to the destination. */
 export async function redirectIfSignedIn({ context, search }: GuardArgs): Promise<void> {
   const session = await context.queryClient.query(sessionQueryOptions);
   if (session) throw redirect({ to: search.redirect ?? "/", replace: true });

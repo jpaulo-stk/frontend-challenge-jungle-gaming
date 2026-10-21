@@ -9,7 +9,6 @@ const networkNames = { ethereum: "Ethereum", polygon: "Polygon", solana: "Solana
 
 const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-/** "Detalhes do NFT" / "Avaliações de colecionadores" tabs. */
 export function NftInfoTabs({ nft }: NftInfoTabsProps) {
   return (
     <Tabs defaultValue="details" className="gap-0">

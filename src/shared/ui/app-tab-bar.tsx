@@ -8,7 +8,6 @@ type AppTabBarProps = {
 const tabClassName =
   "relative inline-flex size-12 items-center justify-center rounded-full text-text-dim transition-colors outline-none data-[status=active]:text-primary-hi focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-6";
 
-/** Mobile bottom navigation (72px bar with a raised 56px action in the middle). */
 export function AppTabBar({ cartCount }: AppTabBarProps) {
   return (
     <nav

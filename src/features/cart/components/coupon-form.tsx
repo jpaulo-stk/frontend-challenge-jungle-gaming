@@ -12,7 +12,6 @@ type CouponFormProps = {
   cartVersion: number;
 };
 
-/** "Código promocional": validated by the API, then kept in the checkout draft. */
 export function CouponForm({ cartVersion }: CouponFormProps) {
   const queryClient = useQueryClient();
   const couponCode = useCheckoutDraft((draft) => draft.couponCode);
@@ -54,8 +53,7 @@ export function CouponForm({ cartVersion }: CouponFormProps) {
         apply.mutate(code, {
           onSuccess: (quote) => {
             const applied = code.toUpperCase();
-            // The validation already priced the cart with the coupon: reuse it
-            // instead of asking again (the next check happens at checkout).
+            // The validation already priced the cart with the coupon; reuse it
             queryClient.setQueryData(
               quoteQueryOptions({ couponCode: applied, cartVersion }).queryKey,
               quote,

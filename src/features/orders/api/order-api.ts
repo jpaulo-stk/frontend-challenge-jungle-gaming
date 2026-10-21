@@ -5,13 +5,8 @@ import { orderSchema } from "@/shared/api/contracts/order";
 import { parseContract } from "@/shared/api/parse-contract";
 import { orderKeys } from "@/shared/api/query-keys";
 
-/** Fallback polling of a pending order while the realtime connection is down. */
 export const PENDING_POLL_MS = 2_000;
 
-/**
- * One order of the signed-in collector. Terminal orders never change, so they
- * are never refetched. A pending one settles through `order.updated`.
- */
 export const orderQueryOptions = (orderId: string) =>
   queryOptions({
     queryKey: orderKeys.detail(orderId),

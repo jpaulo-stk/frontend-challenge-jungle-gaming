@@ -5,7 +5,6 @@ type EmptyStateProps = {
   title: string;
   description?: string;
   icon?: ReactNode;
-  /** Optional call to action, e.g. a "Limpar filtros" button. */
   action?: ReactNode;
   className?: string;
 };

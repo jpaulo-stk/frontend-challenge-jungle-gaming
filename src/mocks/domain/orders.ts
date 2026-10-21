@@ -17,11 +17,7 @@ const providerLabels = {
 
 export type CreateOrderResult = { order: DbOrder; created: boolean };
 
-/**
- * Idempotent order creation. The same key with the same body returns the
- * existing order; the same key with another body is a conflict. A new order
- * is only accepted against a quote that still matches the catalog.
- */
+// Same key + same body returns the existing order; same key + another body is a 409
 export function createOrder(
   user: DbUser,
   idempotencyKey: string,
@@ -148,7 +144,6 @@ function scheduleSettlement(order: DbOrder): void {
   );
 }
 
-/** Re-arms settlement timers for orders left pending by a previous page load. */
 export function resumePendingOrders(): void {
   for (const order of getDb().orders) scheduleSettlement(order);
 }
@@ -158,11 +153,7 @@ export function cancelSettlements(): void {
   timers.clear();
 }
 
-/**
- * Moves a pending order to a terminal status. Confirmation transfers the
- * purchased units: availability drops (nft.updated) and exactly the purchased
- * quantities leave the collector's cart. Terminal orders never change again.
- */
+// Confirmation removes exactly the purchased quantities from the cart
 export async function settleOrder(
   orderId: string,
   outcome: Exclude<OrderStatus, "pending">,

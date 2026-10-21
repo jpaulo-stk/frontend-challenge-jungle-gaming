@@ -18,12 +18,10 @@ export const cartItemSchema = z.object({
   editionId: editionIdSchema,
   editionLabel: z.string(),
   quantity: z.number().int().positive(),
-  /** Current catalog price for one unit. */
   unitPrice: ethAmountSchema,
   /** Price when the item was added; differs from `unitPrice` after a price change. */
   addedUnitPrice: ethAmountSchema,
   lineTotal: ethAmountSchema,
-  /** Units still available in this edition. */
   available: z.number().int().nonnegative(),
 });
 export type CartItem = z.infer<typeof cartItemSchema>;
@@ -49,7 +47,6 @@ export type UpdateCartItemRequest = z.infer<typeof updateCartItemRequestSchema>;
 
 export const quoteRequestSchema = z.object({
   couponCode: z.string().trim().min(1).nullable(),
-  /** Cart items to price; omitted means the whole cart (partial checkout). */
   itemIds: z.array(z.string()).min(1).optional(),
 });
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;
@@ -96,7 +93,6 @@ export const quoteSchema = z.object({
   total: ethAmountSchema,
   coupon: z.object({ code: z.string(), percentOff: z.number().int().positive() }).nullable(),
   expiresAt: isoDateTimeSchema,
-  /** Problems that block checkout until the cart is adjusted. */
   issues: z.array(quoteIssueSchema),
 });
 export type Quote = z.infer<typeof quoteSchema>;

@@ -5,7 +5,6 @@ import { ProfileFormView } from "@/features/profile/components/profile-form";
 import { ErrorState } from "@/shared/ui/error-state";
 import { Skeleton } from "@/shared/ui/skeleton";
 
-/** "Dados do perfil" section. */
 export function ProfileDataPage() {
   const profile = useQuery(profileQueryOptions);
 
@@ -32,7 +31,6 @@ export function ProfileDataPage() {
   return <ProfileFormView profile={profile.data} />;
 }
 
-/** /perfil: the profile data on desktop; on mobile the menu is the page. */
 export function ProfileIndexPage() {
   return (
     <div className="max-lg:hidden">

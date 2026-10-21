@@ -5,15 +5,10 @@ type UnavailableActionProps = Omit<
   React.ComponentProps<"button">,
   "type" | "onClick" | "aria-disabled"
 > & {
-  /** What the control would do, e.g. "Criadores". Used in the notice. */
   feature: string;
 };
 
-/**
- * Control from the layout whose destination is outside the delivery scope.
- * It stays focusable, is announced as unavailable and explains itself on
- * activation instead of pretending to work.
- */
+// Out-of-scope action: focusable, announced as unavailable, explains itself on click
 export function UnavailableAction({ feature, children, ...props }: UnavailableActionProps) {
   return (
     <button

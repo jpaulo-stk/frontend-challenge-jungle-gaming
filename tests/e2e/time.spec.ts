@@ -4,9 +4,7 @@ import { openApp } from "../fixtures/app.ts";
 import { openWithScenario } from "../fixtures/mock-api.ts";
 import { loginThroughDialog, signIn } from "../fixtures/session.ts";
 
-// Time-sensitive rules, with the page clock under test control. The simulated
-// backend runs in the page, so its Date.now() (session and quote expiry)
-// follows the same clock as the app.
+// The mock runs in the page, so page.clock also drives session and quote expiry
 
 test.describe("expiração pelo tempo", { tag: "@desktop" }, () => {
   test("sessão vence depois de 2 horas: login e volta ao destino", async ({ page }) => {
@@ -50,7 +48,6 @@ test.describe("expiração pelo tempo", { tag: "@desktop" }, () => {
     ).toBeVisible();
     expect(await page.evaluate(() => window.__kurioMock?.orderCount())).toBe(1);
 
-    // Confirming again prices the order anew and creates exactly one order.
     await page.getByRole("button", { name: "Confirmar compra" }).click();
     await expect(page.getByRole("heading", { name: "Processando seu pedido" })).toBeVisible();
     expect(await page.evaluate(() => window.__kurioMock?.orderCount())).toBe(2);

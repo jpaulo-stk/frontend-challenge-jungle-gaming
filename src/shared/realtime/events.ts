@@ -4,9 +4,6 @@ import { ethAmountSchema, isoDateTimeSchema } from "@/shared/api/contracts/commo
 import { editionSchema } from "@/shared/api/contracts/nft";
 import { orderStatusSchema } from "@/shared/api/contracts/order";
 
-// Every event carries a stable id (for de-duplication), the affected resource
-// id and its version (to ignore stale or repeated updates).
-
 export const nftUpdatedEventSchema = z.object({
   eventId: z.string(),
   id: z.string(),
@@ -35,7 +32,6 @@ export const realtimeEvents = {
   unsubscribe: "unsubscribe",
 } as const;
 
-/** Rooms a client can join to receive updates for resources on screen. */
 export const subscriptionSchema = z.object({
   resource: z.enum(["nft"]),
   ids: z.array(z.string()),

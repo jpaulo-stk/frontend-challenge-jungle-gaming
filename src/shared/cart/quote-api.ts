@@ -11,14 +11,10 @@ export async function fetchQuote(request: QuoteRequest, signal?: AbortSignal): P
 }
 
 type QuoteParams = QuoteRequest & {
-  /** Cart version the quote prices: any cart change asks for a new quote. */
   cartVersion: number;
 };
 
-/**
- * The quote is the source of truth for subtotal, discount, fee and total.
- * Keyed by coupon, selected items and cart version, so it follows every change.
- */
+// Keyed by cart version, so any cart change asks for a new quote
 export const quoteQueryOptions = ({ cartVersion, ...request }: QuoteParams) =>
   queryOptions({
     queryKey: cartKeys.quote({ ...request, cartVersion }),

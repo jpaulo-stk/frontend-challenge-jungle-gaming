@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/shared/
 const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 const networkNames = { ethereum: "Ethereum", polygon: "Polygon", solana: "Solana" } as const;
 
-/** "2026-07-29T…" → "29 Jul, 2026", as in the receipt frame. */
 function receiptDate(iso: string): string {
   const date = new Date(iso);
   return `${String(date.getDate())} ${months[date.getMonth()] ?? ""}, ${String(date.getFullYear())}`;
@@ -22,10 +21,7 @@ type ReceiptDialogProps = {
   onClose: () => void;
 };
 
-/**
- * Receipt of a confirmed order: a modal on desktop, full screen on mobile.
- * Every value is the order's frozen copy, never the current catalog.
- */
+// Frozen order values, never the current catalog
 export function ReceiptDialog({ order, onClose }: ReceiptDialogProps) {
   const hash = order.transactionHash;
 

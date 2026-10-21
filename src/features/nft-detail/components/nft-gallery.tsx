@@ -10,7 +10,6 @@ type NftGalleryProps = {
   gallery: Image[];
 };
 
-/** Four thumbnails, the main art (444px box, 404px image) and a zoom dialog. */
 export function NftGallery({ name, gallery }: NftGalleryProps) {
   const [selected, setSelected] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);

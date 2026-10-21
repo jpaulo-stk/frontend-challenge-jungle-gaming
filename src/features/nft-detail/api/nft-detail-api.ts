@@ -13,14 +13,12 @@ export const nftDetailQueryOptions = (nftId: string) =>
     queryFn: async ({ signal }) =>
       parseContract(nftDetailSchema, (await http.get(`/nfts/${nftId}`, { signal })).data),
     staleTime: 30_000,
-    // A missing NFT will not appear by retrying.
     retry: (failureCount, error) =>
       !(error instanceof AppError && error.code === "NFT_NOT_FOUND") && failureCount < 2,
   });
 
 const relatedParams = { sort: "trending", perPage: 16 } as const;
 
-/** "Mais desta coleção": every piece belongs to the same series, ordered by interest. */
 export const relatedNftsQueryOptions = queryOptions({
   queryKey: nftKeys.list(relatedParams),
   queryFn: async ({ signal }) =>

@@ -13,6 +13,5 @@ export async function fetchFavorites(signal: AbortSignal): Promise<FavoritesResp
 export const favoritesQueryOptions = queryOptions({
   queryKey: favoriteKeys.list(),
   queryFn: ({ signal }) => fetchFavorites(signal),
-  // Private and changed only by this user's own actions, which invalidate it.
   staleTime: 60_000,
 });

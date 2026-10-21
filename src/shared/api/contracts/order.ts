@@ -12,7 +12,6 @@ import { editionIdSchema } from "@/shared/api/contracts/nft";
 export const orderStatusSchema = z.enum(["pending", "confirmed", "rejected"]);
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 
-/** Collector data from the checkout form, stored with the order. */
 export const buyerSchema = z.object({
   displayName: z.string().trim().min(1),
   username: z.string().trim().min(1),
@@ -36,7 +35,6 @@ export const createOrderRequestSchema = z.object({
 });
 export type CreateOrderRequest = z.infer<typeof createOrderRequestSchema>;
 
-/** Frozen copy of a purchased line; catalog changes never touch it. */
 export const orderLineSchema = z.object({
   nftId: z.string(),
   name: z.string(),
@@ -68,9 +66,7 @@ export const orderSchema = z.object({
   networkFee: ethAmountSchema,
   total: ethAmountSchema,
   coupon: z.object({ code: z.string(), percentOff: z.number().int().positive() }).nullable(),
-  /** Simulated transaction hash; present once the order is confirmed. */
   transactionHash: z.string().nullable(),
-  /** Simulated block explorer link; the hash does not exist on any real chain. */
   explorerUrl: z.string().nullable(),
   rejectionReason: z.string().nullable(),
 });

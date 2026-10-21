@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { useCatalogFilters } from "@/features/catalog/hooks/use-catalog-filters";
 
 const DEBOUNCE_MS = 350;
-/** Hash used by the header icon and the tab bar action to land in the search. */
 const SEARCH_HASH = "busca";
 
 type CatalogSearchFieldProps = {
@@ -14,17 +13,13 @@ type CatalogSearchFieldProps = {
   className?: string;
 };
 
-/**
- * Live search. The term reaches the URL (and the API) once typing pauses,
- * replacing the history entry so each keystroke does not become a "back" step.
- */
+// Commits to the URL after a pause, replacing history (no back step per keystroke)
 export function CatalogSearchField({ id, className }: CatalogSearchFieldProps) {
   const { search, updateFilters } = useCatalogFilters();
   const [value, setValue] = useState(search.q ?? "");
   const [syncedQuery, setSyncedQuery] = useState(search.q);
   const [ownCommit, setOwnCommit] = useState(search.q);
 
-  // The URL changed from outside (history, "Limpar filtros"): reflect it.
   if (search.q !== syncedQuery) {
     setSyncedQuery(search.q);
     if (search.q !== ownCommit) setValue(search.q ?? "");
@@ -39,9 +34,7 @@ export function CatalogSearchField({ id, className }: CatalogSearchFieldProps) {
 
   const input = useRef<HTMLInputElement>(null);
   const hash = useLocation({ select: (location) => location.hash });
-  // The header icon and the tab bar action link to #busca. There is one field
-  // in the sidebar (desktop) and one above the hero (smaller screens): the
-  // one on screen takes the focus, ready to type.
+  // There are two fields (sidebar and above the hero); focus the visible one
   useEffect(() => {
     const field = input.current;
     if (hash === SEARCH_HASH && field && field.getClientRects().length > 0) field.focus();
@@ -55,8 +48,7 @@ export function CatalogSearchField({ id, className }: CatalogSearchFieldProps) {
     [],
   );
 
-  // Leaving the home (clicking a card while the term is still pending) wins:
-  // the pending search must not pull the collector back to the catalog.
+  // Navigating away cancels a pending search so it doesn't pull the user back
   const router = useRouter();
   useEffect(
     () =>

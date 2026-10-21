@@ -12,7 +12,6 @@ async function openCheckout(page: Page, options: MockOptions = {}): Promise<void
   await openWithScenario(page, options);
   await signIn(page);
   await openApp(page, "/pagamento");
-  // Prefilled from the registered wallet.
   await expect(page.getByLabel(/^Endereço da carteira/)).toHaveValue(/^0xA91F/);
 }
 
@@ -24,10 +23,9 @@ async function connectWallet(page: Page): Promise<void> {
   await expect(page.getByText("Carteira conectada")).toBeVisible();
 }
 
-/** The order page itself, not just its URL: the router may still show the previous page. */
+// Wait for the page itself: the URL changes before the route renders
 const processing = (page: Page) => page.getByRole("heading", { name: "Processando seu pedido" });
 
-/** The page is listening to this NFT on the realtime server. */
 async function waitForRoom(page: Page, nftId: string): Promise<void> {
   await page.waitForFunction(
     (id) => window.__kurioMock?.realtimeClients().some((client) => client.rooms.includes(id)),
@@ -134,7 +132,6 @@ test.describe("pagamento", { tag: "@desktop" }, () => {
     await waitForRoom(page, "emerald-ape-042");
     await page.evaluate(() => window.__kurioMock?.raiseNftPrice("emerald-ape-042", 10));
 
-    // The event reaches the open checkout: it says what changed and updates the summary.
     const notice = page.getByRole("status").filter({ hasText: "Os valores mudaram enquanto" });
     await expect(notice).toContainText(
       "Emerald Ape #042: o preço mudou de 1.19 ETH para 1.31 ETH.",
@@ -163,7 +160,6 @@ test.describe("pagamento", { tag: "@desktop" }, () => {
       window.__kurioMock?.setEditionAvailability("emerald-ape-042", "1-50", 0),
     );
 
-    // By event: the line is flagged at once, before any attempt to confirm.
     await expect(page.getByText(/Edição esgotada/)).toBeVisible();
     await confirmButton(page).click();
     await expect(

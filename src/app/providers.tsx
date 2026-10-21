@@ -5,12 +5,12 @@ import { Toaster } from "sonner";
 
 import { queryClient } from "@/app/query-client";
 import { router } from "@/app/router";
-// Registers the checkout draft's identity listener before any login/logout.
+// Registers the checkout draft's identity listener
 import "@/shared/checkout/checkout-draft";
 import { RealtimeProvider } from "@/shared/realtime/realtime-provider";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 
-// Loaded on demand and only in development, so it never ships in the build.
+// Dev only, never in the production bundle
 const ReactQueryDevtools = import.meta.env.DEV
   ? lazy(() =>
       import("@tanstack/react-query-devtools").then((module) => ({

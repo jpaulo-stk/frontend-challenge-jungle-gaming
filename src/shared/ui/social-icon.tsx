@@ -1,7 +1,6 @@
 import type * as React from "react";
 
-// Brand glyphs traced from the Figma export (design/screens/desktop-01-inicio.svg);
-// lucide-react no longer ships brand icons.
+// Traced from the Figma export (lucide no longer ships brand icons)
 const socialIconPaths = {
   facebook:
     "M11 10.33H9V13H11V21H14.33V13H16.73L17 10.33H14.33V9.2C14.33 8.6 14.47 8.33 15.07 8.33H17V5H14.47C12.07 5 11 6.07 11 8.07V10.33 Z",
@@ -21,7 +20,6 @@ type SocialIconProps = React.ComponentProps<"svg"> & {
   network: SocialNetwork;
 };
 
-/** Decorative by default: give the surrounding control the accessible name. */
 export function SocialIcon({ network, ...props }: SocialIconProps) {
   return (
     <svg viewBox="1 1 24 24" fill="currentColor" aria-hidden="true" focusable="false" {...props}>

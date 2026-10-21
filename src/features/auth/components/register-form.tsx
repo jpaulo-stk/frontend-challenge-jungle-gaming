@@ -34,7 +34,6 @@ export function RegisterForm({ redirect }: RegisterFormProps) {
         void router.navigate({ href: redirect ?? "/", replace: true });
       },
       onError: (error) => {
-        // EMAIL_TAKEN / USERNAME_TAKEN land on their own field.
         if (!applyServerErrors(error, form.setError, ["username", "email", "password"])) {
           form.setError("root.server", { message: error.message });
         }

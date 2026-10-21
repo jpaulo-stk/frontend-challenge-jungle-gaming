@@ -5,11 +5,6 @@ import { useRealtimeState } from "@/shared/realtime/use-realtime";
 
 const RESTORED_VISIBLE_MS = 4_000;
 
-/**
- * Discreet status of the realtime connection. Quiet while everything works;
- * after a failure it says that prices and orders may be outdated, and then
- * that the connection is back (and the data on screen was refreshed).
- */
 export function RealtimeStatus() {
   const { status, interrupted } = useRealtimeState();
   const [restored, setRestored] = useState(false);

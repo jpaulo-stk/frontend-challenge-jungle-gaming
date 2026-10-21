@@ -11,7 +11,6 @@ import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
 
 const params = { perPage: 3 };
 
-/** Cards fed by the (simulated) API, so the catalog holds no data of its own. */
 export function UiCatalogCards() {
   const [favorites, setFavorites] = useState<ReadonlySet<string>>(new Set());
   const query = useQuery({

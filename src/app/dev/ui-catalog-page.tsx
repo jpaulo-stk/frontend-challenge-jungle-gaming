@@ -10,7 +10,6 @@ import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
 import { NftDetailSkeleton } from "@/shared/ui/skeleton/nft-detail-skeleton";
 import { TableRowsSkeleton } from "@/shared/ui/skeleton/table-rows-skeleton";
 
-/** Development-only catalog of the design system, for side-by-side review with Figma. */
 export function UiCatalogPage() {
   return (
     <div className="page-container py-10">

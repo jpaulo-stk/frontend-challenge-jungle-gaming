@@ -8,9 +8,7 @@ const stepButton = cva(
   {
     variants: {
       size: {
-        // Detail page (desktop frame): tall 32×48 pills.
         md: "h-12 w-8 [&_svg]:size-5",
-        // Cart rows and mobile action bar: compact pills.
         sm: "h-7 w-5 [&_svg]:size-3.5",
       },
     },
@@ -20,10 +18,8 @@ const stepButton = cva(
 type QuantityStepperProps = {
   value: number;
   onChange: (value: number) => void;
-  /** Available units for the selected edition. */
   max: number;
   min?: number;
-  /** Names the control, e.g. "Quantidade de Emerald Ape #042". */
   label: string;
   size?: "md" | "sm";
   disabled?: boolean;

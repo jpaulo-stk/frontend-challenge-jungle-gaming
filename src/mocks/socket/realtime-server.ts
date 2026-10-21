@@ -7,10 +7,7 @@ import { onOutgoingEvent } from "@/mocks/socket/bus";
 import { REALTIME_URL } from "@/shared/config/realtime";
 import { realtimeEvents, subscriptionSchema } from "@/shared/realtime/events";
 
-// Simulated Socket.IO server. MSW intercepts the WebSocket opened by
-// socket.io-client and @mswjs/socket.io-binding speaks the Engine.IO/Socket.IO
-// protocol on top of it. There is no real server: events originate from the
-// same mock database used by the REST handlers (see ./bus.ts).
+// MSW intercepts the WebSocket; the binding speaks Socket.IO on top of it
 
 /** Server-side heartbeat; without it socket.io-client drops the link after ~30s. */
 const PING_INTERVAL_MS = 25_000;
@@ -24,7 +21,6 @@ type ConnectedClient = {
 
 const clients = new Set<ConnectedClient>();
 
-/** The user behind the token sent in the Socket.IO handshake (`auth.token`). */
 function userFromHandshake(data: unknown): string | null {
   if (typeof data !== "string" || !data.startsWith("40")) return null;
   try {
@@ -83,8 +79,6 @@ export const realtimeHandler = realtime.addEventListener("connection", (connecti
   });
 });
 
-// NFT updates go to clients subscribed to that NFT (or to every NFT with "*");
-// order updates only reach connections authenticated as the order's owner.
 onOutgoingEvent((event) => {
   for (const client of clients) {
     if (event.type === "nft.updated") {
@@ -97,7 +91,6 @@ onOutgoingEvent((event) => {
   }
 });
 
-/** Closes every realtime connection (simulates a dropped network link). */
 export function dropRealtimeConnections(): number {
   const count = clients.size;
   for (const client of [...clients]) client.close();
@@ -108,7 +101,6 @@ export function realtimeClientCount(): number {
   return clients.size;
 }
 
-/** Who is connected and which NFT rooms each connection is in (orphan subscriptions show here). */
 export function realtimeClients(): { userId: string | null; rooms: string[] }[] {
   return [...clients].map((client) => ({
     userId: client.userId,

@@ -9,21 +9,12 @@ import { RealtimeContext } from "@/shared/realtime/use-realtime";
 
 const sessionHash = hashKey(sessionKeys.current());
 
-/**
- * Owns the realtime connection: it opens once the session is known and is
- * replaced whenever the identity changes (login, logout, expiry), so a new
- * collector never shares the previous one's connection.
- *
- * The session is read from the cache without an observer of its own: the
- * router's guards and the layout fetch it. An extra observer mounted above the
- * router would, under StrictMode's double mount, cancel the fetch a guard is
- * awaiting.
- */
+// Reads the session from the cache without its own observer: under StrictMode an
+// observer above the router cancels the fetch a route guard is awaiting
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [client] = useState(() => createRealtimeClient(queryClient));
-  // Only the session query matters here. Queries are created while other
-  // components render, so the notification is deferred out of their render.
+  // Session query only, deferred out of other components' render
   const [subscribeSession] = useState(
     () => (onChange: () => void) =>
       queryClient.getQueryCache().subscribe((event) => {
@@ -33,7 +24,6 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
   const session = useSyncExternalStore(subscribeSession, () =>
     queryClient.getQueryState<Session | null>(sessionKeys.current()),
   );
-  // A failed session check counts as a visitor; the realtime link still serves the catalog.
   const resolved = session !== undefined && session.status !== "pending";
   const userId = session?.data?.user.id ?? null;
 

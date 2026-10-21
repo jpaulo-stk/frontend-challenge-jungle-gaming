@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { walletAddressSchema } from "@/shared/api/contracts/wallet";
 
-/** "Perfil do colecionador" on the payment page; selects start empty. */
 export const buyerFormSchema = z.object({
   displayName: z.string().trim().min(1, "Informe o nome de exibição."),
   username: z.string().trim().min(1, "Informe o nome de usuário."),
@@ -16,7 +15,6 @@ export const buyerFormSchema = z.object({
   referralCode: z.string().trim().min(1, "Informe o código de indicação."),
   email: z.email("Informe um e-mail válido."),
   ensName: z.string().trim().min(1, "Informe o nome ENS."),
-  /** "Usar outra carteira?": receive the NFTs at an address typed here. */
   useOtherWallet: z.boolean(),
   note: z.string().trim().max(500, "Use no máximo 500 caracteres."),
 });

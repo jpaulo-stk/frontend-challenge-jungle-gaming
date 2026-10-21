@@ -1,5 +1,4 @@
-// "THANK YOU" envelope of the receipt frame (desktop-05), paths as exported
-// from the Figma file. The viewBox keeps the frame coordinates.
+// Paths exported from the Figma file; the viewBox keeps the frame coordinates
 export function ThankYouIcon({ className }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="7247 188 66 80" fill="currentColor" className={className}>

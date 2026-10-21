@@ -4,12 +4,10 @@ import { openApp } from "../fixtures/app.ts";
 import { openWithScenario } from "../fixtures/mock-api.ts";
 import { signIn } from "../fixtures/session.ts";
 
-// Stable data: fixed scenario and seed (fresh database), fixed clock, local
-// images and fonts, reduced motion and disabled animations (config).
+// Stable data: fresh database, fixed clock, local assets, no animations
 
 const FIXED_TIME = new Date("2026-10-21T12:00:00-03:00");
 
-/** Every image loaded (lazy ones included) and the fonts ready. */
 async function settle(page: Page): Promise<void> {
   await page.evaluate(async () => {
     for (const image of document.querySelectorAll("img")) image.loading = "eager";

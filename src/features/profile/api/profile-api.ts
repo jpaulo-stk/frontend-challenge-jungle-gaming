@@ -19,7 +19,6 @@ export const profileQueryOptions = queryOptions({
   staleTime: 60_000,
 });
 
-/** Stores the new profile and mirrors name and avatar into the session (header). */
 function useApplyProfile() {
   const queryClient = useQueryClient();
   return (profile: Profile) => {

@@ -4,7 +4,6 @@ type TableRowsSkeletonProps = {
   rows?: number;
 };
 
-/** Item rows of the cart and checkout summary (70px rows with a 56px thumbnail). */
 export function TableRowsSkeleton({ rows = 3 }: TableRowsSkeletonProps) {
   return (
     <div className="flex flex-col gap-3">

@@ -4,10 +4,6 @@ import { UnavailableAction } from "@/shared/ui/unavailable-action";
 const socialButton =
   "flex h-14 w-full items-center justify-center gap-3 rounded-md border-[1.5px] border-border text-sm text-text-muted aria-disabled:cursor-not-allowed md:h-10";
 
-/**
- * Social sign-in is out of scope: the buttons stay in the layout, announce
- * themselves as unavailable and explain it instead of pretending to work.
- */
 export function SocialLogin() {
   return (
     <div className="mt-8">

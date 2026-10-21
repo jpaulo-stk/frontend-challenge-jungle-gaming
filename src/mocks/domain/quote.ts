@@ -46,7 +46,6 @@ type Computed = Omit<DbQuote, "id" | "owner" | "itemIds" | "createdAt" | "expire
   issues: QuoteIssue[];
 };
 
-/** Prices the owner's cart (or the chosen items of it) with the catalog as it is now. */
 export function computeQuote(
   owner: OwnerKey,
   couponCode: string | null,
@@ -160,7 +159,6 @@ export function createQuote(
   };
 }
 
-/** Same lines, prices, quantities, coupon and total as the stored quote. */
 export function quoteStillValid(stored: DbQuote, fresh: Computed): boolean {
   const key = (lines: QuoteLine[]) =>
     lines

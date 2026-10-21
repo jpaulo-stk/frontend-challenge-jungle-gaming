@@ -1,11 +1,8 @@
 import "@/styles/globals.css";
 
 async function bootstrap() {
-  // The entry holds only this bootstrap: React, the app and the simulated
-  // backend are separate chunks that download in parallel from the start.
-  // Nothing renders (so no request leaves) before the mocks answer.
-  // socket.io-client captures the WebSocket constructor when imported, so the
-  // app only loads it on demand, after this point (shared/realtime/socket.ts).
+  // App and mocks download in parallel; rendering waits for the mocks because
+  // socket.io-client must see the intercepted WebSocket (it is imported later, on demand).
   const app = import("@/app/render");
   if (import.meta.env.VITE_ENABLE_MOCKS === "true") {
     const { startMocks } = await import("@/mocks/browser");
@@ -19,7 +16,6 @@ async function bootstrap() {
   renderApp(container);
 }
 
-/** A boot that fails (a chunk that did not download, say) never leaves a blank page. */
 function showBootError(error: unknown) {
   reportError(error);
   const container = document.getElementById("root");

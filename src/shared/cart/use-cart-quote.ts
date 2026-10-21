@@ -16,22 +16,16 @@ const blockingCodes = new Set<QuoteIssue["code"]>([
 ]);
 
 type Options = {
-  /** Cart items left for later at checkout: they stay in the cart, out of the quote. */
   excludedItemIds?: readonly string[];
 };
 
-/**
- * Cart plus its quote. The quote is the reference for every amount; while a
- * new one is on its way the totals are estimated locally from the cart lines
- * (big.js) and flagged as such, and they match once the quote arrives.
- */
+// While a new quote loads, totals are estimated locally (big.js)
 export function useCartQuote({ excludedItemIds = [] }: Options = {}) {
   const cart = useQuery(cartQueryOptions);
   const couponCode = useCheckoutDraft((draft) => draft.couponCode);
   const setCoupon = useCheckoutDraft((draft) => draft.setCoupon);
 
   const allItems: CartItem[] = cart.data?.items ?? [];
-  // Price and availability of what is in the cart arrive by event (cart page and checkout).
   useNftSubscription(allItems.map((item) => item.nftId));
   const items = allItems.filter((item) => !excludedItemIds.includes(item.id));
   // The whole cart is quoted without itemIds, sharing the cart page's quote.
@@ -46,8 +40,6 @@ export function useCartQuote({ excludedItemIds = [] }: Options = {}) {
     placeholderData: keepPreviousData,
   });
 
-  // A coupon that stopped being valid (expired at checkout) is dropped, and
-  // the quote is asked again without it.
   const couponError = quote.error && couponErrors.has(quote.error.code) ? quote.error : null;
   useEffect(() => {
     if (!couponError) return;

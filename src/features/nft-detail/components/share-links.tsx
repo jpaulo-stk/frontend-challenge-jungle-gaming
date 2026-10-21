@@ -9,7 +9,6 @@ type ShareLinksProps = {
 const iconLink =
   "inline-flex size-8 items-center justify-center rounded-sm text-text hover:text-primary-hi [&_svg]:size-5";
 
-/** "Compartilhar este NFT": real share links for LinkedIn, e-mail and Twitter. */
 export function ShareLinks({ name }: ShareLinksProps) {
   const url = typeof window === "undefined" ? "" : window.location.href;
   const text = `${name} na Kurio`;

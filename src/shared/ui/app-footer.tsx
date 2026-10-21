@@ -33,7 +33,6 @@ const helpLinks = [
 
 const profileLinks = ["Minha coleção", "Atividade", "Estúdio do criador"];
 
-// Each one opens the catalog filtered by that collection (slug of the API).
 const collectionLinks = [
   { slug: "arte-digital", label: "Arte digital" },
   { slug: "fotografia", label: "Fotografia" },
@@ -57,7 +56,6 @@ const footerLinkClassName = "text-left text-sm leading-7.5 text-text hover:text-
 export function AppFooter() {
   return (
     <footer className="page-container mt-24 pb-6 max-md:pb-24">
-      {/* Band 1: benefits + newsletter */}
       <section
         aria-label="Por que colecionar na Kurio"
         className="grid gap-8 bg-surface px-6 py-8 sm:grid-cols-2 lg:min-h-62.5 lg:grid-cols-4 xl:grid-cols-[250px_266px_266px_1fr] lg:gap-0 lg:pr-7.5 lg:pl-12"
@@ -111,7 +109,6 @@ export function AppFooter() {
         </form>
       </section>
 
-      {/* Band 2: contact strip */}
       <div className="grid gap-4 bg-surface-3 px-8 py-6 text-sm text-text sm:grid-cols-2 lg:min-h-22 lg:grid-cols-4 xl:grid-cols-[303px_303px_302px_1fr] xl:gap-x-0 lg:items-center lg:py-0">
         <span className="font-bold tracking-[0.18em]">KURIO</span>
         <p className="max-w-55 leading-5.5">Feito para colecionadores, criadores e cultura</p>
@@ -123,7 +120,6 @@ export function AppFooter() {
         </a>
       </div>
 
-      {/* Band 3: link columns */}
       <div className="grid gap-8 bg-surface px-8 py-8 sm:grid-cols-2 lg:min-h-59 lg:grid-cols-4 xl:grid-cols-[303px_303px_302px_1fr] xl:gap-x-0">
         <nav aria-labelledby="footer-profile">
           <h2 id="footer-profile" className="text-lg leading-7 font-bold text-text">

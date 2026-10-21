@@ -16,10 +16,7 @@ export const mulEth = (a: string, quantity: number): string => {
 
 export const compareEth = (a: string, b: string): -1 | 0 | 1 => new Big(a).cmp(b);
 
-/**
- * "12.3" → "12.30 ETH", "0.016" → "0.016 ETH". Rounds half-up to `dp` places,
- * shows at least two (as in the layout) and never uses exponent notation.
- */
+/** "12.3" → "12.30 ETH", "0.016" → "0.016 ETH" (half-up, 2 to 3 decimals) */
 export const formatEth = (value: string, dp = 3): string => {
   const rounded = new Big(value).round(dp, Big.roundHalfUp);
   const decimals = rounded.toFixed().split(".")[1]?.length ?? 0;

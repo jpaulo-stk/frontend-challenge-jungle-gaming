@@ -2,10 +2,6 @@ import type { ScenarioId } from "@/mocks/config";
 import type { Db } from "@/mocks/db/types";
 import { buildSeed, SCHEMA_VERSION } from "@/mocks/fixtures/seed";
 
-// Single in-memory database behind both the REST handlers and the realtime
-// server. Persisted to localStorage so carts, sessions and favorites survive a
-// refresh; `resetDb` restores a known scenario from scratch.
-
 const STORAGE_KEY = "kurio.mock-db";
 
 let db: Db | null = null;
@@ -47,7 +43,6 @@ export function getDb(): Db {
   return db;
 }
 
-/** Applies a change and persists it. Every write goes through here. */
 export function mutate<T>(change: (state: Db) => T): T {
   const result = change(getDb());
   persist();

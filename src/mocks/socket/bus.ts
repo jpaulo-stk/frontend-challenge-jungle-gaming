@@ -2,9 +2,6 @@ import type { DbNft, DbOrder } from "@/mocks/db/types";
 import { totalAvailable } from "@/mocks/domain/serialize";
 import type { NftUpdatedEvent, OrderUpdatedEvent } from "@/shared/realtime/events";
 
-// Changes in the mock database are published here; the Socket.IO server
-// forwards them to connected clients. REST and events always share the data.
-
 export type OutgoingEvent =
   | { type: "nft.updated"; payload: NftUpdatedEvent }
   | { type: "order.updated"; payload: OrderUpdatedEvent; userId: string };
@@ -27,7 +24,6 @@ export function publish(event: OutgoingEvent): void {
   for (const listener of listeners) listener(event);
 }
 
-/** Re-sends an already delivered event, unchanged (duplicate delivery). */
 export function republishLast(): OutgoingEvent | null {
   const last = history.at(-1);
   if (last) for (const listener of listeners) listener(last);

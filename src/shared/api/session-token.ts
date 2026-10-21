@@ -1,5 +1,3 @@
-// Opaque session token issued by the API on login. It is never a credential:
-// passwords are not stored anywhere on the client.
 const STORAGE_KEY = "kurio.session-token";
 
 export function readSessionToken(): string | null {

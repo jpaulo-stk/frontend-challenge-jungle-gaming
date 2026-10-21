@@ -8,14 +8,10 @@ import type { EditionId } from "@/shared/api/contracts/nft";
 
 export type NftChange = {
   price?: string;
-  /** New available units per edition. */
   editions?: Partial<Record<EditionId, number>>;
 };
 
-/**
- * The only way NFT price or availability changes: bumps the version, persists
- * and publishes `nft.updated`, so REST and realtime never disagree.
- */
+// The only way price/availability changes: bumps the version and publishes nft.updated
 export function changeNft(nftId: string, change: NftChange): DbNft | null {
   const updated = mutate((db) => {
     const nft = db.nfts.find((candidate) => candidate.id === nftId);
@@ -34,10 +30,7 @@ export function changeNft(nftId: string, change: NftChange): DbNft | null {
 
 let scenarioTimer: ReturnType<typeof setTimeout> | null = null;
 
-/**
- * price-changed / sold-out: once the first quote exists, change the first item
- * of that cart after the configured delay. Runs at most once per reset.
- */
+// price-changed / sold-out: fires once, after the first quote
 export function scheduleScenarioEvent(owner: OwnerKey): void {
   const { scenario, eventDelayMs } = getConfig();
   if (scenario !== "price-changed" && scenario !== "sold-out") return;

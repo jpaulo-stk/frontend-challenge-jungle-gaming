@@ -1,5 +1,3 @@
-// Anonymous id that owns a visitor's cart until login, when the API merges
-// that cart into the collector's. Not personal data and not a credential.
 const STORAGE_KEY = "kurio.visitor-id";
 
 let memoryFallback: string | null = null;

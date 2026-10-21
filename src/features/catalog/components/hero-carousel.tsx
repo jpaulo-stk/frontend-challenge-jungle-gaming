@@ -5,10 +5,7 @@ import { useState, type KeyboardEvent } from "react";
 import { heroSlides } from "@/features/catalog/components/hero-slides";
 import { buttonVariants } from "@/shared/ui/button";
 
-/**
- * Hero with three slides switched by the dots (click, or arrow keys on the
- * dot group). No autoplay: moving content would need its own pause control.
- */
+// No autoplay: it would need a pause control (WCAG 2.2.2)
 export function HeroCarousel() {
   const [active, setActive] = useState(0);
 

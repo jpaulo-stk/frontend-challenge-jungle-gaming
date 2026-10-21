@@ -9,7 +9,6 @@ export const VISITOR_HEADER = "x-visitor-id";
 
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 
-/** The single error envelope of the API. */
 export function apiError(
   status: number,
   code: string,
@@ -19,7 +18,6 @@ export function apiError(
   return HttpResponse.json({ error: { code, message, ...(fields ? { fields } : {}) } }, { status });
 }
 
-/** Parses the JSON body with a contract schema; invalid input becomes a 422 with field errors. */
 export async function readBody<TSchema extends z.ZodType>(
   request: Request,
   schema: TSchema,
@@ -67,10 +65,6 @@ export function endSession(token: string): void {
 
 type Authenticated = { user: DbUser; session: DbSession };
 
-/**
- * Resolves the caller's session. A request without a token is anonymous
- * (null); a token that is unknown or past its expiry is a 401.
- */
 export function resolveSession(request: Request): Authenticated | null {
   const token = bearerToken(request);
   if (!token) return null;
@@ -84,13 +78,11 @@ export function resolveSession(request: Request): Authenticated | null {
   return { user, session };
 }
 
-/** For private endpoints: requires a valid session. */
 export function requireUser(request: Request): Authenticated {
   const authenticated = resolveSession(request);
   if (!authenticated) {
     throw apiError(401, "UNAUTHORIZED", "Entre na sua conta para continuar.");
   }
-  // session-expired scenario: the next private call after arming ends the session.
   if (getDb().flags.sessionExpiryArmed) {
     mutate((db) => {
       db.flags.sessionExpiryArmed = false;
@@ -101,7 +93,6 @@ export function requireUser(request: Request): Authenticated {
   return authenticated;
 }
 
-/** Cart owner: the signed-in collector, or the visitor id sent by the client. */
 export function resolveOwner(request: Request): OwnerKey {
   const authenticated = resolveSession(request);
   if (authenticated) return `user:${authenticated.user.id}`;

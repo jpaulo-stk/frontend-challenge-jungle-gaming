@@ -6,10 +6,7 @@ const routeApi = getRouteApi("/_catalog");
 
 type FilterPatch = Partial<Omit<CatalogSearch, "page">>;
 
-/**
- * Catalog state lives in the URL. `updateFilters` is the single way to change
- * a filter, and it always returns to page 1.
- */
+// updateFilters always goes back to page 1
 export function useCatalogFilters() {
   const search = routeApi.useSearch();
   const navigate = routeApi.useNavigate();

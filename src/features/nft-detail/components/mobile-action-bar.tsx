@@ -11,7 +11,6 @@ type MobileActionBarProps = {
   purchase: Purchase;
 };
 
-/** Fixed purchase bar of the mobile frame: quantity, total and actions. */
 export function MobileActionBar({ name, price, purchase }: MobileActionBarProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-[32px] border-t border-border bg-surface px-6 pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] lg:hidden">

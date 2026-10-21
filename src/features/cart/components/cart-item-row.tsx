@@ -12,7 +12,6 @@ type CartItemRowProps = {
   issues: QuoteIssue[];
 };
 
-/** One cart line: table row on desktop, card on mobile. */
 export function CartItemRow({ item, issues }: CartItemRowProps) {
   const update = useUpdateCartItem();
   const remove = useRemoveCartItem();

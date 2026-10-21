@@ -1,11 +1,7 @@
 import { cn } from "cn";
 import type * as React from "react";
 
-/**
- * Placeholder block with a shimmer sweep. Purely decorative: the region that
- * contains skeletons carries `aria-busy` and an accessible loading label.
- * Under `prefers-reduced-motion` the shimmer stays still.
- */
+// Decorative: the container carries aria-busy
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

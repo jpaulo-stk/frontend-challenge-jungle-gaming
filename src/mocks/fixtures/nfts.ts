@@ -2,10 +2,6 @@ import type { DbNft } from "@/mocks/db/types";
 import type { Network } from "@/shared/api/contracts/common";
 import type { Edition, EditionId } from "@/shared/api/contracts/nft";
 
-// 36 NFTs (3 pages of 12). The Figma file has only four artworks and reuses
-// them under different names; the fixtures do the same. Names and prices shown
-// in the frames are kept verbatim, the rest follow the same vocabulary.
-
 export const collections = [
   { slug: "arte-digital", name: "Arte digital" },
   { slug: "fotografia", name: "Fotografia" },
@@ -44,7 +40,6 @@ const contracts: Record<Network, string> = {
   solana: "Kur1oEd1t1onsSo1ana111111111111111111111",
 };
 
-/** "1-50:30 open:99" → editions with their available units. */
 function editions(spec: string): Edition[] {
   return spec.split(" ").map((part) => {
     const [id, available] = part.split(":") as [EditionId, string];
@@ -52,7 +47,6 @@ function editions(spec: string): Edition[] {
   });
 }
 
-/** Ratings visible in the Figma frames; the rest are derived from the trending score. */
 const ratingOverrides: Partial<Record<string, DbNft["rating"]>> = {
   "emerald-ape-042": { average: 4.8, count: 19 },
 };
@@ -159,5 +153,4 @@ export function buildNfts(): DbNft[] {
   );
 }
 
-/** Releases on or after this date appear under "Novos lançamentos". */
 export const NEW_RELEASES_SINCE = "2026-09-01T00:00:00.000Z";

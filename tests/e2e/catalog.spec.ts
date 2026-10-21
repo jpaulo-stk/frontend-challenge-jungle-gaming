@@ -70,7 +70,6 @@ test.describe("catálogo — estado na URL", { tag: "@desktop" }, () => {
         timeout: 15_000,
       },
     );
-    // Whatever arrives late for "golden" must never replace the current list.
     await page.waitForLoadState("networkidle");
     await expect(cardNames(page).filter({ hasText: "Golden" })).toHaveCount(0);
   });
@@ -98,8 +97,7 @@ test.describe("catálogo — carregamento e falhas", () => {
     await openWithScenario(page);
     await page.goto("/rota-que-nao-existe");
     await page.locator("main#conteudo").waitFor();
-    // GET /nfts serves the grid and the featured card; three failures each
-    // (first attempt + two automatic retries) leave the grid in error.
+    // Grid and featured card share GET /nfts; three failures each exhaust the retries
     await page.evaluate(() => {
       for (let attempt = 0; attempt < 6; attempt += 1) {
         window.__kurioMock?.failNextRequest("GET", "/nfts");
@@ -137,7 +135,6 @@ test.describe("favoritos", { tag: "@desktop" }, () => {
 
     await heart.click({ force: true });
     await expect(heart).toHaveAttribute("aria-pressed", "true");
-    // Success is announced to screen readers only (live region), with no toast.
     await expect(page.getByText("Sage Nomad #009 foi favoritado.")).toHaveCount(1);
     await page.reload();
     await expect(page.getByRole("button", { name: "Favoritar Sage Nomad #009" })).toHaveAttribute(

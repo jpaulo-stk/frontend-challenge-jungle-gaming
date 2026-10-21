@@ -12,10 +12,6 @@ type AvatarFieldProps = {
   name: string;
 };
 
-/**
- * "Avatar": choose a file (type and size checked before upload, local preview
- * while it uploads) or remove it to go back to the default placeholder.
- */
 export function AvatarField({ avatarUrl, name }: AvatarFieldProps) {
   const input = useRef<HTMLInputElement>(null);
   const upload = useUploadAvatar();

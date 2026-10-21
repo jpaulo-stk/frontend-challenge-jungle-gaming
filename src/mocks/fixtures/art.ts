@@ -1,9 +1,6 @@
 import type { DbNft } from "@/mocks/db/types";
 import type { Image } from "@/shared/api/contracts/common";
 
-// The four artworks of the Figma file, served from public/nfts in 400px (cards)
-// and 800px (detail) WebP versions.
-
 const artDescriptions: Record<DbNft["art"], string> = {
   1: "macaco de óculos redondos e jaqueta college verde com corrente dourada",
   2: "gorila de chapéu bucket verde e moletom lilás",

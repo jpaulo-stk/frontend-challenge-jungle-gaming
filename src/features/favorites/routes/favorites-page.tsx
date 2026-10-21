@@ -14,7 +14,6 @@ import { useNftSubscription } from "@/shared/realtime/use-realtime";
 const gridClassName =
   "mt-8 grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8.5";
 
-/** "Lista de interesse": the collector's favorited NFTs. */
 export function FavoritesPage() {
   const favorites = useQuery(favoritesQueryOptions);
   useNftSubscription(favorites.data?.items.map((nft) => nft.id) ?? []);

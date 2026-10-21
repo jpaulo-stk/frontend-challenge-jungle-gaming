@@ -4,10 +4,7 @@ import { projects } from "./playwright.config.ts";
 
 const PORT = 4173;
 
-// Visual regression of the four main screens, desktop and mobile, against the
-// production build (no dev tools, no simulation panel). Baselines are per OS
-// (font rendering differs): generate and review them with
-// `pnpm test:visual:update`, then commit the PNGs.
+// Visual regression against the production build; baselines are per OS
 export default defineConfig({
   testDir: "./tests/visual",
   fullyParallel: true,

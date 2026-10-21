@@ -14,13 +14,6 @@ import { announce } from "@/shared/lib/announce";
 type ToggleInput = { nft: NftSummary; favorite: boolean };
 type ToggleContext = { previous: FavoritesResponse | undefined };
 
-/**
- * Favorite state for cards and the detail page. The toggle is optimistic: the
- * heart changes at once and rolls back, with an accessible error, if the API
- * refuses. Success is only announced to screen readers (the heart already
- * shows it); a failure also gets a toast. Visitors are sent to login and
- * brought back afterwards.
- */
 export function useFavorites() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();

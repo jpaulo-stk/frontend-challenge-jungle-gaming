@@ -2,8 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 
 import { isTransient } from "@/shared/api/errors";
 
-// Defaults are the conservative baseline; each domain overrides staleTime/gcTime
-// in its own query options. Rationale lives in ARCHITECTURE.md ("Estratégia de cache").
+// Per-domain staleTime/gcTime live in each query's options
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

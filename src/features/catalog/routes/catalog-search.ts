@@ -8,13 +8,11 @@ import {
 } from "@/features/catalog/api/schemas";
 import { ethAmountSchema, networkSchema } from "@/shared/api/contracts/common";
 
-/** A repeated query key arrives as a list, a single one as a string. */
 const stringList = z
   .union([z.string(), z.array(z.string())])
   .transform((value) => (Array.isArray(value) ? value : [value]));
 
-// Catalog state in the URL. Absent keys mean the default, so the bare `/`
-// stays clean; invalid values are dropped instead of breaking the page.
+// Invalid values are dropped instead of breaking the page
 export const catalogSearchSchema = z.object({
   q: z.string().trim().min(1).max(80).optional().catch(undefined),
   collection: stringList
@@ -30,7 +28,6 @@ export const catalogSearchSchema = z.object({
 });
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
 
-/** The exact parameters sent to `GET /nfts`; also the query key. */
 export function toListParams(search: CatalogSearch): NftListParams {
   return {
     ...(search.q ? { q: search.q } : {}),

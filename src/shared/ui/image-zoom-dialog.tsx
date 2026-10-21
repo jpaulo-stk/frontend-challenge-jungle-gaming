@@ -9,7 +9,6 @@ type ImageZoomDialogProps = {
   onClose: () => void;
 };
 
-/** Enlarged artwork. Focus is trapped while open and returns to the trigger on close. */
 export function ImageZoomDialog({ title, image, onClose }: ImageZoomDialogProps) {
   // Opened programmatically (no DialogTrigger), so remember who opened it.
   const opener = useRef<HTMLElement | null>(null);

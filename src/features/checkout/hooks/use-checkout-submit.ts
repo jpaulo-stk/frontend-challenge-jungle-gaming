@@ -12,7 +12,6 @@ import { quoteQueryOptions } from "@/shared/cart/quote-api";
 import { useCheckoutDraft, type OrderAttempt } from "@/shared/checkout/checkout-draft";
 
 export type OrderBody = Omit<CreateOrderRequest, "quoteId">;
-/** What changed since the collector last saw the values; sending waits for a new "yes". */
 export type Review = { quote: Quote; changes: string[]; blocked: boolean; body: OrderBody };
 export type SendProblem = { kind: "unanswered" | "failed"; message: string };
 
@@ -31,17 +30,10 @@ const needsRequote = new Set([
 ]);
 const blockingCodes = new Set(["EDITION_SOLD_OUT", "INSUFFICIENT_AVAILABILITY"]);
 const outdated = "Os valores mudaram desde o envio. Revise o resumo e confirme novamente.";
-/** Why the API asked for a new quote (expired, values changed, coupon fell). */
 type Requote = { requote: string };
 
-/**
- * Review and submission of the purchase. Every confirmation asks the quote
- * again; if anything differs from what the collector saw, nothing is sent and
- * the differences need an explicit new confirmation. Each attempt keeps its
- * Idempotency-Key in the draft, so a resend after a timeout or a refresh
- * recovers the same order. A synchronous lock covers the whole sequence, so
- * repeated clicks never start a second attempt.
- */
+// Re-quotes before sending; any difference needs a new confirmation.
+// Attempts keep their Idempotency-Key, so a resend recovers the same order.
 export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -61,7 +53,6 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
         staleTime: 0,
       });
     } catch (error) {
-      // The coupon fell at checkout: price again without it (the change is listed).
       if (couponCode && error instanceof AppError && error.code.startsWith("COUPON_")) {
         draft.setCoupon(null);
         return freshQuote(null);
@@ -113,7 +104,6 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
     }
   };
 
-  /** Re-prices, compares with `seen` and sends only when nothing changed. */
   const check = async (seen: Quote, body: OrderBody, retried = false): Promise<void> => {
     const fresh = await freshQuote(draft.couponCode);
     const changes = describeQuoteChanges(seen, fresh, items);
@@ -124,7 +114,6 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
     }
     const full: CreateOrderRequest = { ...body, quoteId: fresh.quoteId };
     const outcome = await send({ key: crypto.randomUUID(), body: full });
-    // The API found the values outdated between our check and the send.
     if (outcome === "sent") return;
     if (!retried) {
       await check(seen, body, true);
@@ -150,15 +139,12 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
     problem,
     busy,
     pendingAttempt: draft.attempt,
-    /** "Confirmar compra": validated form body plus the quote on screen. */
     confirm: (seen: Quote, body: OrderBody) => guarded(() => check(seen, body)),
-    /** "Confirmar com os novos valores": the reviewed quote becomes what was seen. */
     acceptReview: () => {
       if (!review) return;
       const { quote, body } = review;
       void guarded(() => check(quote, body));
     },
-    /** Resends the last unanswered attempt, unchanged (same key, same body). */
     resend: () => {
       const attempt = draft.attempt;
       if (!attempt) return;

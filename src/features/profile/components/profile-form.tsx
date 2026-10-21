@@ -22,10 +22,6 @@ const toFormValues = (profile: Profile): ProfileForm => ({
   ...emptyPasswords,
 });
 
-/**
- * "Perfil do colecionador": profile data and the optional password change share
- * one "Salvar", as in the layout. Each part reports its own errors on its fields.
- */
 export function ProfileFormView({ profile }: { profile: Profile }) {
   const updateProfile = useUpdateProfile();
   const changePassword = useChangePassword();

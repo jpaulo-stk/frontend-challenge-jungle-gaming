@@ -2,13 +2,11 @@ import { cn } from "cn";
 import { CircleAlert } from "lucide-react";
 
 type InlineErrorProps = {
-  /** Referenced by the field's `aria-describedby`. */
   id: string;
   message: string | undefined;
   className?: string;
 };
 
-/** Field-level error. Renders nothing when there is no message. */
 export function InlineError({ id, message, className }: InlineErrorProps) {
   if (!message) return null;
 

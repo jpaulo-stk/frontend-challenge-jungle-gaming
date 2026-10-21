@@ -5,10 +5,7 @@ import { toast } from "sonner";
 import { http } from "@/shared/api/axios";
 import { endSession } from "@/shared/session/session-lifecycle";
 
-/**
- * Ends the session on the API and locally. The local cleanup runs even if the
- * request fails: leaving the device signed out is the safe outcome.
- */
+// Local cleanup runs even if the request fails
 export function useLogout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();

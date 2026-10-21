@@ -4,21 +4,15 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import type { CreateOrderRequest } from "@/shared/api/contracts/order";
 import { onIdentityChange } from "@/shared/session/session-lifecycle";
 
-/** A submitted order request and its key: resending it can never create a second order. */
 export type OrderAttempt = { key: string; body: CreateOrderRequest };
 
 type CheckoutDraftState = {
-  /** Collector the draft belongs to (null while a visitor builds the cart). */
   ownerId: string | null;
   couponCode: string | null;
-  /** Cart items left for later: not part of this purchase. */
   excludedItemIds: string[];
-  /** Checkout form as typed, so an expired session or a refresh loses nothing. */
   buyer: Record<string, unknown> | null;
-  /** Registered wallet chosen to pay with. */
   walletId: string | null;
   attempt: OrderAttempt | null;
-  /** Order created and not yet settled, to recover after a refresh. */
   pendingOrderId: string | null;
 };
 
@@ -30,7 +24,6 @@ type CheckoutDraftActions = {
   setWallet: (walletId: string | null) => void;
   setAttempt: (attempt: OrderAttempt | null) => void;
   setPendingOrder: (orderId: string | null) => void;
-  /** After a confirmed purchase: the purchase-specific parts are done. */
   completePurchase: () => void;
   reset: () => void;
 };
@@ -45,10 +38,7 @@ const initialState: CheckoutDraftState = {
   pendingOrderId: null,
 };
 
-/**
- * Client-only checkout draft, kept in sessionStorage (this tab, survives a
- * refresh). It holds no server data: cart, quote and orders stay in the API.
- */
+// Client-only draft in sessionStorage; server data stays in the query cache
 export const useCheckoutDraft = create<CheckoutDraftState & CheckoutDraftActions>()(
   persist(
     (set) => ({
@@ -89,8 +79,7 @@ export const useCheckoutDraft = create<CheckoutDraftState & CheckoutDraftActions
   ),
 );
 
-// Logout, or a login as someone else, drops the draft. A session that merely
-// expired and is resumed by the same collector keeps it, so checkout resumes.
+// Logout or another user resets it; an expired session resumed by the same user keeps it
 onIdentityChange((session, reason) => {
   const { ownerId, reset } = useCheckoutDraft.getState();
   if (reason === "logout") reset();

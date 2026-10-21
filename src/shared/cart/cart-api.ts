@@ -12,13 +12,11 @@ const parseCart = (data: unknown): Cart => parseContract(cartSchema, data);
 export const cartQueryOptions = queryOptions({
   queryKey: cartKeys.detail(),
   queryFn: async ({ signal }) => parseCart((await http.get("/cart", { signal })).data),
-  // Kept fresh by mutations and price/availability events; short window otherwise.
   staleTime: 15_000,
 });
 
 type AddToCartInput = AddCartItemRequest & { name: string };
 
-/** Adds an NFT edition to the cart; availability is enforced by the API. */
 export function useAddToCart() {
   const queryClient = useQueryClient();
   return useMutation<Cart, AppError, AddToCartInput>({

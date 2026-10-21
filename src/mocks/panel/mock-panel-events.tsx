@@ -8,7 +8,6 @@ import { Label } from "@/shared/ui/label";
 const selectClassName =
   "h-10 w-full rounded-md border-[1.5px] border-border bg-surface px-3 text-sm text-text";
 
-/** Manual triggers for realtime events, connection loss and session expiry. */
 export function MockPanelEvents() {
   const nfts = getDb().nfts;
   const [nftId, setNftId] = useState(nfts[0]?.id ?? "");

@@ -1,11 +1,9 @@
 import type { Page } from "@playwright/test";
 
-// Helpers to drive the simulated backend from Playwright. Requests run inside
-// the page, so they go through the MSW service worker like the app's own.
+// Requests run inside the page, through the MSW worker
 
 export type ApiResult = { status: number; body: unknown };
 
-/** The subset of `window.__kurioMock` (src/mocks/controls.ts) used by tests. */
 export type MockHandle = {
   raiseNftPrice: (nftId: string, percent?: number) => void;
   setNftPrice: (nftId: string, price: string) => void;
@@ -33,14 +31,12 @@ declare global {
 
 export type MockOptions = {
   scenario?: string;
-  /** Fixed latency in ms (default 0); null keeps the scenario's own latency. */
   latency?: number | null;
   settle?: "auto" | "manual";
   settleDelay?: number;
   eventDelay?: number;
 };
 
-/** Opens the app with a fresh database for the given scenario. */
 export async function openWithScenario(page: Page, options: MockOptions = {}): Promise<void> {
   const params = new URLSearchParams({
     scenario: options.scenario ?? "default",
@@ -63,7 +59,6 @@ type RequestInput = {
   timeoutMs?: number;
 };
 
-/** Calls the API from inside the page. Network failures resolve as status 0. */
 export async function api(page: Page, input: RequestInput): Promise<ApiResult> {
   return page.evaluate(async ({ method, path, body, token, headers, timeoutMs }) => {
     const init: RequestInit = {
@@ -88,9 +83,7 @@ export async function api(page: Page, input: RequestInput): Promise<ApiResult> {
 }
 
 export async function login(page: Page, email = "colecionador@kurio.test"): Promise<string> {
-  // Setup step: right after the worker starts, under parallel load, a request
-  // can fail before reaching the mock (status 0). Retry it instead of storing
-  // an undefined token; any answer from the API is final.
+  // Right after the worker starts a request can fail before reaching the mock; retry
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const result = await api(page, {
       method: "POST",

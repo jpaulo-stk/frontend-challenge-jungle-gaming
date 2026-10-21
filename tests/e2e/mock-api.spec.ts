@@ -2,8 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { api, login, openWithScenario } from "../fixtures/mock-api.ts";
 
-// Contract tests of the simulated backend (MSW + Socket.IO). They run once, in
-// the desktop project: the behavior under test does not depend on viewport.
+// API contract tests, desktop project only
 
 type NftList = {
   items: { id: string; price: string; collection: { slug: string }; network: string }[];
@@ -13,7 +12,6 @@ type NftList = {
 type Order = { id: string; status: string; total: string; lines: { unitPrice: string }[] };
 type Quote = { quoteId: string; total: string; discount: string; issues: { code: string }[] };
 
-/** Path of the app's Socket.IO client module, served by the Vite dev server. */
 const SOCKET_MODULE = "/src/shared/realtime/socket.ts";
 
 type SocketLike = {
@@ -38,7 +36,6 @@ const buyer = {
   note: null,
 };
 
-/** Quote + wallet connection: everything `POST /orders` needs. */
 async function prepareCheckout(page: Page, token: string, couponCode: string | null = null) {
   const quote = await api(page, {
     method: "POST",
@@ -324,8 +321,7 @@ test.describe("API simulada", { tag: "@api" }, () => {
           other: await createRealtimeSocket(otherToken),
         };
         const got: Record<string, unknown[]> = { owner: [], other: [] };
-        // Resolves once the owner hears about the order, plus a grace period in
-        // which the other collector must hear nothing.
+        // Resolve after the owner's event plus a grace period
         await new Promise<void>((resolve) => {
           sockets.owner.on("order.updated", (event: unknown) => {
             got.owner?.push(event);
@@ -341,7 +337,6 @@ test.describe("API simulada", { tag: "@api" }, () => {
       { ownerToken: owner, otherToken: other, modulePath: SOCKET_MODULE },
     );
 
-    // The app keeps its own connection too: wait for the two collectors.
     await page.waitForFunction(() => {
       const users = window.__kurioMock?.realtimeClients().map((client) => client.userId) ?? [];
       return users.includes("user_colecionador") && users.includes("user_nova");

@@ -17,7 +17,6 @@ import { UnavailableAction } from "@/shared/ui/unavailable-action";
 const itemClassName =
   "relative flex h-11.25 w-full items-center gap-3 px-4 text-[15px] text-primary-hi transition-colors hover:bg-surface-2 [&_svg]:size-5 [&_svg]:shrink-0 data-[status=active]:bg-surface-2 data-[status=active]:before:absolute data-[status=active]:before:inset-y-0 data-[status=active]:before:left-0 data-[status=active]:before:w-1.25 data-[status=active]:before:bg-primary";
 
-// On desktop, /perfil itself shows the profile data (on mobile it is the list).
 const activeClassName =
   "lg:bg-surface-2 lg:before:absolute lg:before:inset-y-0 lg:before:left-0 lg:before:w-1.25 lg:before:bg-primary";
 
@@ -25,10 +24,6 @@ type ProfileMenuProps = {
   className?: string;
 };
 
-/**
- * "Meu perfil" side menu. Profile data, wallets and the interest list are
- * implemented; activity, offers, downloads and support are out of scope.
- */
 export function ProfileMenu({ className }: ProfileMenuProps) {
   const logout = useLogout();
   const onProfileIndex = useLocation({

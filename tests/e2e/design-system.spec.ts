@@ -2,7 +2,6 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { openApp } from "../fixtures/app.ts";
 
-/** Landmark that contains the focused element, plus whether focus is visibly drawn. */
 async function describeFocus(page: Page) {
   return page.evaluate(() => {
     const element = document.activeElement;
@@ -93,8 +92,7 @@ test("ação fora do escopo avisa em vez de simular sucesso", async ({ page, isM
         .first()
     : page.getByRole("banner").getByRole("button", { name: /Criadores/ });
   await expect(action).toHaveAttribute("aria-disabled", "true");
-  // Playwright refuses to click aria-disabled controls; browsers do not. Keyboard
-  // activation is the path assistive technology uses anyway.
+  // Playwright won't click aria-disabled controls; use the keyboard
   await action.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByText(/não está disponível nesta demonstração/)).toBeVisible();

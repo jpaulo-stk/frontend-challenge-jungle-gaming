@@ -1,10 +1,6 @@
 import type { CartItem, Quote } from "@/shared/api/contracts/cart";
 import { compareEth, formatEth } from "@/shared/lib/eth";
 
-/**
- * Human-readable differences between the quote the collector saw and a fresh
- * one. Any difference means the purchase needs an explicit new confirmation.
- */
 export function describeQuoteChanges(seen: Quote, fresh: Quote, items: CartItem[]): string[] {
   const changes: string[] = [];
   const nameOf = (itemId: string) => items.find((item) => item.id === itemId)?.name ?? "Item";

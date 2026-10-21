@@ -18,7 +18,6 @@ function bumpCart(db: Db, owner: OwnerKey): void {
   db.cartVersions[owner] = (db.cartVersions[owner] ?? 0) + 1;
 }
 
-/** Throws the right 409 when `quantity` exceeds what the edition has left. */
 function assertAvailable(nftId: string, editionId: EditionId, quantity: number): string {
   const nft = getDb().nfts.find((candidate) => candidate.id === nftId);
   const edition = nft?.editions.find((candidate) => candidate.id === editionId);

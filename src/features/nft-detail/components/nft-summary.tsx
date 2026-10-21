@@ -16,7 +16,6 @@ type NftSummaryProps = {
   onToggleFavorite: () => void;
 };
 
-/** Info column of the detail page: name, price, rating, editions, quantity and actions. */
 export function NftSummary({ nft, purchase, isFavorite, onToggleFavorite }: NftSummaryProps) {
   return (
     <div className="flex flex-col gap-4">

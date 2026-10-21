@@ -18,7 +18,6 @@ export function RootLayout() {
   const cart = useQuery(cartQueryOptions);
   const cartCount = cart.data?.itemCount ?? 0;
   const user = session.data ? { name: session.data.user.displayName } : null;
-  // The detail page has its own fixed purchase bar on mobile, as in the Figma frame.
   const onDetail = Boolean(useMatchRoute()({ to: "/nft/$nftId" }));
 
   return (

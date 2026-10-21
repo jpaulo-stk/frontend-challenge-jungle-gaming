@@ -4,10 +4,6 @@ import type { Edition, EditionId } from "@/shared/api/contracts/nft";
 import type { Buyer, Order } from "@/shared/api/contracts/order";
 import type { Wallet } from "@/shared/api/contracts/wallet";
 
-// Internal records of the simulated backend. They hold more than the public
-// contracts (password hashes, owners, idempotency data) and are converted to
-// contract shapes by the serializers before leaving a handler.
-
 export type DbUser = {
   id: string;
   displayName: string;
@@ -31,7 +27,6 @@ export type DbNft = {
   id: string;
   name: string;
   tokenId: string;
-  /** Which of the four Figma artworks (1–4) this NFT uses. */
   art: 1 | 2 | 3 | 4;
   price: string;
   previousPrice: string | null;
@@ -51,7 +46,6 @@ export type DbNft = {
   version: number;
 };
 
-/** "user:<id>" for signed-in collectors, "visitor:<id>" for anonymous carts. */
 export type OwnerKey = `user:${string}` | `visitor:${string}`;
 
 export type DbCartItem = {
@@ -73,7 +67,6 @@ export type DbFavorite = {
 export type DbQuote = {
   id: string;
   owner: OwnerKey;
-  /** Items covered by the quote; null means the whole cart. */
   itemIds: string[] | null;
   couponCode: string | null;
   percentOff: number | null;
@@ -100,10 +93,8 @@ export type DbWalletConnection = {
 export type DbOrder = Order & {
   userId: string;
   idempotencyKey: string;
-  /** Stable hash of the creating request, to detect key reuse with another payload. */
   requestHash: string;
   buyer: Buyer;
-  /** Epoch ms when the simulated payment settles; null once settled. */
   settleAt: number | null;
 };
 
@@ -114,11 +105,8 @@ export type DbCoupon = {
 };
 
 export type DbFlags = {
-  /** session-expired: the next private request ends the session. */
   sessionExpiryArmed: boolean;
-  /** coupon-expired: set after the first successful use of a valid coupon. */
   couponExpiresOnNextUse: boolean;
-  /** price-changed / sold-out: the scenario event already fired. */
   scenarioEventFired: boolean;
 };
 

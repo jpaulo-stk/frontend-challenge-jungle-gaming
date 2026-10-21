@@ -1,5 +1,4 @@
-// Seeded pseudo-random generator (mulberry32). Given the same seed and the
-// same sequence of requests, latency and failures repeat exactly.
+// mulberry32: same seed, same latency and failures
 
 let state = 42;
 

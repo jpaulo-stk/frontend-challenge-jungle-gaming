@@ -5,10 +5,8 @@ import { Button } from "@/shared/ui/button";
 
 type ErrorStateProps = {
   title?: string;
-  /** User-facing message, usually `AppError.message`. */
   message: string;
   onRetry?: () => void;
-  /** True while the retry request is in flight. */
   retrying?: boolean;
   className?: string;
 };

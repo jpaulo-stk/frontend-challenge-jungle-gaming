@@ -4,7 +4,6 @@ import { sessionSchema } from "@/shared/api/contracts/session";
 
 export const PASSWORD_MIN_LENGTH = 8;
 
-/** Login and register return the session plus the opaque token for later requests. */
 export const authResponseSchema = sessionSchema.extend({
   token: z.string(),
 });
@@ -31,11 +30,10 @@ export type AuthResponse = z.infer<typeof authResponseSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
-/** Register form: the API payload plus the confirmation field of the layout. */
 export const registerFormSchema = registerRequestSchema
   .extend({ confirmPassword: z.string().min(1, "Confirme sua senha.") })
   .refine((values) => values.password === values.confirmPassword, {
-    // Also checked while other fields are still invalid (see profileFormSchema).
+    // Run even while other fields are invalid
     when: (payload) =>
       z.object({ password: z.string(), confirmPassword: z.string() }).safeParse(payload.value)
         .success,

@@ -9,7 +9,6 @@ type FacetChecklistProps = {
   onChange: (selected: string[]) => void;
 };
 
-/** Multi-select list of the sidebar ("Coleções", "Rede"); options combine with each other. */
 export function FacetChecklist({ legend, options, selected, onChange }: FacetChecklistProps) {
   const toggle = (value: string) => {
     onChange(

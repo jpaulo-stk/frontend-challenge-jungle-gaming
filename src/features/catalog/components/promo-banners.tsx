@@ -12,7 +12,6 @@ const art = (n: number) => ({
   srcSet: `/nfts/nft-0${String(n)}-400.webp 400w, /nfts/nft-0${String(n)}-800.webp 800w`,
 });
 
-/** Two promotional banners under the catalog (copy from the Figma frame). */
 export function PromoBanners() {
   return (
     <section

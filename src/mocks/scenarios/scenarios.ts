@@ -4,7 +4,6 @@ export type ScenarioDefinition = {
   id: ScenarioId;
   label: string;
   description: string;
-  /** Latency range in ms applied to every API call. */
   latency: readonly [number, number];
 };
 

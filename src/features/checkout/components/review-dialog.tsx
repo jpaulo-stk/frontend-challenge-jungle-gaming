@@ -21,10 +21,6 @@ type ReviewDialogProps = {
   children?: ReactNode;
 };
 
-/**
- * Shown when the quote asked right before sending differs from what was on
- * screen. Nothing was sent; the collector confirms the new values or goes back.
- */
 export function ReviewDialog({ review, busy, onAccept, onClose, children }: ReviewDialogProps) {
   return (
     <Dialog

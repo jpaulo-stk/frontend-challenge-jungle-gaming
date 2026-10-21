@@ -9,14 +9,12 @@ export const walletAddressSchema = z
 export const walletRoleSchema = z.enum(["primary", "secondary"]);
 export type WalletRole = z.infer<typeof walletRoleSchema>;
 
-/** Editable fields of a wallet, as in the "Carteiras" form. */
 export const walletInputSchema = z.object({
   displayName: z.string().trim().min(1, "Informe o nome de exibição."),
   nickname: z.string().trim().min(1, "Informe o apelido da carteira."),
   network: networkSchema,
   profileName: z.string().trim().min(1, "Informe o nome do perfil."),
   address: walletAddressSchema,
-  /** "ENS ou carteira secundária (opcional)". */
   alternateAddress: z.string().trim().nullable(),
   provider: walletProviderSchema,
   referralCode: z.string().trim().min(1, "Informe o código de indicação."),
@@ -42,7 +40,6 @@ export type WalletsResponse = z.infer<typeof walletsResponseSchema>;
 export const createWalletRequestSchema = walletInputSchema.extend({ role: walletRoleSchema });
 export type CreateWalletRequest = z.infer<typeof createWalletRequestSchema>;
 
-/** Simulated provider handshake used by checkout (connect / refuse / disconnect). */
 export const walletConnectionRequestSchema = z.object({
   walletId: z.string(),
   provider: walletProviderSchema,

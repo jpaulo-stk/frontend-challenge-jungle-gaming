@@ -11,7 +11,6 @@ function Slider({
   thumbLabels,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root> & {
-  /** Accessible name of each thumb, e.g. ["Preço mínimo", "Preço máximo"]. */
   thumbLabels?: readonly string[];
 }) {
   const _values = React.useMemo(

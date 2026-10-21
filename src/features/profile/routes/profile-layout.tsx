@@ -4,10 +4,6 @@ import { ChevronLeft } from "lucide-react";
 
 import { ProfileMenu } from "@/features/profile/components/profile-menu";
 
-/**
- * Desktop: side menu plus the selected section. Mobile (no frame in the
- * layout): /perfil is the list of sections and each section opens on its own.
- */
 export function ProfileLayout() {
   const onIndex = useLocation({
     select: (location) => location.pathname === "/perfil" || location.pathname === "/perfil/",

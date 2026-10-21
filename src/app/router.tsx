@@ -21,9 +21,7 @@ import { loadNftDetail } from "@/features/nft-detail/routes/nft-detail-loader";
 import { NftDetailPending } from "@/features/nft-detail/routes/nft-detail-pending";
 import { loadOrder } from "@/features/orders/routes/order-loader";
 
-// Every screen but the home is split by route: the home (the entry point and the
-// Lighthouse target) does not download checkout, profile or detail code. The
-// router preloads a route's chunk on hover/focus of its links (defaultPreload).
+// Every route but the home is lazy-loaded
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -34,7 +32,7 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
   notFoundComponent: NotFoundPage,
 });
 
-// Pathless layout: the home and the auth dialogs that open over it.
+// Pathless layout: /entrar and /criar-conta open as dialogs over the home
 const catalogLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: "_catalog",
@@ -112,8 +110,6 @@ const registerRoute = createRoute({
   ),
 });
 
-// Desktop shows the side menu plus the profile form on `/perfil`; mobile turns
-// `/perfil` into the section list and moves the form to `/perfil/dados`.
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/perfil",
@@ -151,8 +147,7 @@ const walletsRoute = createRoute({
   ),
 });
 
-// Component catalog for visual review. Development only: in production builds
-// `import.meta.env.DEV` is false and the whole branch, import included, is dropped.
+// Dev-only component catalog, dropped from production builds
 const devRoutes = import.meta.env.DEV
   ? [
       createRoute({

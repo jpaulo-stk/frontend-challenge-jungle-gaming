@@ -9,10 +9,6 @@ type LoaderArgs = {
   params: { nftId: string };
 };
 
-/**
- * Loads the NFT into the query cache before the page renders. A missing NFT
- * becomes the router's not-found, rendered by the project's 404 in the layout.
- */
 export async function loadNftDetail({ context, params }: LoaderArgs): Promise<void> {
   try {
     await context.queryClient.query(nftDetailQueryOptions(params.nftId));

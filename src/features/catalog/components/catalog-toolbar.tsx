@@ -17,7 +17,6 @@ const sorts: { value: CatalogSort; label: string }[] = [
   { value: "trending", label: "Em alta" },
 ];
 
-/** Lists ("Todos os NFTs / Novos lançamentos / Em alta") and the sort order. */
 export function CatalogToolbar() {
   const { search, updateFilters } = useCatalogFilters();
   const activeTab = search.tab ?? "all";

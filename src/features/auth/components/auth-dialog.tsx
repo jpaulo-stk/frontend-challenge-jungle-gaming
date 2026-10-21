@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/shared/
 
 type AuthDialogProps = {
   mode: "login" | "register";
-  /** Where to go after authenticating (also kept when switching tabs). */
   redirect: string | undefined;
   title: string;
   description: string;
@@ -16,18 +15,11 @@ type AuthDialogProps = {
 const tabClassName =
   "text-xl font-bold transition-colors hover:text-primary-hi data-[status=active]:text-primary-hi";
 
-/**
- * Login/register dialog over the home: 500px wide on desktop (as in the
- * frames), full screen with the logo on mobile. Focus is trapped while open;
- * closing goes back, or home when there is no previous page. A private page
- * that sent the collector here is not in the history (guards redirect with
- * replace), so "back" is the page before it, such as the cart.
- */
+// Closing goes back; guards redirect with replace, so the private page is not in history
 export function AuthDialog({ mode, redirect, title, description, children }: AuthDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(true);
-  // The dialog is opened by navigation, so remember what had focus (the
-  // header's "Entrar") and give it back once the dialog has closed.
+  // Opened by navigation: give focus back to whatever opened it
   const opener = useRef<HTMLElement | null>(null);
 
   const leave = () => {
@@ -46,8 +38,7 @@ export function AuthDialog({ mode, redirect, title, description, children }: Aut
             document.activeElement instanceof HTMLElement ? document.activeElement : null;
         }}
         onCloseAutoFocus={(event) => {
-          // Also called when a successful login navigates away and unmounts the
-          // dialog; only a close by the user (Esc, X, overlay) leaves the route.
+          // Also fires when a successful login unmounts the dialog
           if (open) return;
           event.preventDefault();
           opener.current?.focus();

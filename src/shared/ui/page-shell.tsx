@@ -5,7 +5,6 @@ type PageShellProps = {
   children?: ReactNode;
 };
 
-/** Page frame aligned to the 1200px container of the layout. */
 export function PageShell({ title, children }: PageShellProps) {
   return (
     <section className="page-container py-10">

@@ -13,9 +13,6 @@ import type { NftSummary } from "@/shared/api/contracts/nft";
 import type { Order } from "@/shared/api/contracts/order";
 import type { Wallet } from "@/shared/api/contracts/wallet";
 
-// Internal records → public contract shapes. Nothing private (password hashes,
-// owners, idempotency data) leaves the mock through these functions.
-
 export function totalAvailable(nft: DbNft): number {
   return nft.editions.reduce((sum, edition) => sum + edition.available, 0);
 }
@@ -56,7 +53,6 @@ export function toNftDetail(nft: DbNft): NftDetail {
     attributes: nft.attributes,
     contractAddress: nft.contractAddress,
     royaltiesPercent: nft.royaltiesPercent,
-    // The Figma gallery repeats the main art in its four thumbnails.
     gallery: [1, 2, 3, 4].map((view) => ({
       ...image,
       alt: `${image.alt} (vista ${String(view)} de 4)`,

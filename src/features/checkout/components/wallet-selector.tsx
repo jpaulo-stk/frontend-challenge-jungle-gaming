@@ -28,7 +28,6 @@ type WalletSelectorProps = {
   connection: WalletConnectionState;
 };
 
-/** Registered wallet to pay with, the provider to connect through and the connection state. */
 export function WalletSelector(props: WalletSelectorProps) {
   const { wallets, walletId, onWalletChange, provider, onProviderChange, connection } = props;
   const registered = [wallets.primary, wallets.secondary].filter(
@@ -43,7 +42,6 @@ export function WalletSelector(props: WalletSelectorProps) {
           Carteira cadastrada
         </legend>
         {registered.length > 0 && (
-          // "Trocar carteira" of the mobile frame: the wallets are managed in the profile.
           <Link
             to="/perfil/carteiras"
             className="float-right text-[15px] font-bold text-primary-hi hover:underline"

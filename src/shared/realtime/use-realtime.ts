@@ -10,16 +10,11 @@ function useRealtimeClient(): RealtimeClient {
   return client;
 }
 
-/** Connection status, for the indicator and for fallbacks (polling while offline). */
 export function useRealtimeState(): RealtimeState {
   const client = useRealtimeClient();
   return useSyncExternalStore(client.subscribeState, client.getState);
 }
 
-/**
- * Keeps the NFTs on screen subscribed to `nft.updated` while the component is
- * mounted; the cleanup leaves the rooms, so no subscription outlives the screen.
- */
 export function useNftSubscription(ids: readonly string[]): void {
   const client = useRealtimeClient();
   // A stable key: a new array with the same ids does not resubscribe.

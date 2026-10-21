@@ -22,7 +22,6 @@ type BuyerFormProps = {
   onUseOtherWallet: (useOther: boolean) => void;
 };
 
-/** "Perfil do colecionador": prefilled from the chosen wallet and the profile. */
 export function BuyerForm({ form, onUseOtherWallet }: BuyerFormProps) {
   const { errors } = form.formState;
   const useOtherWallet = useWatch({ control: form.control, name: "useOtherWallet" });

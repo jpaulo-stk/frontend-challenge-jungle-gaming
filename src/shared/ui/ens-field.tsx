@@ -11,7 +11,6 @@ type EnsFieldProps = Omit<ComponentProps<"input">, "id"> & {
   error?: string | undefined;
 };
 
-/** "Nome ENS": the ".eth" domain selector of the layout plus the name itself. */
 export function EnsField({
   label = "Nome ENS",
   required,

@@ -2,7 +2,6 @@ import type { z } from "zod";
 
 import { AppError } from "@/shared/api/errors";
 
-/** Validates an API payload at the boundary; a mismatch is a typed AppError. */
 export function parseContract<TSchema extends z.ZodType>(
   schema: TSchema,
   data: unknown,

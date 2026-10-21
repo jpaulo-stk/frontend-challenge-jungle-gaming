@@ -7,11 +7,9 @@ export const CATALOG_PAGE_SIZE = 12;
 export const catalogSortSchema = z.enum(["recent", "price_asc", "price_desc", "trending"]);
 export type CatalogSort = z.infer<typeof catalogSortSchema>;
 
-/** "Todos os NFTs" / "Novos lançamentos" / "Em alta". */
 export const catalogTabSchema = z.enum(["all", "new", "trending"]);
 export type CatalogTab = z.infer<typeof catalogTabSchema>;
 
-/** Query sent to `GET /nfts`; mirrors the catalog URL state one to one. */
 export const nftListParamsSchema = z.object({
   q: z.string().trim().min(1).optional(),
   collection: z.array(z.string()).optional(),

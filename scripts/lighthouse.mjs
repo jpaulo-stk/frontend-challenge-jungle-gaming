@@ -1,12 +1,5 @@
-// Lighthouse audit runner.
-//
-// Serves the production build (`vite preview`, mocks on with the `default`
-// scenario), audits each page × profile 3 times and keeps the median run:
-// HTML + JSON of that run in lighthouse/, every run in lighthouse/tmp/ (not
-// committed), and a summary (lighthouse/summary.md and summary.json).
-//
+// Lighthouse: 3 runs per page and profile on vite preview; keeps the median report.
 // Usage: pnpm build && pnpm lighthouse
-// Chrome: CHROME_PATH, or the Chromium installed by Playwright.
 
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -73,7 +66,7 @@ const median = (values) => {
   return sorted[Math.floor(sorted.length / 2)];
 };
 
-/** One run; a run that crashes the browser itself (CDP "Target closed") is retried once. */
+// Retry once if the browser target crashes
 async function audit(url, profile, attempt = 1) {
   try {
     return await auditOnce(url, profile);
@@ -134,7 +127,6 @@ async function main() {
           });
         }
 
-        // The median run by performance is the one kept as the report.
         const kept = [...runs].sort((a, b) => a.performance - b.performance)[Math.floor(RUNS / 2)];
         await writeFile(path.join(OUT, `${page.id}-${profile.id}.report.html`), kept.report[0]);
         await writeFile(path.join(OUT, `${page.id}-${profile.id}.report.json`), kept.report[1]);

@@ -1,7 +1,5 @@
 import { UnavailableAction } from "@/shared/ui/unavailable-action";
 
-// "Diário da Cunhagem": editorial content from the Figma frame. Editorial pages
-// are out of scope, so "Ler mais" announces itself as unavailable.
 const posts = [
   {
     art: 3,

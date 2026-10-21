@@ -93,7 +93,6 @@ test.describe("sessão", { tag: "@desktop" }, () => {
 
   test("carrinho do visitante é preservado ao entrar", async ({ page }) => {
     await openWithScenario(page);
-    // The app creates the visitor id on its first request.
     const visitorId = await page
       .waitForFunction(() => localStorage.getItem("kurio.visitor-id"))
       .then((handle) => handle.jsonValue() as Promise<string>);

@@ -1,6 +1,4 @@
-// Plain query strings (`?collection=musica&collection=jogos&page=2`) instead of
-// the router's default JSON encoding. Every value is read as a string (or a
-// string list when a key repeats); route schemas coerce the types.
+// Plain query strings instead of the router's JSON encoding; route schemas coerce types
 
 export function parseSearch(searchStr: string): Record<string, unknown> {
   const params = new URLSearchParams(searchStr.startsWith("?") ? searchStr.slice(1) : searchStr);

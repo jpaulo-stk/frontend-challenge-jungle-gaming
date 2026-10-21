@@ -3,8 +3,6 @@ import { cn } from "cn";
 import { Slot } from "radix-ui";
 import type * as React from "react";
 
-// Mobile frames use 56px pill buttons; from `md` up the desktop frames use
-// 44px buttons with a 6px radius.
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center gap-2 border-[1.5px] border-transparent font-bold whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   {

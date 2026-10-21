@@ -1,6 +1,5 @@
 import { Skeleton } from "@/shared/ui/skeleton";
 
-/** Gallery (4 thumbs + main art) and info column of the detail page. */
 export function NftDetailSkeleton() {
   return (
     <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[88px_minmax(0,460px)_minmax(0,1fr)]">

@@ -4,10 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
-/**
- * Preloads the regular (400) weight of the self-hosted font. Its file name is
- * content-hashed by the build, so the tag is injected after bundling.
- */
+// Preload the 400 weight; its file name is hashed, so inject after bundling
 function preloadBodyFont(): Plugin {
   return {
     name: "kurio:preload-body-font",
@@ -37,11 +34,7 @@ function preloadBodyFont(): Plugin {
   };
 }
 
-/**
- * main.tsx loads the app and the simulated backend with dynamic imports (they
- * start in parallel, see there). The browser would only discover those chunks
- * after running the entry; preloading them from the HTML saves that round trip.
- */
+// main.tsx loads the app and the mocks via dynamic import; preload those chunks from the HTML
 function preloadBootChunks(): Plugin {
   const entries = [/src\/app\/render\.tsx$/, /src\/mocks\/browser\.ts$/];
   return {
@@ -76,7 +69,6 @@ function preloadBootChunks(): Plugin {
   };
 }
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), preloadBodyFont(), preloadBootChunks()],
   resolve: {
@@ -93,9 +85,7 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        // The base libraries and the app's shared code each go in one chunk,
-        // instead of dozens of tiny ones that cost a round trip each on slow
-        // networks. The simulated backend's libraries stay in their own chunk.
+        // Group base libs and src/shared instead of many tiny chunks
         codeSplitting: {
           groups: [
             {
@@ -109,8 +99,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    // Pre-bundled up front: discovering it on first use makes the dev server
-    // re-optimize and reload the page mid-session.
+    // Pre-bundled to avoid a mid-session re-optimize and reload
     include: ["socket.io-client"],
   },
   server: {

@@ -9,12 +9,7 @@ type LoaderArgs = {
   params: { orderId: string };
 };
 
-/**
- * Loads the order before the page renders. An order that does not exist, or
- * belongs to another collector (the API answers both with 404), becomes the
- * project's not-found page. An order already in cache (just created at
- * checkout) renders at once; the page revalidates it.
- */
+// 404 for a missing or someone else's order; an order already in cache renders at once
 export async function loadOrder({ context, params }: LoaderArgs): Promise<void> {
   const options = orderQueryOptions(params.orderId);
   if (context.queryClient.getQueryData(options.queryKey)) return;

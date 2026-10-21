@@ -1,6 +1,4 @@
-// Runtime configuration of the simulated backend. It is read from the URL
-// (`?scenario=…&seed=…`) and persisted in localStorage, and only code under
-// src/mocks reads it: the application never branches on it.
+// Read from the URL and persisted; only src/mocks reads it
 
 export const scenarioIds = [
   "default",
@@ -23,17 +21,11 @@ export type SettleMode = "auto" | "manual";
 
 export type MockConfig = {
   scenario: ScenarioId;
-  /** Seed for every pseudo-random decision (latency, intermittent failures). */
   seed: number;
-  /** Fixed latency in ms overriding the scenario's range (tests use 0). */
   latencyMs: number | null;
-  /** "manual" leaves pending orders pending until a control settles them. */
   settle: SettleMode;
-  /** Delay before a pending order is settled automatically. */
   settleDelayMs: number;
-  /** Delay before scenario-driven events (price change, sell-out) fire. */
   eventDelayMs: number;
-  /** Shows the mock control panel outside development builds. */
   panel: boolean;
 };
 
@@ -86,14 +78,9 @@ export function saveConfig(next: MockConfig): void {
 
 export type ConfigLoadResult = {
   config: MockConfig;
-  /** True when the URL picked a different scenario or asked for a reset. */
   resetRequested: boolean;
 };
 
-/**
- * Merges URL parameters over the stored configuration. Recognized parameters
- * are removed from the address bar so they do not leak into app navigation.
- */
 export function loadConfig(location: Location): ConfigLoadResult {
   const url = new URL(location.href);
   const params = url.searchParams;

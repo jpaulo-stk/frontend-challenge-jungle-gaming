@@ -7,7 +7,6 @@ type QuoteChangedNoticeProps = {
   onAccept: () => void;
 };
 
-/** Values that changed while the payment page was open (realtime events). */
 export function QuoteChangedNotice({ changes, onAccept }: QuoteChangedNoticeProps) {
   return (
     <div

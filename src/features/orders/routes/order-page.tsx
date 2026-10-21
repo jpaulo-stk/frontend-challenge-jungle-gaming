@@ -32,14 +32,12 @@ export function OrderPage() {
   const status = order.data?.status;
   const previousStatus = useRef(status);
 
-  // The order this tab is waiting for settled: a confirmation took the bought
-  // units out of the cart (server side), a rejection left the cart as it was.
+  // This tab's pending order settled: clear the draft and refresh the cart
   useEffect(() => {
     const wasPending = previousStatus.current === "pending";
     previousStatus.current = status;
     if (!status || status === "pending") return;
-    // Seen live: the receipt opens as a dialog; say it too. A rejection renders
-    // its own role="alert".
+    // A rejection renders its own role="alert"
     if (wasPending && status === "confirmed") {
       announce("Pedido confirmado. Seus NFTs agora estão na sua carteira.");
     }
@@ -118,7 +116,6 @@ function OrderLines({ order }: { order: Order }) {
 
 type PendingOrderProps = { order: Order; refreshing: boolean; onRefresh: () => void };
 
-/** Processing: polled until the simulation settles it; nothing here claims success. */
 function PendingOrder({ order, refreshing, onRefresh }: PendingOrderProps) {
   return (
     <section

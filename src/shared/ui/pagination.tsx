@@ -11,7 +11,6 @@ type PaginationProps = {
 const square =
   "inline-flex size-8.5 items-center justify-center rounded-sm border border-border text-base text-text transition-colors hover:border-primary disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-5";
 
-/** Numbered pages plus previous/next arrows (34px squares, 8px apart). */
 export function Pagination({ page, totalPages, onPageChange, className }: PaginationProps) {
   if (totalPages <= 1) return null;
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);

@@ -7,12 +7,10 @@ type OrderTotalsProps = {
   discount: string;
   networkFee: string;
   total: string;
-  /** True while a new quote is on its way: values are a local estimate. */
   estimating?: boolean;
   className?: string;
 };
 
-/** Subtotal, launch discount, network fee and total (cart, checkout and receipt). */
 export function OrderTotals({
   subtotal,
   discount,

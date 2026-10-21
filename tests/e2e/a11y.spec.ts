@@ -5,9 +5,6 @@ import { openApp } from "../fixtures/app.ts";
 import { openWithScenario } from "../fixtures/mock-api.ts";
 import { signIn } from "../fixtures/session.ts";
 
-// axe on the four main screens, in both projects (desktop 1440 and mobile 390).
-// Serious and critical violations fail the test; the rest is reported.
-
 async function audit(page: Page, screen: string): Promise<void> {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

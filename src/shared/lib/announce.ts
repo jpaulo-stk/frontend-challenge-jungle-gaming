@@ -1,6 +1,4 @@
-// One polite live region for the whole app (`LiveAnnouncer`, in the root
-// layout). Used for results that are visible but would otherwise be silent for
-// screen readers, without a toast on screen.
+// Single polite live region (LiveAnnouncer, in the root layout)
 
 let message = "";
 const listeners = new Set<() => void>();
@@ -18,7 +16,6 @@ export const subscribeAnnouncements = (listener: () => void) => {
 
 export const currentAnnouncement = () => message;
 
-/** Reads `text` to screen reader users (politely, after what they are hearing). */
 export function announce(text: string): void {
   // Cleared first, so the same message twice in a row is read again.
   message = "";

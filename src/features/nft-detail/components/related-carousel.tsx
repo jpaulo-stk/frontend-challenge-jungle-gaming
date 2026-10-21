@@ -15,7 +15,6 @@ type RelatedCarouselProps = {
   currentId: string;
 };
 
-/** "Mais desta coleção": 219×255 cards, 5 per page, with dots; swipeable on touch. */
 export function RelatedCarousel({ currentId }: RelatedCarouselProps) {
   const related = useQuery(relatedNftsQueryOptions);
   const track = useRef<HTMLUListElement>(null);

@@ -5,11 +5,7 @@ import type { NftDetail } from "@/features/nft-detail/api/schemas";
 import type { EditionId } from "@/shared/api/contracts/nft";
 import { useAddToCart } from "@/shared/cart/cart-api";
 
-/**
- * Edition and quantity chosen on the detail page. The quantity is clamped to
- * what the chosen edition has left, so an impossible request is never sent;
- * the API still enforces it (and its 409 is shown) if stock moved meanwhile.
- */
+// Quantity is clamped to the edition's stock; the API still enforces it
 export function usePurchase(nft: NftDetail) {
   const navigate = useNavigate();
   const addToCart = useAddToCart();
@@ -55,7 +51,6 @@ export function usePurchase(nft: NftDetail) {
 
 export type Purchase = ReturnType<typeof usePurchase>;
 
-/** Pre-selects the numbered edition with the most units left (the Figma shows 1/50). */
 function defaultEdition(nft: NftDetail): EditionId | undefined {
   const available = nft.editions.filter((edition) => edition.available > 0);
   const numbered = available.filter((edition) => edition.id !== "open");

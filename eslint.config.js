@@ -107,8 +107,7 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
-    // Architectural boundaries: features are isolated from each other, shared
-    // never depends on features, and mocks only enter through the bootstrap.
+    // Boundaries: features are isolated, shared never imports features
     files: ["src/**/*.{ts,tsx}"],
     plugins: { boundaries },
     settings: {

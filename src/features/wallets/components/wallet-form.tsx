@@ -48,7 +48,6 @@ type WalletFormProps = {
   defaults: WalletFormInput;
 };
 
-/** The ten fields of a wallet, validated locally (0x + 40 hex) and by the API. */
 export function WalletForm({ role, existing, defaults }: WalletFormProps) {
   const save = useSaveWallet();
   const [status, setStatus] = useState("");

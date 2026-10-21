@@ -17,7 +17,6 @@ type NftCardProps = {
   onToggleFavorite?: () => void;
   onAddToCart?: () => void;
   onZoom?: () => void;
-  /** Above-the-fold cards load eagerly to help LCP. */
   priority?: boolean;
   className?: string;
 };
@@ -54,8 +53,7 @@ export function NftCard({
         {nft.rare && <Badge className="absolute top-4 left-0 rounded-l-none">Raro</Badge>}
 
         {hasActions && (
-          // Always visible on touch layouts; on desktop it appears on hover and
-          // whenever focus is inside the card, so keyboard users reach it too.
+          // Always visible on touch; on desktop on hover or focus-within
           <div className="absolute top-2 right-2 z-10 flex justify-center gap-3 transition-opacity md:inset-x-0 md:top-auto md:right-auto md:bottom-0 md:bg-gradient-to-t md:from-bg/80 md:to-transparent md:px-3 md:pt-8 md:pb-4 md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
             {onAddToCart && (
               <button
@@ -89,7 +87,6 @@ export function NftCard({
       </div>
 
       <h3 className="mt-5 text-base leading-6 text-text">
-        {/* The stretched link makes the whole card clickable; actions sit above it. */}
         <Link
           to="/nft/$nftId"
           params={{ nftId: nft.id }}

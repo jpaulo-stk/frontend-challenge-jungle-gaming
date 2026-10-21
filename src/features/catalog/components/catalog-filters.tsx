@@ -7,7 +7,6 @@ import { useCatalogFilters } from "@/features/catalog/hooks/use-catalog-filters"
 import type { Network } from "@/shared/api/contracts/common";
 import { Skeleton } from "@/shared/ui/skeleton";
 
-/** Sidebar filters: collections, price range and network. Used in the aside and in the mobile sheet. */
 export function CatalogFilters() {
   const { search, updateFilters } = useCatalogFilters();
   const facets = useQuery(facetsQueryOptions);

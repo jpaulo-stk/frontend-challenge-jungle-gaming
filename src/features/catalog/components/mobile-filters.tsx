@@ -12,7 +12,6 @@ import {
   SheetTrigger,
 } from "@/shared/ui/sheet";
 
-/** Below `lg` the sidebar filters live in a sheet opened next to the search field. */
 export function MobileFilters() {
   const { search } = useCatalogFilters();
   const activeCount =

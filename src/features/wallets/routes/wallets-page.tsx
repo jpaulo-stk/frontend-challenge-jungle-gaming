@@ -8,7 +8,6 @@ import { ErrorState } from "@/shared/ui/error-state";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { walletsQueryOptions } from "@/shared/wallets/wallets-api";
 
-/** "Carteiras": primary wallet plus an optional secondary one, both used at checkout. */
 export function WalletsPage() {
   const wallets = useQuery(walletsQueryOptions);
 

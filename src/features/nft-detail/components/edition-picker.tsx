@@ -9,7 +9,6 @@ type EditionPickerProps = {
   onChange: (edition: EditionId) => void;
 };
 
-/** "Edição:" chips. A sold-out edition stays visible, disabled, with the reason in text. */
 export function EditionPicker({ editions, value, onChange }: EditionPickerProps) {
   const soldOut = editions.filter((edition) => edition.available === 0);
 

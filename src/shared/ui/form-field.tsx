@@ -7,7 +7,6 @@ import { fieldControlClassName } from "@/shared/ui/input";
 
 type FieldShellProps = {
   label: string;
-  /** Visually hidden label (placeholder-led layouts such as the login dialog). */
   hideLabel?: boolean | undefined;
   required?: boolean | undefined;
   error?: string | undefined;
@@ -20,7 +19,6 @@ type FieldShellProps = {
   }) => ReactNode;
 };
 
-/** Label, required marker, hint and error, wired to the control through ids. */
 export function FieldShell({
   label,
   hideLabel,
@@ -61,13 +59,11 @@ export function FieldShell({
 }
 
 type ShellProps = Pick<FieldShellProps, "label" | "hideLabel" | "required" | "error" | "hint"> & {
-  /** Class of the field wrapper (label + control + error). */
   fieldClassName?: string | undefined;
 };
 
 type TextFieldProps = Omit<ComponentProps<"input">, "id"> &
   ShellProps & {
-    /** Control rendered inside the input box, at its right edge. */
     endAdornment?: ReactNode;
   };
 
@@ -108,7 +104,6 @@ export function TextField({
   );
 }
 
-/** Password input with the show/hide toggle (eye icon) of the layout. */
 export function PasswordField(props: Omit<TextFieldProps, "type" | "endAdornment">) {
   const [visible, setVisible] = useState(false);
   return (
@@ -138,7 +133,6 @@ type SelectFieldProps = Omit<ComponentProps<"select">, "id"> &
     placeholder?: string;
   };
 
-/** Native select styled as the layout's dropdown: keyboard and screen-reader friendly. */
 export function SelectField({
   label,
   hideLabel,

@@ -8,7 +8,6 @@ type GuardArgs = {
   location: ParsedLocation;
 };
 
-/** `beforeLoad` guard for private routes; keeps the target so login can resume it. */
 export async function requireAuth({ context, location }: GuardArgs): Promise<void> {
   const session = await context.queryClient.query(sessionQueryOptions);
   if (session) return;

@@ -3,9 +3,7 @@ import { cn } from "cn";
 import { formatEth } from "@/shared/lib/eth";
 
 type PriceProps = {
-  /** Decimal string, e.g. "1.19". */
   value: string;
-  /** Price before a discount; rendered struck through and labelled for screen readers. */
   previousValue?: string | null | undefined;
   className?: string;
 };

@@ -2,11 +2,7 @@ import { expect, type Page } from "@playwright/test";
 
 import { login } from "./mock-api.ts";
 
-/**
- * Signs in through the simulated API and stores the session token where the
- * app reads it, then reloads so the app boots with that session. Stands in for
- * the login screen until the account flows exist.
- */
+/** Login through the API, store the token and reload. */
 export async function signIn(page: Page, email = "colecionador@kurio.test"): Promise<void> {
   const token = await login(page, email);
   await page.evaluate((value) => {
@@ -16,7 +12,6 @@ export async function signIn(page: Page, email = "colecionador@kurio.test"): Pro
   await page.locator("main#conteudo").waitFor();
 }
 
-/** Fills and submits the login dialog that is currently open. */
 export async function loginThroughDialog(
   page: Page,
   email = "colecionador@kurio.test",

@@ -7,7 +7,6 @@ export const profileSchema = z.object({
   displayName: z.string(),
   username: z.string(),
   email: z.email(),
-  /** ENS name without the ".eth" suffix. */
   ensName: z.string().nullable(),
   walletNickname: z.string(),
   avatarUrl: z.string().nullable(),
@@ -46,17 +45,11 @@ type PasswordBlock = z.infer<typeof passwordBlockSchema>;
 const passwordTyped = (values: PasswordBlock) =>
   Boolean(values.currentPassword || values.newPassword || values.confirmPassword);
 
-// Zod skips refinements while other fields are invalid; `when` runs these as
-// soon as the password fields themselves are strings, so a submit shows the
-// errors of both blocks at once instead of in two rounds.
+// zod skips refinements while other fields are invalid; `when` shows both blocks' errors at once
 const passwordCheck = {
   when: (payload: { value: unknown }) => passwordBlockSchema.safeParse(payload.value).success,
 };
 
-/**
- * "Perfil do colecionador" form: profile data plus the optional "Alterar senha"
- * block, validated only when one of its fields is filled.
- */
 export const profileFormSchema = z
   .object({
     displayName: z.string().trim().min(1, "Informe o nome de exibição."),

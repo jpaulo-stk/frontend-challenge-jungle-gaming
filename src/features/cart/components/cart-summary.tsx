@@ -10,7 +10,6 @@ type CartSummaryProps = {
   state: ReturnType<typeof useCartQuote>;
 };
 
-/** "Resumo da carteira": coupon, totals from the quote and the way to checkout. */
 export function CartSummary({ state }: CartSummaryProps) {
   const { cart, quote, totals, estimating, blockingIssues } = state;
 

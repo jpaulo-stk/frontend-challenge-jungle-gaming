@@ -6,11 +6,7 @@ import { random, randomBetween } from "@/mocks/lib/random";
 import { takeFault } from "@/mocks/scenarios/faults";
 import { scenarios } from "@/mocks/scenarios/scenarios";
 
-/**
- * First handler in the chain: applies the scenario's network conditions
- * (latency, connection failure, intermittent 5xx) and then falls through to
- * the resource handlers by returning nothing.
- */
+// Runs first: applies latency/failures, then falls through to the resource handlers
 export const networkConditions = http.all(`${API}/*`, async ({ request }) => {
   const config = getConfig();
   const scenario = scenarios[config.scenario];

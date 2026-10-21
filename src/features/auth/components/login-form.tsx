@@ -31,7 +31,6 @@ export function LoginForm({ redirect }: LoginFormProps) {
         void router.navigate({ href: redirect ?? "/", replace: true });
       },
       onError: (error) => {
-        // Wrong credentials keep what was typed; only the message changes.
         if (!applyServerErrors(error, form.setError, ["email", "password"])) {
           form.setError("root.server", { message: error.message });
         }

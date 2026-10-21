@@ -9,11 +9,7 @@ import { onSessionExpired } from "@/shared/api/session-events";
 import { clearSessionToken } from "@/shared/api/session-token";
 import { endSession } from "@/shared/session/session-lifecycle";
 
-/**
- * A request that carried the session got a 401: drop private data, warn and
- * send the collector to login with the current page as the way back.
- * A stale token found at startup (no session known yet) is just discarded.
- */
+/** A 401 on a request that carried the session: clear private data and go to login. */
 export function useSessionExpiry(): void {
   const queryClient = useQueryClient();
   const router = useRouter();

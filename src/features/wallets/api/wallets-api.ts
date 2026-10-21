@@ -14,7 +14,6 @@ import type { AppError } from "@/shared/api/errors";
 import { parseContract } from "@/shared/api/parse-contract";
 import { walletKeys } from "@/shared/api/query-keys";
 
-/** Form of the "Carteiras" page; selects start empty, so their messages are explicit. */
 export const walletFormSchema = z.object({
   displayName: z.string().trim().min(1, "Informe o nome de exibição."),
   nickname: z.string().trim().min(1, "Informe o apelido da carteira."),
@@ -37,7 +36,6 @@ export const toWalletInput = (values: WalletFormOutput): WalletInput => ({
 
 type SaveWalletInput = { role: WalletRole; existingId: string | null; values: WalletInput };
 
-/** Creates the wallet of a role, or updates it when it already exists. */
 export function useSaveWallet() {
   const queryClient = useQueryClient();
   return useMutation<Wallet, AppError, SaveWalletInput>({

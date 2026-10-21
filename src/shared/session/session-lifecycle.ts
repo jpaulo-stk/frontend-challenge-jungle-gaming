@@ -4,17 +4,13 @@ import type { Session } from "@/shared/api/contracts/session";
 import { sessionKeys } from "@/shared/api/query-keys";
 import { clearSessionToken, writeSessionToken } from "@/shared/api/session-token";
 
-// Identity changes (login, register, logout, expiry) always drop the whole
-// query cache before the new identity is applied: no favorite, cart, profile
-// or order of the previous collector can render, not even for one frame.
+// Identity changes clear the whole cache before the new identity is applied
 
-/** Why the identity changed: an expired session keeps the checkout draft for the same user. */
 export type IdentityChange = "login" | "logout" | "expired";
 
 type Listener = (session: Session | null, reason: IdentityChange) => void;
 const listeners = new Set<Listener>();
 
-/** Notified on every identity change (the realtime client reconnects on it). */
 export function onIdentityChange(listener: Listener): () => void {
   listeners.add(listener);
   return () => {

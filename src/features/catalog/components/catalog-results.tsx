@@ -21,7 +21,6 @@ import { useNftSubscription } from "@/shared/realtime/use-realtime";
 const gridClassName =
   "grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-[repeat(3,258px)] lg:gap-x-8.5 lg:gap-y-14";
 
-/** Catalog grid with skeleton, empty, error and background-refresh states. */
 export function CatalogResults() {
   const { search, clearFilters, goToPage } = useCatalogFilters();
   const params = toListParams(search);

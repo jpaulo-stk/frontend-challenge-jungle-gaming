@@ -1,6 +1,5 @@
 import { Skeleton } from "@/shared/ui/skeleton";
 
-/** Order summary card: coupon field, four value rows and the call to action. */
 export function CartSummarySkeleton() {
   return (
     <div className="flex flex-col gap-4 rounded-lg bg-surface p-6">
