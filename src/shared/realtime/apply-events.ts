@@ -31,7 +31,8 @@ export function createEventApplier(queryClient: QueryClient) {
     for (const [, list] of queryClient.getQueriesData<NftListResponse>({
       queryKey: nftKeys.lists(),
     })) {
-      for (const item of list?.items ?? []) if (item.id === id) versions.push(item.version);
+      const items = Array.isArray(list?.items) ? list.items : [];
+      for (const item of items) if (item.id === id) versions.push(item.version);
     }
     for (const item of queryClient.getQueryData<FavoritesResponse>(favoriteKeys.list())?.items ??
       []) {
@@ -90,7 +91,8 @@ export function createEventApplier(queryClient: QueryClient) {
         previous ? patch(previous, event) : previous,
       );
       queryClient.setQueriesData<NftListResponse>({ queryKey: nftKeys.lists() }, (previous) =>
-        previous
+        // Guarded: an unexpected shape under a list key must never break realtime.
+        Array.isArray(previous?.items)
           ? { ...previous, items: previous.items.map((item) => patch(item, event)) }
           : previous,
       );

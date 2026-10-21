@@ -8,6 +8,7 @@ export type ApiResult = { status: number; body: unknown };
 /** The subset of `window.__kurioMock` (src/mocks/controls.ts) used by tests. */
 export type MockHandle = {
   raiseNftPrice: (nftId: string, percent?: number) => void;
+  setNftPrice: (nftId: string, price: string) => void;
   setEditionAvailability: (nftId: string, editionId: string, available: number) => void;
   settleOrder: (orderId: string, outcome: "confirmed" | "rejected") => Promise<unknown>;
   replayLastEvent: () => void;

@@ -30,12 +30,17 @@ export const facetsQueryOptions = queryOptions({
 
 const featuredParams = { sort: "trending", perPage: 1 } as const;
 
-/** "NFT em destaque": the top trending piece. */
+/**
+ * "NFT em destaque": the top trending piece. The cache keeps the list response
+ * (every nftKeys.list entry has that shape, which realtime updates rely on);
+ * the card selects its first item.
+ */
 export const featuredQueryOptions = queryOptions({
   queryKey: nftKeys.list(featuredParams),
   queryFn: async ({ signal }) =>
     parseContract(
       nftListResponseSchema,
       (await http.get("/nfts", { params: featuredParams, signal })).data,
-    ).items[0] ?? null,
+    ),
+  select: (list) => list.items[0] ?? null,
 });

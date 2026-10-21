@@ -45,6 +45,18 @@ test.describe("tempo real", { tag: "@desktop" }, () => {
     await expect(main.getByText("1.31 ETH").first()).toBeVisible();
   });
 
+  test("catálogo e destaque abertos recebem o novo preço por evento", async ({ page }) => {
+    await openWithScenario(page);
+    const catalog = page.getByRole("region", { name: "Catálogo de NFTs" });
+    const firstCard = catalog.getByRole("article").first();
+    const href = await firstCard.getByRole("link").first().getAttribute("href");
+    const nftId = href?.split("/").pop() ?? "";
+    await waitForRoom(page, nftId);
+
+    await page.evaluate((id) => window.__kurioMock?.setNftPrice(id, "9.87"), nftId);
+    await expect(firstCard).toContainText("9.87 ETH");
+  });
+
   test("o mesmo evento 3 vezes muda o estado uma vez; evento antigo não muda nada", async ({
     page,
   }) => {
