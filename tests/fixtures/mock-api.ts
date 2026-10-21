@@ -13,6 +13,7 @@ export type MockHandle = {
   replayLastEvent: () => void;
   sendStaleNftEvent: (nftId: string) => void;
   dropConnections: () => number;
+  failNextRequest: (method: string, path: string, status?: number) => void;
   connectedClients: () => number;
   orderCount: () => number;
   pendingOrders: () => string[];
@@ -28,7 +29,8 @@ declare global {
 
 export type MockOptions = {
   scenario?: string;
-  latency?: number;
+  /** Fixed latency in ms (default 0); null keeps the scenario's own latency. */
+  latency?: number | null;
   settle?: "auto" | "manual";
   settleDelay?: number;
   eventDelay?: number;
@@ -39,9 +41,9 @@ export async function openWithScenario(page: Page, options: MockOptions = {}): P
   const params = new URLSearchParams({
     scenario: options.scenario ?? "default",
     reset: "1",
-    latency: String(options.latency ?? 0),
     settle: options.settle ?? "auto",
   });
+  if (options.latency !== null) params.set("latency", String(options.latency ?? 0));
   if (options.settleDelay !== undefined) params.set("settleDelay", String(options.settleDelay));
   if (options.eventDelay !== undefined) params.set("eventDelay", String(options.eventDelay));
   await page.goto(`/?${params.toString()}`);

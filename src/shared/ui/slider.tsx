@@ -8,8 +8,12 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  thumbLabels,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: React.ComponentProps<typeof SliderPrimitive.Root> & {
+  /** Accessible name of each thumb, e.g. ["Preço mínimo", "Preço máximo"]. */
+  thumbLabels?: readonly string[];
+}) {
   const _values = React.useMemo(
     () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
     [value, defaultValue, min, max],
@@ -41,6 +45,7 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
+          aria-label={thumbLabels?.[index]}
           className="relative block size-4 shrink-0 rounded-full border-2 border-bg bg-primary ring-primary/40 transition-[color,box-shadow] select-none after:absolute after:-inset-3 hover:ring-4 focus-visible:ring-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:ring-4 disabled:pointer-events-none disabled:opacity-50"
         />
       ))}

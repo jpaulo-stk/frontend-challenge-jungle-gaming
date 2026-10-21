@@ -56,9 +56,13 @@ export function NftCard({
         {hasActions && (
           // Always visible on touch layouts; on desktop it appears on hover and
           // whenever focus is inside the card, so keyboard users reach it too.
-          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center gap-3 bg-gradient-to-t from-bg/80 to-transparent px-3 pt-8 pb-4 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
+          <div className="absolute top-2 right-2 z-10 flex justify-center gap-3 transition-opacity md:inset-x-0 md:top-auto md:right-auto md:bottom-0 md:bg-gradient-to-t md:from-bg/80 md:to-transparent md:px-3 md:pt-8 md:pb-4 md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
             {onAddToCart && (
-              <button type="button" className={actionButton} onClick={onAddToCart}>
+              <button
+                type="button"
+                className={cn(actionButton, "max-md:hidden")}
+                onClick={onAddToCart}
+              >
                 <ShoppingCart aria-hidden="true" />
                 <span className="sr-only">Adicionar {nft.name} ao carrinho</span>
               </button>
@@ -75,7 +79,7 @@ export function NftCard({
               </button>
             )}
             {onZoom && (
-              <button type="button" className={actionButton} onClick={onZoom}>
+              <button type="button" className={cn(actionButton, "max-md:hidden")} onClick={onZoom}>
                 <ZoomIn aria-hidden="true" />
                 <span className="sr-only">Ampliar imagem de {nft.name}</span>
               </button>

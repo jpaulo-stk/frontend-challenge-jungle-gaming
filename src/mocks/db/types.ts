@@ -41,6 +41,7 @@ export type DbNft = {
   editions: Edition[];
   description: string;
   seriesName: string;
+  creatorName: string;
   rating: { average: number; count: number };
   attributes: string[];
   contractAddress: string;

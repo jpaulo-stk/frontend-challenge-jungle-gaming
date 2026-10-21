@@ -5,6 +5,9 @@ import { nftSummarySchema } from "@/shared/api/contracts/nft";
 
 export const nftDetailSchema = nftSummarySchema.extend({
   description: z.string(),
+  /** Long-form text of the "Detalhes do NFT" tab, one entry per paragraph. */
+  story: z.array(z.string()),
+  creatorName: z.string(),
   /** Artist series shown as "Coleção" on the detail page (e.g. "Kurio Apes"). */
   seriesName: z.string(),
   rating: z.object({

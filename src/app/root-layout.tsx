@@ -1,13 +1,20 @@
-import { Outlet } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Outlet, useMatchRoute } from "@tanstack/react-router";
 
+import { cartQueryOptions } from "@/shared/cart/cart-api";
+import { useSession } from "@/shared/session/session-api";
 import { AppFooter } from "@/shared/ui/app-footer";
 import { AppHeader } from "@/shared/ui/app-header";
 import { AppTabBar } from "@/shared/ui/app-tab-bar";
 
-// Cart count and session come from the API once those features exist.
-const VISITOR = { cartCount: 0, user: null };
-
 export function RootLayout() {
+  const session = useSession();
+  const cart = useQuery(cartQueryOptions);
+  const cartCount = cart.data?.itemCount ?? 0;
+  const user = session.data ? { name: session.data.user.displayName } : null;
+  // The detail page has its own fixed purchase bar on mobile, as in the Figma frame.
+  const onDetail = Boolean(useMatchRoute()({ to: "/nft/$nftId" }));
+
   return (
     <div className="flex min-h-dvh flex-col">
       <a
@@ -16,12 +23,12 @@ export function RootLayout() {
       >
         Pular para o conteúdo
       </a>
-      <AppHeader cartCount={VISITOR.cartCount} user={VISITOR.user} />
+      <AppHeader cartCount={cartCount} user={user} />
       <main id="conteudo" tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
       <AppFooter />
-      <AppTabBar cartCount={VISITOR.cartCount} />
+      {!onDetail && <AppTabBar cartCount={cartCount} />}
     </div>
   );
 }

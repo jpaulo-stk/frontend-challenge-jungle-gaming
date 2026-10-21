@@ -5,6 +5,7 @@ import { getDb, mutate, resetDb } from "@/mocks/db/store";
 import { cancelScenarioEvent, changeNft } from "@/mocks/domain/nfts";
 import { cancelSettlements, settleOrder } from "@/mocks/domain/orders";
 import { seedRandom } from "@/mocks/lib/random";
+import { clearFaults, queueFault } from "@/mocks/scenarios/faults";
 import { nftUpdatedEvent, publish, republishLast } from "@/mocks/socket/bus";
 import { dropRealtimeConnections, realtimeClientCount } from "@/mocks/socket/realtime-server";
 import type { EditionId } from "@/shared/api/contracts/nft";
@@ -21,6 +22,7 @@ export const mockControls = {
   reset(): void {
     cancelSettlements();
     cancelScenarioEvent();
+    clearFaults();
     seedRandom(getConfig().seed);
     resetDb(getConfig().scenario);
   },
@@ -69,6 +71,11 @@ export const mockControls = {
     const nft = getDb().nfts.find((candidate) => candidate.id === nftId);
     if (!nft || nft.version < 2) return;
     publish(nftUpdatedEvent({ ...nft, version: nft.version - 1, price: "0.01" }));
+  },
+
+  /** The next matching request fails (e.g. `failNextRequest("POST", "/favorites")`). */
+  failNextRequest(method: string, path: string, status = 500): void {
+    queueFault({ method, path, status });
   },
 
   /** Closes realtime connections; socket.io-client reconnects on its own. */

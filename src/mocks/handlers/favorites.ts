@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { getDb, mutate } from "@/mocks/db/store";
 import { toNftSummary } from "@/mocks/domain/serialize";
 import { API, apiError, readBody, requireUser } from "@/mocks/handlers/http";
-import { addFavoriteRequestSchema } from "@/features/favorites/api/schemas";
+import { addFavoriteRequestSchema } from "@/shared/api/contracts/favorites";
 
 function favoritesOf(userId: string) {
   const db = getDb();

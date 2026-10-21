@@ -76,7 +76,28 @@ Rotas declaradas por código em `src/app/router.tsx`, com os componentes vindos 
 | `/perfil/carteiras` | privado | `wallets`      |
 | qualquer outra      | —       | 404 do projeto |
 
-Rotas privadas usam o guard `requireAuth` em `beforeLoad`. Sem sessão, ele redireciona para `/entrar?redirect=<destino>`. O parâmetro `redirect` só aceita caminhos internos (começando com `/` e não com `//`), para não virar um redirecionamento aberto.
+Rotas privadas usam o guard `requireAuth` em `beforeLoad`.
+
+- **Sessão:** o guard lê a sessão real (`GET /auth/session`) pelo `queryClient` do contexto do router.
+- **Sem sessão:** redireciona para `/entrar?redirect=<destino>`.
+- **Parâmetro `redirect`:** só aceita caminhos internos (começando com `/` e não com `//`), para não virar um redirecionamento aberto.
+
+`/nft/$nftId` tem um `loader` que carrega o NFT no cache do Query antes de renderizar:
+
+- **NFT inexistente:** `NFT_NOT_FOUND` vira `notFound()` e mostra a 404 do projeto dentro do layout.
+- **Rede lenta:** depois de 200 ms, o skeleton do detalhe aparece como `pendingComponent`.
+- **Outras falhas:** caem no `errorComponent`, que tem "Tentar novamente".
+
+### Estado do catálogo na URL
+
+- **Parâmetros:** a busca, os filtros e a página vivem na URL (`q`, `collection`, `network`, `priceMin`, `priceMax`, `tab`, `sort`, `page`), validados por um schema zod no `validateSearch`.
+- **Valores inválidos:** são descartados (`.catch`), sem quebrar a página.
+- **Valores padrão:** ficam fora da URL, então a Início continua sendo `/`.
+- **Serialização própria:** em vez do JSON padrão do router, as listas viram chaves repetidas, como em `?collection=musica&collection=jogos&page=2`. A URL fica legível e números decimais não são convertidos (`src/app/search-params.ts`).
+- **`updateFilters`:** toda mudança de filtro passa por essa função única (`use-catalog-filters.ts`), que sempre volta para a página 1.
+- **Busca:** a URL só é atualizada 350 ms depois da última tecla, com `replace` no histórico, para não criar um passo de "voltar" por tecla. Enter confirma na hora.
+- **Respostas fora de ordem:** a `queryKey` é exatamente o conjunto de parâmetros enviados (`toListParams`), e o `AbortSignal` do Query cancela a requisição anterior no Axios. Uma resposta atrasada de uma busca antiga não chega à lista atual; o cenário `jitter` cobre isso em teste.
+- **Revalidação:** ao trocar de página ou de filtro, a lista anterior continua visível, esmaecida e marcada com `aria-busy` (`placeholderData: keepPreviousData`). O skeleton só aparece no primeiro carregamento.
 
 ## Cliente HTTP e erros
 
@@ -236,14 +257,31 @@ Defaults globais em `src/app/query-client.ts`. Cada domínio ajusta `staleTime`/
 
 Ajustes por domínio:
 
-| Domínio   | `staleTime` | Por quê                                                                                  |
-| --------- | ----------- | ---------------------------------------------------------------------------------------- |
-| Favoritos | 60 s        | Dado privado que só muda por ação do próprio colecionador, e essa ação invalida a lista. |
+| Domínio             | `staleTime`   | Por quê                                                                                                 |
+| ------------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| Favoritos           | 60 s          | Dado privado que só muda por ação do próprio colecionador, e essa ação invalida a lista.                |
+| Catálogo (lista)    | 30 s (padrão) | Preço e disponibilidade chegam por evento; ao mudar de filtro ou página, a lista anterior fica visível. |
+| Filtros (`/facets`) | 5 min         | As contagens quase não mudam.                                                                           |
+| Detalhe do NFT      | 30 s          | Também atualizado por evento. Sem nova tentativa automática para `NFT_NOT_FOUND`.                       |
+| Relacionados        | 60 s          | Vitrine secundária.                                                                                     |
+| Sessão              | 5 min         | Revalidada no login, no logout e em respostas 401; não precisa de polling.                              |
+| Carrinho            | 15 s          | Atualizado pelas mutations; uma janela curta cobre mudanças vindas de outra aba.                        |
 
 Regras que valem para todo o projeto:
 
 - **Chaves por factory.** Use `shared/api/query-keys.ts` (`nftKeys.list(params)`, `cartKeys.detail()`…). Nenhum componente monta array de chave na mão. Os parâmetros da busca fazem parte da chave, então cada combinação de filtros tem seu próprio cache.
 - **Isolamento por usuário.** Logout e troca de usuário chamam `queryClient.clear()`, que remove todo dado privado em cache.
+- **Erro tipado.** `Register.defaultError` é `AppError` (`shared/api/query-types.ts`), porque toda falha passa pelo interceptor do Axios ou pelo `parseContract`.
+
+### Atualização otimista (favoritos)
+
+O coração dos cards e do detalhe usa `useFavorites` (`shared/favorites/`). Os favoritos ficam em `shared/` porque o catálogo e o detalhe são features diferentes.
+
+- **`onMutate`:** cancela a busca em andamento, guarda a lista atual e aplica a mudança na hora.
+- **`onError`:** restaura a lista guardada e mostra um aviso de erro acessível (toast com `aria-live`).
+- **`onSettled`:** invalida a lista.
+
+Um visitante que clica no coração vai para o login, com o retorno guardado. A falha da mutation e a recuperação são testadas com uma falha injetada (`failNextRequest`).
 
 ## Dependências
 
@@ -334,7 +372,27 @@ O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads,
 
 - **Mercado:** no Figma, "Mercado" é a listagem do catálogo, que fica na própria Início. O link leva a `/#catalogo`.
 - **Busca:** no desktop, o ícone de busca leva a `/#busca`. No mobile, a ação central da tab bar faz o mesmo.
+- **Busca no desktop:** o Figma desktop só mostra o ícone de busca no header. O campo fica no topo da barra lateral, e o ícone leva até ele e o foca. No mobile, o campo fica no topo, como no Figma.
+- **Hero:** são 3 slides trocados pelos indicadores (clique ou setas). Não há rotação automática, porque ela exigiria um controle de pausa (WCAG 2.2.2) que o Figma não tem. O título muda de slide para slide, por isso o `h1` da página é oculto visualmente.
+- **Listas do catálogo:** "Todos os NFTs / Novos lançamentos / Em alta" filtram a mesma lista. Por isso usam botões com `aria-pressed`, e não `role="tab"`, que exigiria painéis distintos.
+- **Detalhe mobile:** a barra de compra fixa substitui a tab bar, como no frame `mobile-02`.
 - **Lista de interesse (`/favoritos`):** o Figma não desenha essa tela, mas usa "Lista de interesse" com ícone de coração no menu do perfil e no rodapé, e um coração na tab bar mobile. Os três apontam para `/favoritos`, que lista `GET /favorites` com o mesmo card do catálogo e os estados de carregamento, vazio e erro.
+
+## Desvios do Figma
+
+| Onde                                      | Figma                                        | Implementação                                                                               | Motivo                                              |
+| ----------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Busca no desktop                          | Só o ícone no header                         | Campo no topo da barra lateral; o ícone leva até ele e o foca                               | A busca é um requisito e precisa de um campo        |
+| Hero                                      | 1 slide desenhado com 3 indicadores          | 3 slides com textos do próprio Figma (desktop, mobile e banner)                             | O conteúdo dos outros dois slides não foi desenhado |
+| Hero mobile                               | Texto curto                                  | Mesmo slide, com a variante curta abaixo de `md`                                            | Fidelidade aos dois frames                          |
+| Detalhe: "Contrato" e "Direitos autorais" | Os textos dos dois rótulos aparecem trocados | Cada rótulo com o seu texto (endereço no contrato, percentual nos direitos)                 | Erro de conteúdo no layout                          |
+| Detalhe: aba "Avaliações"                 | Não desenhada                                | Resumo da nota e da quantidade, avisando que os comentários não fazem parte da demonstração | Não há conteúdo de avaliações no Figma nem na API   |
+| Banner "Arte digital selecionada"         | Texto cortado no frame ("…que definem a")    | Frase completa ("…a cultura da rede."); o banner cresce para não cortar                     | Conteúdo cortado no layout                          |
+| Contagens da barra lateral                | 33, 12, 65…                                  | Contagens reais dos 36 NFTs das fixtures                                                    | Os números do Figma são ilustrativos                |
+| Ordenação no mobile                       | Não aparece                                  | "Ordenar por" visível também no mobile                                                      | A ordenação é um requisito em qualquer largura      |
+| Card no mobile                            | Só o coração                                 | Só o coração; carrinho e zoom ficam no detalhe                                              | Fidelidade ao frame mobile                          |
+| Preços                                    | "1.19", "0.016", "26.846"                    | Mínimo de 2 e máximo de 3 casas decimais                                                    | Mesmo formato do layout para qualquer valor         |
+| Estrelas                                  | 4 cheias para 4,8                            | Arredondamento para baixo                                                                   | Fidelidade ao frame                                 |
 
 ## Ferramentas
 

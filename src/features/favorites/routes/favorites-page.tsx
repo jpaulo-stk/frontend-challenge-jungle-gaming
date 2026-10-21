@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 
-import { favoritesQueryOptions } from "@/features/favorites/api/favorites-api";
+import { favoritesQueryOptions } from "@/shared/favorites/favorites-api";
 import { buttonVariants } from "@/shared/ui/button";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { ErrorState } from "@/shared/ui/error-state";

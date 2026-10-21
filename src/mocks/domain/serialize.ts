@@ -3,9 +3,9 @@ import Big from "big.js";
 import type { DbCartItem, DbNft, DbOrder, DbUser, DbWallet, OwnerKey } from "@/mocks/db/types";
 import { getDb } from "@/mocks/db/store";
 import { artImage } from "@/mocks/fixtures/art";
-import { collections } from "@/mocks/fixtures/nfts";
+import { collections, networkNames } from "@/mocks/fixtures/nfts";
 import type { FacetsResponse } from "@/features/catalog/api/schemas";
-import type { SessionUser } from "@/features/auth/api/schemas";
+import type { SessionUser } from "@/shared/api/contracts/session";
 import type { NftDetail } from "@/features/nft-detail/api/schemas";
 import type { Profile } from "@/features/profile/api/schemas";
 import type { Cart, CartItem } from "@/shared/api/contracts/cart";
@@ -46,6 +46,11 @@ export function toNftDetail(nft: DbNft): NftDetail {
   return {
     ...toNftSummary(nft),
     description: nft.description,
+    story: [
+      `${nft.name} é uma obra digital finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na ${networkNames[nft.network]}. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.`,
+      `A propriedade inclui a arte em alta resolução, lançamentos exclusivos para colecionadores e um registro permanente de procedência registrada na rede. ${nft.creatorName} recebe ${String(nft.royaltiesPercent)}% de direitos autorais nas vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.`,
+    ],
+    creatorName: nft.creatorName,
     seriesName: nft.seriesName,
     rating: nft.rating,
     attributes: nft.attributes,

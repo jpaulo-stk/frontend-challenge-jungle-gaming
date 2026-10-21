@@ -4,7 +4,7 @@ import { useState } from "react";
 import { UiCatalogSection } from "@/app/dev/ui-catalog-section";
 import { http } from "@/shared/api/axios";
 import { nftListResponseSchema } from "@/shared/api/contracts/nft";
-import { AppError } from "@/shared/api/errors";
+import { parseContract } from "@/shared/api/parse-contract";
 import { nftKeys } from "@/shared/api/query-keys";
 import { NftCard } from "@/shared/ui/nft-card";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
@@ -18,9 +18,7 @@ export function UiCatalogCards() {
     queryKey: nftKeys.list(params),
     queryFn: async ({ signal }) => {
       const response = await http.get("/nfts", { params, signal });
-      const parsed = nftListResponseSchema.safeParse(response.data);
-      if (!parsed.success) throw new AppError("CONTRACT_MISMATCH", parsed.error);
-      return parsed.data;
+      return parseContract(nftListResponseSchema, response.data);
     },
   });
 

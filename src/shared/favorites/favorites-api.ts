@@ -1,15 +1,13 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { favoritesResponseSchema, type FavoritesResponse } from "@/features/favorites/api/schemas";
+import { favoritesResponseSchema, type FavoritesResponse } from "@/shared/api/contracts/favorites";
 import { http } from "@/shared/api/axios";
-import { AppError } from "@/shared/api/errors";
+import { parseContract } from "@/shared/api/parse-contract";
 import { favoriteKeys } from "@/shared/api/query-keys";
 
 export async function fetchFavorites(signal: AbortSignal): Promise<FavoritesResponse> {
   const response = await http.get("/favorites", { signal });
-  const parsed = favoritesResponseSchema.safeParse(response.data);
-  if (!parsed.success) throw new AppError("CONTRACT_MISMATCH", parsed.error);
-  return parsed.data;
+  return parseContract(favoritesResponseSchema, response.data);
 }
 
 export const favoritesQueryOptions = queryOptions({

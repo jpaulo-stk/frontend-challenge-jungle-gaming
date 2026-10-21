@@ -39,7 +39,7 @@ const artAttributes: Record<DbNft["art"], string[]> = {
 };
 
 const contracts: Record<Network, string> = {
-  ethereum: "0x7a1c3e5b9d2f4a6c8e0b1d3f5a7c9e1b3d5f7a92",
+  ethereum: "0x7A42c3e5b9d2f4a6c8e0b1d3f5a7c9e1b3d519E8",
   polygon: "0x2b4d6f8a0c1e3b5d7f9a1c3e5b7d9f1a3c5e7b04",
   solana: "Kur1oEd1t1onsSo1ana111111111111111111111",
 };
@@ -143,6 +143,7 @@ export function buildNfts(): DbNft[] {
         editions: editions(editionSpec),
         description: `Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na ${networkNames[network]}, com arte desbloqueável e acesso para colecionadores.`,
         seriesName: "Kurio Apes",
+        creatorName: "Nova Sato",
         rating: ratingOverrides[id] ?? {
           average: Math.round((4 + (trendingScore % 10) / 10) * 10) / 10,
           count: 6 + (trendingScore % 23),

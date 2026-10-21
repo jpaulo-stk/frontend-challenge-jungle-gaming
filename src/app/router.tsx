@@ -10,14 +10,18 @@ import { queryClient } from "@/app/query-client";
 import { NotFoundPage } from "@/app/not-found-page";
 import { RootLayout } from "@/app/root-layout";
 import { RouteError } from "@/app/route-error";
+import { parseSearch, stringifySearch } from "@/app/search-params";
 import { authSearchSchema } from "@/features/auth/routes/auth-search-schema";
 import { LoginPage } from "@/features/auth/routes/login-page";
 import { RegisterPage } from "@/features/auth/routes/register-page";
 import { requireAuth } from "@/features/auth/routes/require-auth";
 import { CartPage } from "@/features/cart/routes/cart-page";
+import { catalogSearchSchema } from "@/features/catalog/routes/catalog-search";
 import { HomePage } from "@/features/catalog/routes/home-page";
 import { FavoritesPage } from "@/features/favorites/routes/favorites-page";
 import { CheckoutPage } from "@/features/checkout/routes/checkout-page";
+import { loadNftDetail } from "@/features/nft-detail/routes/nft-detail-loader";
+import { NftDetailPending } from "@/features/nft-detail/routes/nft-detail-pending";
 import { NftDetailPage } from "@/features/nft-detail/routes/nft-detail-page";
 import { OrderPage } from "@/features/orders/routes/order-page";
 import { ProfileDataPage } from "@/features/profile/routes/profile-data-page";
@@ -36,12 +40,16 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
+  validateSearch: catalogSearchSchema,
   component: HomePage,
 });
 
 const nftDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/nft/$nftId",
+  loader: loadNftDetail,
+  pendingComponent: NftDetailPending,
+  pendingMs: 200,
   component: NftDetailPage,
 });
 
@@ -54,27 +62,21 @@ const cartRoute = createRoute({
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pagamento",
-  beforeLoad: ({ location }) => {
-    requireAuth(location);
-  },
+  beforeLoad: requireAuth,
   component: CheckoutPage,
 });
 
 const orderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pedido/$orderId",
-  beforeLoad: ({ location }) => {
-    requireAuth(location);
-  },
+  beforeLoad: requireAuth,
   component: OrderPage,
 });
 
 const favoritesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/favoritos",
-  beforeLoad: ({ location }) => {
-    requireAuth(location);
-  },
+  beforeLoad: requireAuth,
   component: FavoritesPage,
 });
 
@@ -97,9 +99,7 @@ const registerRoute = createRoute({
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/perfil",
-  beforeLoad: ({ location }) => {
-    requireAuth(location);
-  },
+  beforeLoad: requireAuth,
   component: ProfileLayout,
 });
 
@@ -150,6 +150,8 @@ export const router = createRouter({
   routeTree,
   context: { queryClient },
   defaultPreload: "intent",
+  parseSearch,
+  stringifySearch,
   defaultNotFoundComponent: NotFoundPage,
   defaultErrorComponent: RouteError,
   scrollRestoration: true,
