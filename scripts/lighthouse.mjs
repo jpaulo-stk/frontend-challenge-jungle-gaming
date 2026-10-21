@@ -73,7 +73,20 @@ const median = (values) => {
   return sorted[Math.floor(sorted.length / 2)];
 };
 
-async function audit(url, profile) {
+/** One run; a run that crashes the browser itself (CDP "Target closed") is retried once. */
+async function audit(url, profile, attempt = 1) {
+  try {
+    return await auditOnce(url, profile);
+  } catch (error) {
+    if (attempt >= 2) throw error;
+    process.stdout
+      .write(`  nova tentativa: ${error instanceof Error ? error.message : String(error)}
+`);
+    return audit(url, profile, attempt + 1);
+  }
+}
+
+async function auditOnce(url, profile) {
   const chrome = await chromeLauncher.launch({
     chromePath: process.env.CHROME_PATH ?? chromium.executablePath(),
     chromeFlags: ["--headless=new", "--no-first-run", "--disable-extensions"],
