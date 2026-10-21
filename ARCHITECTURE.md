@@ -68,6 +68,7 @@ Rotas declaradas por código em `src/app/router.tsx`, com os componentes vindos 
 | `/carrinho`         | público | `cart`         |
 | `/pagamento`        | privado | `checkout`     |
 | `/pedido/$orderId`  | privado | `orders`       |
+| `/favoritos`        | privado | `favorites`    |
 | `/entrar`           | público | `auth`         |
 | `/criar-conta`      | público | `auth`         |
 | `/perfil`           | privado | `profile`      |
@@ -233,6 +234,12 @@ Defaults globais em `src/app/query-client.ts`. Cada domínio ajusta `staleTime`/
 | `queries.refetchOnWindowFocus` | desligado                                   | Voltar à aba no meio do checkout não pode disparar uma nova cotação de surpresa. Onde revalidar no foco fizer sentido, a query liga isso explicitamente.                       |
 | `mutations.retry`              | 0                                           | Repetir uma mutation automaticamente pode duplicar efeitos (o caso crítico é o pedido). A recuperação de pedido é explícita, com chave de idempotência.                        |
 
+Ajustes por domínio:
+
+| Domínio   | `staleTime` | Por quê                                                                                  |
+| --------- | ----------- | ---------------------------------------------------------------------------------------- |
+| Favoritos | 60 s        | Dado privado que só muda por ação do próprio colecionador, e essa ação invalida a lista. |
+
 Regras que valem para todo o projeto:
 
 - **Chaves por factory.** Use `shared/api/query-keys.ts` (`nftKeys.list(params)`, `cartKeys.detail()`…). Nenhum componente monta array de chave na mão. Os parâmetros da busca fazem parte da chave, então cada combinação de filtros tem seu próprio cache.
@@ -318,7 +325,7 @@ A menor razão é 4,75:1 (`--success` sobre `--surface-3`). A maior parte das co
 
 O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads, e pede que ações fora do escopo não pareçam funcionar. Os controles do layout que levam a esses destinos usam `UnavailableAction`:
 
-- Exemplos: "Criadores" e "Aprenda" no header, os links de ajuda e redes sociais do rodapé, a newsletter e "Favoritos" na tab bar.
+- Exemplos: "Criadores" e "Aprenda" no header, os links de ajuda e redes sociais do rodapé, e a newsletter.
 - O botão continua focável e tem `aria-disabled="true"`.
 - O nome acessível ganha o sufixo "(indisponível nesta demonstração)".
 - Ao ser acionado, mostra um aviso informativo em toast. Nunca mostra um aviso de sucesso.
@@ -327,6 +334,7 @@ O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads,
 
 - **Mercado:** no Figma, "Mercado" é a listagem do catálogo, que fica na própria Início. O link leva a `/#catalogo`.
 - **Busca:** no desktop, o ícone de busca leva a `/#busca`. No mobile, a ação central da tab bar faz o mesmo.
+- **Lista de interesse (`/favoritos`):** o Figma não desenha essa tela, mas usa "Lista de interesse" com ícone de coração no menu do perfil e no rodapé, e um coração na tab bar mobile. Os três apontam para `/favoritos`, que lista `GET /favorites` com o mesmo card do catálogo e os estados de carregamento, vazio e erro.
 
 ## Ferramentas
 

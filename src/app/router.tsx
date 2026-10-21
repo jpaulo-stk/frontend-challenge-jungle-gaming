@@ -16,6 +16,7 @@ import { RegisterPage } from "@/features/auth/routes/register-page";
 import { requireAuth } from "@/features/auth/routes/require-auth";
 import { CartPage } from "@/features/cart/routes/cart-page";
 import { HomePage } from "@/features/catalog/routes/home-page";
+import { FavoritesPage } from "@/features/favorites/routes/favorites-page";
 import { CheckoutPage } from "@/features/checkout/routes/checkout-page";
 import { NftDetailPage } from "@/features/nft-detail/routes/nft-detail-page";
 import { OrderPage } from "@/features/orders/routes/order-page";
@@ -66,6 +67,15 @@ const orderRoute = createRoute({
     requireAuth(location);
   },
   component: OrderPage,
+});
+
+const favoritesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/favoritos",
+  beforeLoad: ({ location }) => {
+    requireAuth(location);
+  },
+  component: FavoritesPage,
 });
 
 const loginRoute = createRoute({
@@ -130,6 +140,7 @@ const routeTree = rootRoute.addChildren([
   cartRoute,
   checkoutRoute,
   orderRoute,
+  favoritesRoute,
   loginRoute,
   registerRoute,
   profileRoute.addChildren([profileIndexRoute, profileDataRoute, walletsRoute]),

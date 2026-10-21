@@ -1,8 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Heart, House, ScanSearch, ShoppingCart, UserRound } from "lucide-react";
 
-import { UnavailableAction } from "@/shared/ui/unavailable-action";
-
 type AppTabBarProps = {
   cartCount: number;
 };
@@ -25,10 +23,10 @@ export function AppTabBar({ cartCount }: AppTabBarProps) {
           </Link>
         </li>
         <li>
-          <UnavailableAction feature="A lista de favoritos" className={tabClassName}>
+          <Link to="/favoritos" className={tabClassName}>
             <Heart aria-hidden="true" />
-            <span className="sr-only">Favoritos</span>
-          </UnavailableAction>
+            <span className="sr-only">Lista de interesse</span>
+          </Link>
         </li>
         <li>
           <Link

@@ -60,6 +60,16 @@ test.describe("layout desktop", { tag: "@desktop" }, () => {
 });
 
 test.describe("layout mobile", { tag: "@mobile" }, () => {
+  test("aba Lista de interesse leva ao login guardando o destino", async ({ page }) => {
+    await openApp(page, "/");
+
+    await page
+      .getByRole("navigation", { name: "Principal" })
+      .getByRole("link", { name: "Lista de interesse" })
+      .click();
+    await expect(page).toHaveURL(/\/entrar\?redirect=%2Ffavoritos$/);
+  });
+
   test("tab bar substitui o header", async ({ page }) => {
     await openApp(page, "/");
 
@@ -77,7 +87,10 @@ test("ação fora do escopo avisa em vez de simular sucesso", async ({ page, isM
   await openApp(page, "/");
 
   const action = isMobile
-    ? page.getByRole("navigation", { name: "Principal" }).getByRole("button", { name: /Favoritos/ })
+    ? page
+        .getByRole("contentinfo")
+        .getByRole("button", { name: /Central de ajuda/ })
+        .first()
     : page.getByRole("banner").getByRole("button", { name: /Criadores/ });
   await expect(action).toHaveAttribute("aria-disabled", "true");
   // Playwright refuses to click aria-disabled controls; browsers do not. Keyboard

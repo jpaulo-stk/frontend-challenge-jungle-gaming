@@ -31,7 +31,7 @@ const helpLinks = [
   "Denunciar item",
 ] as const;
 
-const profileLinks = ["Minha coleção", "Atividade", "Estúdio do criador", "Lista de interesse"];
+const profileLinks = ["Minha coleção", "Atividade", "Estúdio do criador"];
 
 const collectionLinks = ["Arte digital", "Fotografia", "Música", "Arte 3D", "Utilidade"] as const;
 
@@ -137,6 +137,11 @@ export function AppFooter() {
                 </UnavailableAction>
               </li>
             ))}
+            <li>
+              <Link to="/favoritos" className={footerLinkClassName}>
+                Lista de interesse
+              </Link>
+            </li>
           </ul>
         </nav>
         <nav aria-labelledby="footer-help">
