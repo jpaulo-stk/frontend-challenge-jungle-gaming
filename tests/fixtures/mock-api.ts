@@ -14,6 +14,7 @@ export type MockHandle = {
   sendStaleNftEvent: (nftId: string) => void;
   dropConnections: () => number;
   failNextRequest: (method: string, path: string, status?: number) => void;
+  expireSessionOnNextRequest: () => void;
   connectedClients: () => number;
   orderCount: () => number;
   pendingOrders: () => string[];

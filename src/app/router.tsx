@@ -8,23 +8,25 @@ import {
 
 import { queryClient } from "@/app/query-client";
 import { NotFoundPage } from "@/app/not-found-page";
+import { PagePending } from "@/app/page-pending";
 import { RootLayout } from "@/app/root-layout";
 import { RouteError } from "@/app/route-error";
 import { parseSearch, stringifySearch } from "@/app/search-params";
 import { authSearchSchema } from "@/features/auth/routes/auth-search-schema";
 import { LoginPage } from "@/features/auth/routes/login-page";
 import { RegisterPage } from "@/features/auth/routes/register-page";
+import { redirectIfSignedIn } from "@/features/auth/routes/redirect-if-signed-in";
 import { requireAuth } from "@/features/auth/routes/require-auth";
 import { CartPage } from "@/features/cart/routes/cart-page";
 import { catalogSearchSchema } from "@/features/catalog/routes/catalog-search";
-import { HomePage } from "@/features/catalog/routes/home-page";
+import { HomeLayout } from "@/features/catalog/routes/home-layout";
 import { FavoritesPage } from "@/features/favorites/routes/favorites-page";
 import { CheckoutPage } from "@/features/checkout/routes/checkout-page";
 import { loadNftDetail } from "@/features/nft-detail/routes/nft-detail-loader";
 import { NftDetailPending } from "@/features/nft-detail/routes/nft-detail-pending";
 import { NftDetailPage } from "@/features/nft-detail/routes/nft-detail-page";
 import { OrderPage } from "@/features/orders/routes/order-page";
-import { ProfileDataPage } from "@/features/profile/routes/profile-data-page";
+import { ProfileDataPage, ProfileIndexPage } from "@/features/profile/routes/profile-data-page";
 import { ProfileLayout } from "@/features/profile/routes/profile-layout";
 import { WalletsPage } from "@/features/wallets/routes/wallets-page";
 
@@ -37,11 +39,17 @@ const rootRoute = createRootRouteWithContext<RouterContext>()({
   notFoundComponent: NotFoundPage,
 });
 
-const homeRoute = createRoute({
+// Pathless layout: the home and the auth dialogs that open over it.
+const catalogLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/",
+  id: "_catalog",
   validateSearch: catalogSearchSchema,
-  component: HomePage,
+  component: HomeLayout,
+});
+
+const homeRoute = createRoute({
+  getParentRoute: () => catalogLayoutRoute,
+  path: "/",
 });
 
 const nftDetailRoute = createRoute({
@@ -81,16 +89,18 @@ const favoritesRoute = createRoute({
 });
 
 const loginRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/entrar",
+  getParentRoute: () => catalogLayoutRoute,
+  path: "entrar",
   validateSearch: authSearchSchema,
+  beforeLoad: redirectIfSignedIn,
   component: LoginPage,
 });
 
 const registerRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/criar-conta",
+  getParentRoute: () => catalogLayoutRoute,
+  path: "criar-conta",
   validateSearch: authSearchSchema,
+  beforeLoad: redirectIfSignedIn,
   component: RegisterPage,
 });
 
@@ -106,7 +116,7 @@ const profileRoute = createRoute({
 const profileIndexRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: "/",
-  component: ProfileDataPage,
+  component: ProfileIndexPage,
 });
 
 const profileDataRoute = createRoute({
@@ -135,14 +145,12 @@ const devRoutes = import.meta.env.DEV
 
 const routeTree = rootRoute.addChildren([
   ...devRoutes,
-  homeRoute,
+  catalogLayoutRoute.addChildren([homeRoute, loginRoute, registerRoute]),
   nftDetailRoute,
   cartRoute,
   checkoutRoute,
   orderRoute,
   favoritesRoute,
-  loginRoute,
-  registerRoute,
   profileRoute.addChildren([profileIndexRoute, profileDataRoute, walletsRoute]),
 ]);
 
@@ -153,6 +161,7 @@ export const router = createRouter({
   parseSearch,
   stringifySearch,
   defaultNotFoundComponent: NotFoundPage,
+  defaultPendingComponent: PagePending,
   defaultErrorComponent: RouteError,
   scrollRestoration: true,
 });

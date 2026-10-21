@@ -35,3 +35,48 @@ export const changePasswordRequestSchema = z.object({
   newPassword: z.string().min(8, "Use pelo menos 8 caracteres."),
 });
 export type ChangePasswordRequest = z.infer<typeof changePasswordRequestSchema>;
+
+/**
+ * "Perfil do colecionador" form: profile data plus the optional "Alterar senha"
+ * block, validated only when one of its fields is filled.
+ */
+export const profileFormSchema = z
+  .object({
+    displayName: z.string().trim().min(1, "Informe o nome de exibição."),
+    username: z
+      .string()
+      .trim()
+      .min(3, "Use pelo menos 3 caracteres.")
+      .regex(/^[a-z0-9._]+$/, "Use apenas letras minúsculas, números, ponto e sublinhado."),
+    email: z.email("Informe um e-mail válido."),
+    ensName: z.string().trim().min(1, "Informe o nome ENS."),
+    walletNickname: z.string().trim().min(1, "Informe o apelido da carteira."),
+    currentPassword: z.string(),
+    newPassword: z.string(),
+    confirmPassword: z.string(),
+  })
+  .superRefine((values, context) => {
+    if (!values.currentPassword && !values.newPassword && !values.confirmPassword) return;
+    if (!values.currentPassword) {
+      context.addIssue({
+        code: "custom",
+        path: ["currentPassword"],
+        message: "Informe a senha atual.",
+      });
+    }
+    if (values.newPassword.length < 8) {
+      context.addIssue({
+        code: "custom",
+        path: ["newPassword"],
+        message: "Use pelo menos 8 caracteres.",
+      });
+    }
+    if (values.confirmPassword !== values.newPassword) {
+      context.addIssue({
+        code: "custom",
+        path: ["confirmPassword"],
+        message: "As senhas não coincidem.",
+      });
+    }
+  });
+export type ProfileForm = z.infer<typeof profileFormSchema>;

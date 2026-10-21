@@ -24,5 +24,5 @@ test("rota privada redireciona visitante ao login guardando o destino", async ({
   await openApp(page, "/pagamento");
 
   await expect(page).toHaveURL(/\/entrar\?redirect=%2Fpagamento$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Entrar" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Entrar" })).toBeVisible();
 });

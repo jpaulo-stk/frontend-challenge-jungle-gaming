@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useMatchRoute } from "@tanstack/react-router";
 
+import { useSessionExpiry } from "@/app/use-session-expiry";
 import { cartQueryOptions } from "@/shared/cart/cart-api";
 import { useSession } from "@/shared/session/session-api";
 import { AppFooter } from "@/shared/ui/app-footer";
@@ -8,6 +9,7 @@ import { AppHeader } from "@/shared/ui/app-header";
 import { AppTabBar } from "@/shared/ui/app-tab-bar";
 
 export function RootLayout() {
+  useSessionExpiry();
   const session = useSession();
   const cart = useQuery(cartQueryOptions);
   const cartCount = cart.data?.itemCount ?? 0;

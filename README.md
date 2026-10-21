@@ -31,6 +31,8 @@ pnpm dev                                # http://localhost:5173
 | Colecionador Kurio | `colecionador@kurio.test` | `kurio123` | Carrinho do Figma (26.846 ETH), 2 favoritos, carteira principal, 1 pedido |
 | Nova Sato          | `nova.sato@kurio.test`    | `kurio123` | 1 item no carrinho, 3 favoritos, carteiras principal e reserva            |
 
+Senhas novas precisam de pelo menos 8 caracteres. Os botões "Continuar com Google/Facebook" e "Esqueceu a senha?" estão fora do escopo da demonstração e avisam isso ao serem acionados.
+
 Cupons: `KURIO10` (10% de desconto), `EXPIRADO2025` (expirado); qualquer outro código é inválido.
 
 ## Cenários da API simulada

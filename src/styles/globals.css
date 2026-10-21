@@ -27,6 +27,15 @@
   --color-success: #00a66c;
   --color-overlay: rgb(10 6 5 / 0.72);
 
+  /* Brand colors, used only by the social login marks. */
+  --color-brand-google-green: #59c36a;
+  --color-brand-google-green-dark: #00a66c;
+  --color-brand-google-yellow: #ffda2d;
+  --color-brand-google-blue: #4086f4;
+  --color-brand-google-blue-dark: #4175df;
+  --color-brand-google-red: #ff641a;
+  --color-brand-facebook: #3b5999;
+
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-mono);
 

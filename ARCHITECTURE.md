@@ -61,20 +61,20 @@ Um arquivo em `src/` que não pertença a nenhuma dessas camadas também falha n
 
 Rotas declaradas por código em `src/app/router.tsx`, com os componentes vindos das features. Rotas por código foram escolhidas em vez de rotas por arquivo para manter as páginas dentro da pasta de cada feature sem um gerador de árvore de rotas. As páginas acessam parâmetros tipados com `getRouteApi('/rota')`, sem importar o router.
 
-| Rota                | Acesso  | Feature        |
-| ------------------- | ------- | -------------- |
-| `/`                 | público | `catalog`      |
-| `/nft/$nftId`       | público | `nft-detail`   |
-| `/carrinho`         | público | `cart`         |
-| `/pagamento`        | privado | `checkout`     |
-| `/pedido/$orderId`  | privado | `orders`       |
-| `/favoritos`        | privado | `favorites`    |
-| `/entrar`           | público | `auth`         |
-| `/criar-conta`      | público | `auth`         |
-| `/perfil`           | privado | `profile`      |
-| `/perfil/dados`     | privado | `profile`      |
-| `/perfil/carteiras` | privado | `wallets`      |
-| qualquer outra      | —       | 404 do projeto |
+| Rota                | Acesso                             | Feature        |
+| ------------------- | ---------------------------------- | -------------- |
+| `/`                 | público                            | `catalog`      |
+| `/nft/$nftId`       | público                            | `nft-detail`   |
+| `/carrinho`         | público                            | `cart`         |
+| `/pagamento`        | privado                            | `checkout`     |
+| `/pedido/$orderId`  | privado                            | `orders`       |
+| `/favoritos`        | privado                            | `favorites`    |
+| `/entrar`           | visitante (diálogo sobre a Início) | `auth`         |
+| `/criar-conta`      | visitante (diálogo sobre a Início) | `auth`         |
+| `/perfil`           | privado                            | `profile`      |
+| `/perfil/dados`     | privado                            | `profile`      |
+| `/perfil/carteiras` | privado                            | `wallets`      |
+| qualquer outra      | —                                  | 404 do projeto |
 
 Rotas privadas usam o guard `requireAuth` em `beforeLoad`.
 
@@ -88,6 +88,14 @@ Rotas privadas usam o guard `requireAuth` em `beforeLoad`.
 - **Rede lenta:** depois de 200 ms, o skeleton do detalhe aparece como `pendingComponent`.
 - **Outras falhas:** caem no `errorComponent`, que tem "Tentar novamente".
 
+### Login e cadastro sobre a Início
+
+A Início é um layout sem caminho próprio (`/_catalog`) com três filhas: `/`, `/entrar` e `/criar-conta`. Assim o catálogo fica montado atrás do diálogo, e acesso direto ou refresh de `/entrar` mostram a Início ao fundo, nunca uma tela em branco.
+
+- **Tamanho:** no desktop, o diálogo tem 500 px (600/656 de altura), como nos frames. No mobile, ocupa a tela cheia com o logo.
+- **Fechar:** fechar o diálogo (Esc, X ou fundo) devolve o foco a quem o abriu e volta à página anterior. Quando há `redirect`, a página de origem exigia sessão, então o destino ao fechar é a Início.
+- **Usuário com sessão:** um colecionador já logado que abre essas rotas segue direto para o destino.
+
 ### Estado do catálogo na URL
 
 - **Parâmetros:** a busca, os filtros e a página vivem na URL (`q`, `collection`, `network`, `priceMin`, `priceMax`, `tab`, `sort`, `page`), validados por um schema zod no `validateSearch`.
@@ -98,6 +106,25 @@ Rotas privadas usam o guard `requireAuth` em `beforeLoad`.
 - **Busca:** a URL só é atualizada 350 ms depois da última tecla, com `replace` no histórico, para não criar um passo de "voltar" por tecla. Enter confirma na hora.
 - **Respostas fora de ordem:** a `queryKey` é exatamente o conjunto de parâmetros enviados (`toListParams`), e o `AbortSignal` do Query cancela a requisição anterior no Axios. Uma resposta atrasada de uma busca antiga não chega à lista atual; o cenário `jitter` cobre isso em teste.
 - **Revalidação:** ao trocar de página ou de filtro, a lista anterior continua visível, esmaecida e marcada com `aria-busy` (`placeholderData: keepPreviousData`). O skeleton só aparece no primeiro carregamento.
+
+## Sessão e conta
+
+- **Token:** a sessão é um token opaco emitido pela API no login ou cadastro, guardado no `localStorage` e enviado em `Authorization: Bearer`. Nenhuma senha passa pelo armazenamento do cliente. No mock, as senhas são guardadas como SHA-256 com salt.
+- **Sessão como dado de servidor:** `GET /auth/session` fica no TanStack Query (`shared/session/session-api.ts`). Os guards das rotas privadas leem essa query; enquanto ela resolve, a rota mostra o `defaultPendingComponent` (skeleton) e não pisca para outra página.
+- **Troca de identidade:** login, cadastro, logout e expiração passam por `startSession`/`endSession` (`shared/session/session-lifecycle.ts`), que primeiro chamam `queryClient.clear()` e só depois aplicam a nova identidade. Nenhum dado do colecionador anterior (favoritos, carrinho, perfil, pedidos) chega a renderizar. Ouvintes de troca de identidade (`onIdentityChange`) avisam o cliente de tempo real.
+- **Carrinho do visitante:** no login ou cadastro, a API mescla o carrinho do `X-Visitor-Id` no do colecionador.
+- **Expiração:** o interceptor do Axios emite `session-expired` quando uma requisição que levava sessão recebe `SESSION_EXPIRED` ou `UNAUTHORIZED`. Um 401 de senha errada no login não conta.
+  - Com sessão conhecida, o app limpa o cache, avisa e leva a `/entrar?redirect=<página atual>`. Depois do login, volta exatamente para lá.
+  - Um token velho encontrado no início (por exemplo, depois de um reset dos mocks) só é descartado, sem redirecionar quem está numa página pública.
+- **Validação:** os formulários usam react-hook-form + zod, com o mesmo schema do contrato.
+  - **Senha:** mínimo de 8 caracteres.
+  - **Erros da API:** os erros por campo (`EMAIL_TAKEN`, `USERNAME_TAKEN`, `WRONG_PASSWORD`, endereço de carteira) vão para o campo, via `fields` do envelope de erro. Os demais aparecem no topo do formulário com `role="alert"`, sem apagar o que foi digitado.
+- **Perfil:**
+  - Dados e senha compartilham um único "Salvar", como no layout. Cada parte informa o próprio resultado.
+  - O avatar é enviado na hora: tipo (PNG, JPEG, WebP) e tamanho (até 1 MB) são validados antes do envio, e uma prévia local aparece enquanto ele sobe.
+  - O nome e o avatar salvos atualizam a sessão em cache, então o header muda sem nova requisição.
+- **Carteiras:** a principal e a secundária usam o mesmo formulário. A secundária começa vazia, com a opção de copiar os dados da principal. A consulta fica em `shared/wallets/` porque o checkout também usa.
+- **Mobile:** o perfil não tem frame no Figma. `/perfil` vira a lista de seções, e `/perfil/dados` e `/perfil/carteiras` abrem cada uma com um link para voltar.
 
 ## Cliente HTTP e erros
 
@@ -266,6 +293,8 @@ Ajustes por domínio:
 | Relacionados        | 60 s          | Vitrine secundária.                                                                                     |
 | Sessão              | 5 min         | Revalidada no login, no logout e em respostas 401; não precisa de polling.                              |
 | Carrinho            | 15 s          | Atualizado pelas mutations; uma janela curta cobre mudanças vindas de outra aba.                        |
+| Perfil              | 60 s          | Muda só por edição do próprio colecionador, que grava a resposta no cache.                              |
+| Carteiras           | 60 s          | Idem; a mesma consulta abastece o checkout.                                                             |
 
 Regras que valem para todo o projeto:
 

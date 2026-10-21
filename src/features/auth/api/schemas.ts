@@ -30,3 +30,12 @@ export const registerRequestSchema = z.object({
 export type AuthResponse = z.infer<typeof authResponseSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
+
+/** Register form: the API payload plus the confirmation field of the layout. */
+export const registerFormSchema = registerRequestSchema
+  .extend({ confirmPassword: z.string().min(1, "Confirme sua senha.") })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "As senhas não coincidem.",
+  });
+export type RegisterForm = z.infer<typeof registerFormSchema>;

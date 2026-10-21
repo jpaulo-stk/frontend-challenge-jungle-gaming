@@ -2,7 +2,7 @@ import { getRouteApi } from "@tanstack/react-router";
 
 import type { CatalogSearch } from "@/features/catalog/routes/catalog-search";
 
-const routeApi = getRouteApi("/");
+const routeApi = getRouteApi("/_catalog");
 
 type FilterPatch = Partial<Omit<CatalogSearch, "page">>;
 
@@ -16,6 +16,7 @@ export function useCatalogFilters() {
 
   const updateFilters = (patch: FilterPatch, options: { replace?: boolean } = {}) => {
     void navigate({
+      to: "/",
       search: (previous) => ({ ...previous, ...patch, page: undefined }),
       replace: options.replace ?? false,
       resetScroll: false,
@@ -24,13 +25,17 @@ export function useCatalogFilters() {
 
   const clearFilters = () => {
     void navigate({
+      to: "/",
       search: { tab: search.tab, sort: search.sort },
       resetScroll: false,
     });
   };
 
   const goToPage = (page: number) => {
-    void navigate({ search: (previous) => ({ ...previous, page: page > 1 ? page : undefined }) });
+    void navigate({
+      to: "/",
+      search: (previous) => ({ ...previous, page: page > 1 ? page : undefined }),
+    });
   };
 
   return { search, updateFilters, clearFilters, goToPage };

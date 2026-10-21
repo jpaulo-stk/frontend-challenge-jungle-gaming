@@ -7,6 +7,7 @@ import { getVisitorId } from "@/shared/api/visitor-id";
 
 const SESSION_HEADER = "Authorization";
 const VISITOR_HEADER = "X-Visitor-Id";
+const sessionErrorCodes = new Set(["SESSION_EXPIRED", "UNAUTHORIZED"]);
 
 /** The only HTTP client of the app. Transport concerns only — no business rules. */
 export const http = axios.create({
@@ -24,9 +25,9 @@ http.interceptors.request.use((config) => {
 
 http.interceptors.response.use(undefined, (error: unknown) => {
   const appError = toAppError(error);
-  // Only a request that carried a session can "expire"; anonymous 401s (e.g. a
-  // failed login) are ordinary errors for the caller to handle.
+  // Only a request that carried a session can "expire", and only a session
+  // error counts: a wrong password on login is an ordinary 401 for the caller.
   const hadSession = isAxiosError(error) && error.config?.headers.has(SESSION_HEADER) === true;
-  if (appError.status === 401 && hadSession) emitSessionExpired();
+  if (hadSession && sessionErrorCodes.has(appError.code)) emitSessionExpired();
   return Promise.reject(appError);
 });
