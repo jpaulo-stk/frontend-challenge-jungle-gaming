@@ -1,0 +1,24 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Lighthouse (final reports are committed; intermediate runs are not)
+/lighthouse/tmp/
+
+# Logs and editors
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/

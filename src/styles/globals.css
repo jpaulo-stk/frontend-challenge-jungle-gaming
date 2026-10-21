@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Design tokens measured from the Figma export (see design/DESIGN-TOKENS.md). */
+@theme {
+  --color-bg: #140d0a;
+  --color-surface: #241612;
+  --color-surface-2: #2f1d15;
+  --color-surface-3: #38220f;
+  --color-border: #3f2319;
+  --color-border-strong: #55321f;
+  --color-primary: #d28a4c;
+  --color-primary-hi: #e89b55;
+  --color-primary-alt: #e3a44e;
+  --color-text: #f5f1eb;
+  --color-text-muted: #cfb28c;
+  --color-text-dim: #b39463;
+  --color-danger: #f0805f;
+  --color-success: #00a66c;
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 16px;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary-hi);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,12 @@
+pnpm-lock.yaml
+dist
+playwright-report
+test-results
+lighthouse
+design
+public/mockServiceWorker.js
+
+# Only the project docs are formatted; other markdown is reference material kept verbatim.
+**/*.md
+!/README.md
+!/ARCHITECTURE.md
