@@ -1,6 +1,15 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource/jetbrains-mono/latin-400.css";
+@import "@fontsource/jetbrains-mono/latin-500.css";
+@import "@fontsource/jetbrains-mono/latin-700.css";
 
-/* Design tokens measured from the Figma export (see design/DESIGN-TOKENS.md). */
+/* The product is dark-only: <html class="dark"> is set in index.html. */
+@custom-variant dark (&:is(.dark *));
+
+/* Design tokens measured from the Figma export (see design/DESIGN-TOKENS.md).
+   This is the only place in the codebase where raw colors are declared. */
 @theme {
   --color-bg: #140d0a;
   --color-surface: #241612;
@@ -16,25 +25,88 @@
   --color-text-dim: #b39463;
   --color-danger: #f0805f;
   --color-success: #00a66c;
+  --color-overlay: rgb(10 6 5 / 0.72);
 
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-mono);
 
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 16px;
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+/* shadcn/ui semantic names, mapped onto the Kurio palette. */
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
+  --color-primary-foreground: var(--color-bg);
+  --color-secondary: var(--color-surface-2);
+  --color-secondary-foreground: var(--color-text);
+  --color-muted: var(--color-surface-2);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-surface-2);
+  --color-accent-foreground: var(--color-text);
+  --color-destructive: var(--color-danger);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-primary-hi);
+}
+
+/* Fixed 1200px content column of the layout, fluid below it. */
+@utility page-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: calc(1200px + 2 * 20px);
+  padding-inline: 20px;
 }
 
 @layer base {
   html {
     color-scheme: dark;
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-mono);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background font-mono text-foreground antialiased;
+  }
+
+  * {
+    @apply border-border outline-ring;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-primary-hi);
+    outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

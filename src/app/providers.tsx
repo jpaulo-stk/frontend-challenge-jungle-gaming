@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 
 import { queryClient } from "@/app/query-client";
 import { router } from "@/app/router";
+import { TooltipProvider } from "@/shared/ui/tooltip";
 
 // Loaded on demand and only in development, so it never ships in the build.
 const ReactQueryDevtools = import.meta.env.DEV
@@ -18,7 +19,9 @@ const ReactQueryDevtools = import.meta.env.DEV
 export function AppProviders() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <TooltipProvider delayDuration={300}>
+        <RouterProvider router={router} />
+      </TooltipProvider>
       <Toaster position="bottom-right" theme="dark" closeButton />
       {ReactQueryDevtools && (
         <Suspense fallback={null}>

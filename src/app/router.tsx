@@ -1,5 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, createRoute, createRouter } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  createRoute,
+  createRouter,
+  lazyRouteComponent,
+} from "@tanstack/react-router";
 
 import { queryClient } from "@/app/query-client";
 import { NotFoundPage } from "@/app/not-found-page";
@@ -106,7 +111,20 @@ const walletsRoute = createRoute({
   component: WalletsPage,
 });
 
+// Component catalog for visual review. Development only: in production builds
+// `import.meta.env.DEV` is false and the whole branch, import included, is dropped.
+const devRoutes = import.meta.env.DEV
+  ? [
+      createRoute({
+        getParentRoute: () => rootRoute,
+        path: "/__ui",
+        component: lazyRouteComponent(() => import("@/app/dev/ui-catalog-page"), "UiCatalogPage"),
+      }),
+    ]
+  : [];
+
 const routeTree = rootRoute.addChildren([
+  ...devRoutes,
   homeRoute,
   nftDetailRoute,
   cartRoute,

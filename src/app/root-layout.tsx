@@ -1,4 +1,11 @@
-import { Link, Outlet } from "@tanstack/react-router";
+import { Outlet } from "@tanstack/react-router";
+
+import { AppFooter } from "@/shared/ui/app-footer";
+import { AppHeader } from "@/shared/ui/app-header";
+import { AppTabBar } from "@/shared/ui/app-tab-bar";
+
+// Cart count and session come from the API once those features exist.
+const VISITOR = { cartCount: 0, user: null };
 
 export function RootLayout() {
   return (
@@ -9,16 +16,12 @@ export function RootLayout() {
       >
         Pular para o conteúdo
       </a>
-      <header className="border-b border-border">
-        <div className="mx-auto flex h-[72px] w-full max-w-[1200px] items-center px-5 xl:px-0">
-          <Link to="/" className="text-sm font-bold tracking-[0.18em] text-text">
-            KURIO
-          </Link>
-        </div>
-      </header>
+      <AppHeader cartCount={VISITOR.cartCount} user={VISITOR.user} />
       <main id="conteudo" tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
+      <AppFooter />
+      <AppTabBar cartCount={VISITOR.cartCount} />
     </div>
   );
 }

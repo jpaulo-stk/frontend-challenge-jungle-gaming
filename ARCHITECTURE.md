@@ -113,6 +113,75 @@ Cada dependência fora da stack obrigatória tem uma justificativa:
 | `eslint-import-resolver-typescript`                        | Resolve o alias `@/` para o `eslint-plugin-boundaries`.                                             |
 | `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh` | Regras de hooks e compatibilidade com HMR.                                                          |
 | `prettier`                                                 | Formatação consistente.                                                                             |
+| `radix-ui`                                                 | Primitivos acessíveis (foco preso, teclado, ARIA) por trás dos componentes shadcn/ui.               |
+| `class-variance-authority`                                 | Variantes tipadas dos componentes (botão, badge, stepper).                                          |
+| `cn`                                                       | Junção de classes com resolução de conflitos do Tailwind, usada pelos componentes shadcn/ui.        |
+| `vaul`                                                     | Drawer inferior com gesto de arrastar, base do `drawer` do shadcn/ui no mobile.                     |
+| `shadcn`, `tw-animate-css` (dev)                           | CLI que gera os componentes e as variantes/animações de CSS que eles usam; só atuam no build.       |
+
+## Design system
+
+### Tokens
+
+Todas as cores, raios e a fonte estão declarados uma única vez, no `@theme` de `src/styles/globals.css`, com os valores medidos no Figma. Nenhum `.ts`/`.tsx` contém cor literal.
+
+Os nomes semânticos do shadcn/ui (`background`, `card`, `muted`, `ring`…) são mapeados em `@theme inline` para a paleta Kurio. Assim os componentes gerados herdam o tema sem que a paleta neutra de fábrica sobreviva em lugar nenhum. O produto é só escuro: `<html class="dark">`.
+
+### Componentes shadcn/ui adaptados
+
+Ficam em `src/shared/ui/` (alias configurado em `components.json`). O que mudou em relação ao padrão:
+
+- **Botão:** variantes `default` (fundo `--primary`, texto `--bg`), `outline` (borda `--primary`), `ghost`, `destructive` e `link`.
+  - Abaixo de `md`, 56px de altura e formato pill, como nos frames mobile.
+  - A partir de `md`, 44px de altura e raio 6, como nos frames desktop.
+  - `aria-disabled` tem estilo próprio (ver "Ações fora do escopo").
+- **Input e select:** fundo `--surface`, borda de 1,5px, placeholder `--text-dim`. No foco a borda fica `--primary` com anel; quando inválido, `--danger`. Altura de 56px no mobile e 44px no desktop.
+- **Abas:** variante de linha, com item ativo em `--primary-hi` e sublinhado. Rolam horizontalmente quando não cabem (360px).
+- **Slider:** trilho `--border-strong`, faixa e polegares `--primary`.
+- **Checkbox e radio:** 20px com borda de 1,5px.
+- **Diálogo:** 500px de largura, `--surface`, overlay escurecido e rótulo "Fechar".
+- **Foco:** todos os controles usam anel `--primary-hi` com deslocamento. O fallback global de `:focus-visible` cobre qualquer elemento sem estilo próprio.
+
+O `form` antigo do shadcn não existe mais no estilo atual (`radix-nova`). O substituto é o `field`, combinado com react-hook-form nas telas de formulário.
+
+### Componentes próprios
+
+| Componente                                   | Observação                                                                                                                                      |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app-header`                                 | Desktop (≥768px). O item ativo usa o `data-status` do TanStack Router.                                                                          |
+| `app-tab-bar`                                | Mobile (<768px): barra fixa de 72px com ação central de 56px, como no frame `mobile-01-inicio`.                                                 |
+| `app-footer`                                 | Três faixas (250/88/236) com as colunas exatas do Figma a partir de 1280px; abaixo disso as colunas são fluidas.                                |
+| `nft-card`                                   | Caixa de 258×300 com arte de 250×250 (raio 15). A barra de ações aparece no hover **e** com foco dentro do card; no mobile fica sempre visível. |
+| `price`                                      | Recebe string decimal; o preço anterior é riscado **e** anunciado como "Preço anterior" (não depende só de cor).                                |
+| `quantity-stepper`                           | Desabilita nos limites, anuncia o valor com `aria-live` e explica o limite da edição.                                                           |
+| `empty-state`, `error-state`, `inline-error` | Estados não desenhados no mesmo padrão visual (`--surface`, borda `--border`, texto `--text-muted`).                                            |
+| `skeleton/*`                                 | Mesmas dimensões do conteúdo real (o skeleton do card mede 258×300, verificado em teste). O shimmer para sob `prefers-reduced-motion`.          |
+| `social-icon`                                | Ícones de marca copiados dos paths do SVG do Figma, porque o lucide não traz mais ícones de marca.                                              |
+
+O catálogo de componentes em `/__ui` mostra tudo nos estados normal, foco, desabilitado, erro e carregando. A rota só existe em desenvolvimento: no build de produção, o ramo inteiro, incluindo o `import()`, é eliminado.
+
+### Contraste
+
+Todas as combinações de cor em uso foram verificadas contra o critério de 4,5:1:
+
+- Texto `--text`, `--text-muted`, `--text-dim`, `--primary`, `--primary-hi`, `--danger` e `--success` sobre `--bg`, `--surface`, `--surface-2` e `--surface-3`.
+- Texto `--bg` sobre `--primary`, `--primary-hi` e `--primary-alt`.
+
+A menor razão é 4,75:1 (`--success` sobre `--surface-3`). A maior parte das combinações fica acima de 6:1.
+
+### Ações fora do escopo
+
+O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads, e pede que ações fora do escopo não pareçam funcionar. Os controles do layout que levam a esses destinos usam `UnavailableAction`:
+
+- Exemplos: "Criadores" e "Aprenda" no header, os links de ajuda e redes sociais do rodapé, a newsletter e "Favoritos" na tab bar.
+- O botão continua focável e tem `aria-disabled="true"`.
+- O nome acessível ganha o sufixo "(indisponível nesta demonstração)".
+- Ao ser acionado, mostra um aviso informativo em toast. Nunca mostra um aviso de sucesso.
+
+### Decisões de navegação
+
+- **Mercado:** no Figma, "Mercado" é a listagem do catálogo, que fica na própria Início. O link leva a `/#catalogo`.
+- **Busca:** no desktop, o ícone de busca leva a `/#busca`. No mobile, a ação central da tab bar faz o mesmo.
 
 ## Ferramentas
 
@@ -121,4 +190,8 @@ Cada dependência fora da stack obrigatória tem uma justificativa:
 
 ## Substituição de assets
 
-- **Fonte:** o export do Figma vetorizou os textos, então o nome da fonte não está no arquivo. A comparação de glifos (zero pontilhado, `1` com base reta, caixa-alta geométrica) indica **JetBrains Mono**, servida localmente via `@fontsource/jetbrains-mono`. O token `--font-mono` já aponta para ela; o carregamento dos pesos 400/500/700 (com `font-display: swap` e preload do 400) entra junto com o design system.
+- **Fonte:** o export do Figma vetorizou os textos, então o nome da fonte não está no arquivo. A comparação de glifos (zero pontilhado, `1` com base reta, caixa-alta geométrica) indica **JetBrains Mono**, servida localmente via `@fontsource/jetbrains-mono`.
+  - Pesos: 400, 500 e 700, só no subconjunto `latin`, que cobre os acentos do português.
+  - Carregamento: `font-display: swap`.
+  - Preload: o peso 400 é pré-carregado por um plugin do Vite (`vite.config.ts`) que injeta a tag com o nome do arquivo já com hash.
+- **Artes dos NFTs:** as 4 artes do Figma estão em `public/nfts/`, nas versões `-400.webp` (cards) e `-800.webp` (detalhe). Os PNGs originais de 1254px (~2 MB cada) não são usados na aplicação.

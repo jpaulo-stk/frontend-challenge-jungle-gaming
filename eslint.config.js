@@ -77,6 +77,16 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // shadcn/ui convention: cva variant helpers live next to their component.
+      "react-refresh/only-export-components": [
+        "error",
+        {
+          allowConstantExport: true,
+          allowExportNames: ["buttonVariants", "badgeVariants", "tabsListVariants"],
+        },
+      ],
+    },
   },
   {
     // Tooling entry points that must use default exports.

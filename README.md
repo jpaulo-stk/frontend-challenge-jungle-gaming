@@ -34,6 +34,8 @@ pnpm dev                                # http://localhost:5173
 
 O relatório HTML do Playwright fica em `playwright-report/`, e os traces das falhas em `test-results/`.
 
+Com `pnpm dev` rodando, `http://localhost:5173/__ui` mostra o catálogo de componentes do design system. A rota só existe em desenvolvimento.
+
 ## Versões instaladas
 
 | Ferramenta                           | Versão   |

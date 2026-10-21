@@ -4,8 +4,8 @@ test("abre a home", async ({ page }) => {
   await page.goto("/");
 
   await expect(page).toHaveTitle("Kurio — Marketplace de NFTs");
-  await expect(page.getByRole("link", { name: "KURIO" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "Início" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Principal" })).toBeVisible();
 });
 
 test("rota inexistente mostra a página 404 do projeto", async ({ page }) => {
