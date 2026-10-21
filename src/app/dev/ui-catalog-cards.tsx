@@ -32,7 +32,7 @@ export function UiCatalogCards() {
 
   return (
     <UiCatalogSection title="Card de NFT">
-      <div className="grid w-full grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:w-auto lg:grid-cols-[repeat(3,258px)] lg:gap-x-[34px]">
+      <div className="grid w-full grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:w-auto lg:grid-cols-[repeat(3,258px)] lg:gap-x-8.5">
         {query.data
           ? query.data.items.map((nft) => (
               <NftCard

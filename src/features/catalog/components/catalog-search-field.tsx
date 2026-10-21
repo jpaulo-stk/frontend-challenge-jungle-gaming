@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { useCatalogFilters } from "@/features/catalog/hooks/use-catalog-filters";
 
 const DEBOUNCE_MS = 350;
+/** Hash used by the header icon and the tab bar action to land in the search. */
+const SEARCH_HASH = "busca";
 
 type CatalogSearchFieldProps = {
   id: string;
@@ -37,10 +39,13 @@ export function CatalogSearchField({ id, className }: CatalogSearchFieldProps) {
 
   const input = useRef<HTMLInputElement>(null);
   const hash = useLocation({ select: (location) => location.hash });
-  // The header's search icon links to #busca: land in the field, ready to type.
+  // The header icon and the tab bar action link to #busca. There is one field
+  // in the sidebar (desktop) and one above the hero (smaller screens): the
+  // one on screen takes the focus, ready to type.
   useEffect(() => {
-    if (hash === id) input.current?.focus({ preventScroll: false });
-  }, [hash, id]);
+    const field = input.current;
+    if (hash === SEARCH_HASH && field && field.getClientRects().length > 0) field.focus();
+  }, [hash]);
 
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(

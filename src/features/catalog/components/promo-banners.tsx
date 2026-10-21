@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/shared/ui/button";
 
 const explore = buttonVariants({
-  className: "mt-4 h-10 w-[140px] gap-1 text-base md:h-10 md:rounded-md",
+  className: "mt-4 h-10 w-35 gap-1 text-base md:h-10 md:rounded-md",
 });
 
 const art = (n: number) => ({
@@ -19,7 +19,7 @@ export function PromoBanners() {
       aria-label="Destaques da curadoria"
       className="page-container mt-24 grid gap-7 md:grid-cols-2"
     >
-      <article className="grid overflow-hidden md:grid-cols-[minmax(0,292px)_1fr] rounded-lg bg-surface md:min-h-[250px]">
+      <article className="grid overflow-hidden md:grid-cols-[minmax(0,292px)_1fr] rounded-lg bg-surface md:min-h-62.5">
         <img
           {...art(1)}
           sizes="292px"
@@ -27,7 +27,7 @@ export function PromoBanners() {
           width={292}
           height={250}
           loading="lazy"
-          className="h-[180px] w-full rounded-[18px] object-cover md:h-0 md:min-h-full"
+          className="h-45 w-full rounded-[18px] object-cover md:h-0 md:min-h-full"
         />
         <div className="flex flex-col items-start justify-center p-5 md:items-end md:py-6 md:pr-6 md:pl-3 md:text-right">
           <h2 className="text-lg leading-6 font-bold text-text">
@@ -43,7 +43,7 @@ export function PromoBanners() {
         </div>
       </article>
 
-      <article className="grid overflow-hidden md:grid-cols-[minmax(0,287px)_1fr] rounded-lg bg-surface md:min-h-[250px]">
+      <article className="grid overflow-hidden md:grid-cols-[minmax(0,287px)_1fr] rounded-lg bg-surface md:min-h-62.5">
         <img
           {...art(3)}
           sizes="287px"
@@ -51,7 +51,7 @@ export function PromoBanners() {
           width={287}
           height={250}
           loading="lazy"
-          className="h-[180px] w-full rounded-[17px] object-cover md:h-0 md:min-h-full"
+          className="h-45 w-full rounded-[17px] object-cover md:h-0 md:min-h-full"
         />
         <div className="flex flex-col items-start justify-center p-5 md:items-end md:py-6 md:pr-6 md:pl-3 md:text-right">
           <h2 className="text-lg leading-6 font-bold text-text">

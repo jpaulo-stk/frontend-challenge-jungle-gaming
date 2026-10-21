@@ -54,6 +54,23 @@ test.describe("sessão", { tag: "@desktop" }, () => {
     await expect(page.getByRole("heading", { name: "Carteira principal" })).toBeVisible();
   });
 
+  test("fechar o login que uma página privada pediu volta para onde estava", async ({ page }) => {
+    await openWithScenario(page);
+    await page.goto("/carrinho");
+    await page.getByRole("contentinfo").getByRole("link", { name: "Lista de interesse" }).click();
+    await expect(page).toHaveURL(/\/entrar\?redirect=%2Ffavoritos/);
+    await page.keyboard.press("Escape");
+    await expect(page).toHaveURL("/carrinho");
+  });
+
+  test("Sair no header encerra a sessão", async ({ page }) => {
+    await openWithScenario(page);
+    await signIn(page);
+    await page.getByRole("banner").getByRole("button", { name: "Sair da conta" }).click();
+    await expect(page.getByText("Você saiu da sua conta.")).toBeVisible();
+    await expect(page.getByRole("banner").getByRole("link", { name: "Entrar" })).toBeVisible();
+  });
+
   test("carrinho do visitante é preservado ao entrar", async ({ page }) => {
     await openWithScenario(page);
     // The app creates the visitor id on its first request.
@@ -101,7 +118,7 @@ test.describe("sessão", { tag: "@desktop" }, () => {
     await expect(page.getByRole("heading", { level: 3, name: "Emerald Ape #042" })).toBeVisible();
 
     await page.goto("/perfil");
-    await page.getByRole("button", { name: "Sair" }).click();
+    await page.getByRole("button", { name: "Sair", exact: true }).click();
     await expect(page.getByText("Você saiu da sua conta.")).toBeVisible();
     await expect(page.getByRole("banner").getByRole("link", { name: "Entrar" })).toBeVisible();
 
@@ -136,6 +153,19 @@ test.describe("sessão", { tag: "@desktop" }, () => {
 });
 
 test.describe("perfil", { tag: "@desktop" }, () => {
+  test("erros dos dados e da senha aparecem no mesmo envio", async ({ page }) => {
+    await openWithScenario(page);
+    await signIn(page);
+    await page.goto("/perfil/dados");
+    await page.getByLabel(/^Nome de exibição/).fill("");
+    await page.getByLabel(/^Nova senha/).fill("curta");
+    await page.getByRole("button", { name: "Salvar", exact: true }).click();
+
+    await expect(page.getByText("Informe o nome de exibição.")).toBeVisible();
+    await expect(page.getByText("Informe a senha atual.")).toBeVisible();
+    await expect(page.getByText("Use pelo menos 8 caracteres.")).toBeVisible();
+  });
+
   test("edição persiste após refresh e atualiza o header", async ({ page }) => {
     await openWithScenario(page);
     await signIn(page);

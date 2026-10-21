@@ -60,7 +60,7 @@ export function AvatarField({ avatarUrl, name }: AvatarFieldProps) {
     <div>
       <p className="mb-3 text-[15px] text-text">Avatar</p>
       <div className="flex items-center gap-6" aria-busy={busy}>
-        <span className="flex size-[50px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-2 text-primary">
+        <span className="flex size-12.5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-2 text-primary">
           {shown ? (
             <img src={shown} alt={`Avatar de ${name}`} className="size-full object-cover" />
           ) : (
@@ -82,7 +82,7 @@ export function AvatarField({ avatarUrl, name }: AvatarFieldProps) {
         <Button
           type="button"
           size="sm"
-          className="h-10 w-[98px]"
+          className="h-10 w-24.5"
           disabled={busy}
           aria-describedby={error ? "avatar-error" : undefined}
           onClick={() => input.current?.click()}

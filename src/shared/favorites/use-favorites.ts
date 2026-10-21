@@ -9,6 +9,7 @@ import type { AppError } from "@/shared/api/errors";
 import { favoriteKeys } from "@/shared/api/query-keys";
 import { favoritesQueryOptions } from "@/shared/favorites/favorites-api";
 import { useSession } from "@/shared/session/session-api";
+import { announce } from "@/shared/lib/announce";
 
 type ToggleInput = { nft: NftSummary; favorite: boolean };
 type ToggleContext = { previous: FavoritesResponse | undefined };
@@ -16,7 +17,9 @@ type ToggleContext = { previous: FavoritesResponse | undefined };
 /**
  * Favorite state for cards and the detail page. The toggle is optimistic: the
  * heart changes at once and rolls back, with an accessible error, if the API
- * refuses. Visitors are sent to login and brought back afterwards.
+ * refuses. Success is only announced to screen readers (the heart already
+ * shows it); a failure also gets a toast. Visitors are sent to login and
+ * brought back afterwards.
  */
 export function useFavorites() {
   const queryClient = useQueryClient();
@@ -51,7 +54,7 @@ export function useFavorites() {
       );
     },
     onSuccess: (_data, { nft, favorite }) => {
-      toast.success(favorite ? `${nft.name} foi favoritado.` : `${nft.name} saiu dos favoritos.`);
+      announce(favorite ? `${nft.name} foi favoritado.` : `${nft.name} saiu dos favoritos.`);
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.list() }),
   });

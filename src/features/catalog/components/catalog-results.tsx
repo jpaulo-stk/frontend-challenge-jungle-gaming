@@ -18,7 +18,7 @@ import { Pagination } from "@/shared/ui/pagination";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
 
 const gridClassName =
-  "grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-[repeat(3,258px)] lg:gap-x-[34px] lg:gap-y-14";
+  "grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-[repeat(3,258px)] lg:gap-x-8.5 lg:gap-y-14";
 
 /** Catalog grid with skeleton, empty, error and background-refresh states. */
 export function CatalogResults() {

@@ -13,7 +13,7 @@ export function ProfileDataPage() {
     return (
       <div aria-busy="true" aria-label="Carregando perfil" className="grid gap-8 md:grid-cols-2">
         {Array.from({ length: 6 }, (_, index) => (
-          <Skeleton key={index} className="h-[78px]" />
+          <Skeleton key={index} className="h-19.5" />
         ))}
       </div>
     );

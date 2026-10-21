@@ -34,7 +34,7 @@ export function MobileActionBar({ name, price, purchase }: MobileActionBarProps)
       </div>
       <div className="mt-5 flex items-center gap-3">
         <Button
-          className="h-[60px] flex-1 bg-linear-to-r from-primary-alt to-primary text-base"
+          className="h-15 flex-1 bg-linear-to-r from-primary-alt to-primary text-base"
           disabled={!purchase.canBuy}
           onClick={purchase.buy}
         >
@@ -43,7 +43,7 @@ export function MobileActionBar({ name, price, purchase }: MobileActionBarProps)
         <Button
           size="icon"
           variant="ghost"
-          className="size-[60px] rounded-full bg-surface-2 text-primary-hi"
+          className="size-15 rounded-full bg-surface-2 text-primary-hi"
           disabled={!purchase.canBuy}
           onClick={purchase.addToCart}
         >

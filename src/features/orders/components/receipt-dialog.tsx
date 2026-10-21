@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
+import { ThankYouIcon } from "@/features/orders/components/thank-you-icon";
 import type { Order } from "@/shared/api/contracts/order";
 import { compareEth, formatEth } from "@/shared/lib/eth";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/shared/ui/dialog";
@@ -15,26 +16,6 @@ function receiptDate(iso: string): string {
 
 const shortHash = (hash: string) =>
   `${hash.slice(0, 6).toUpperCase().replace("0X", "0x")}…${hash.slice(-4).toUpperCase()}`;
-
-function EnvelopeIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 68 82" className="h-[82px] w-[68px] text-primary">
-      <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-        <path d="M30 6 34 2l4 4" />
-        <rect x="8" y="6" width="52" height="40" rx="2" />
-        <path d="M2 38v40h64V38" />
-        <path d="M2 78 28 54h12l26 24" />
-        <path d="M2 38l20 16M66 38 46 54" />
-      </g>
-      <text x="34" y="22" textAnchor="middle" className="fill-current text-[11px] font-bold">
-        THANK
-      </text>
-      <text x="34" y="35" textAnchor="middle" className="fill-current text-[11px] font-bold">
-        YOU
-      </text>
-    </svg>
-  );
-}
 
 type ReceiptDialogProps = {
   order: Order;
@@ -57,10 +38,10 @@ export function ReceiptDialog({ order, onClose }: ReceiptDialogProps) {
     >
       <DialogContent
         aria-describedby="receipt-summary"
-        className="max-h-dvh gap-0 overflow-y-auto border-0 bg-surface p-0 text-text max-md:inset-0 max-md:h-dvh max-md:max-w-none max-md:translate-0 max-md:rounded-none sm:max-w-[578px] md:rounded-none"
+        className="max-h-dvh gap-0 overflow-y-auto border-0 bg-surface p-0 text-text max-md:inset-0 max-md:h-dvh max-md:max-w-none max-md:translate-0 max-md:rounded-none sm:max-w-144.5 md:rounded-none"
       >
         <div className="flex flex-col items-center gap-5 px-6 pt-6 pb-5">
-          <EnvelopeIcon />
+          <ThankYouIcon className="h-20 w-16.5 text-primary" />
           <DialogTitle className="text-center text-base font-bold text-primary-hi">
             Seus NFTs agora estão na sua carteira
           </DialogTitle>
@@ -120,7 +101,7 @@ export function ReceiptDialog({ order, onClose }: ReceiptDialogProps) {
                         alt={line.image.alt}
                         width={70}
                         height={70}
-                        className="size-[56px] shrink-0 rounded-md object-cover md:size-[70px]"
+                        className="size-14 shrink-0 rounded-md object-cover md:size-17.5"
                       />
                       <div className="min-w-0">
                         <p className="text-[15px] font-bold">{line.name}</p>
@@ -139,7 +120,7 @@ export function ReceiptDialog({ order, onClose }: ReceiptDialogProps) {
             </tbody>
           </table>
 
-          <dl className="mt-4 flex flex-col gap-1 border-b border-border pb-2 text-[15px] md:pl-[170px]">
+          <dl className="mt-4 flex flex-col gap-1 border-b border-border pb-2 text-[15px] md:pl-42.5">
             {compareEth(order.discount, "0") > 0 && (
               <div className="flex justify-between">
                 <dt>Desconto{order.coupon ? ` (${order.coupon.code})` : ""}</dt>

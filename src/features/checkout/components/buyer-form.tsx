@@ -105,7 +105,7 @@ export function BuyerForm({ form, onUseOtherWallet }: BuyerFormProps) {
       <label className="mt-6 flex w-fit cursor-pointer items-center gap-2 text-[15px] text-text">
         <input
           type="checkbox"
-          className="size-4 appearance-none rounded-full border-[1.5px] border-primary checked:border-[5px]"
+          className="size-4 appearance-none rounded-full border-[1.5px] border-primary checked:border-5"
           {...form.register("useOtherWallet", {
             onChange: (event: { target: { checked: boolean } }) => {
               onUseOtherWallet(event.target.checked);
@@ -126,7 +126,7 @@ export function BuyerForm({ form, onUseOtherWallet }: BuyerFormProps) {
             rows={6}
             aria-invalid={invalid ? true : undefined}
             aria-describedby={describedBy}
-            className={`${fieldControlClassName} h-[152px] resize-y py-3 md:h-[152px]`}
+            className={`${fieldControlClassName} h-38 resize-y py-3 md:h-38`}
             {...form.register("note")}
           />
         )}

@@ -74,7 +74,7 @@ export function CartPage() {
       )}
 
       {items.length > 0 && (
-        <div className="mt-4 grid gap-8 lg:grid-cols-[782px_1fr] lg:gap-[86px]">
+        <div className="mt-4 grid gap-8 lg:grid-cols-[782px_1fr] lg:gap-21.5">
           <section aria-label="Itens do carrinho">
             <div
               aria-hidden="true"

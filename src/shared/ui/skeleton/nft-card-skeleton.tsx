@@ -10,7 +10,7 @@ type NftCardSkeletonProps = {
 export function NftCardSkeleton({ className }: NftCardSkeletonProps) {
   return (
     <div className={cn("flex flex-col", className)}>
-      <div className="flex aspect-[258/300] items-center justify-center bg-surface max-md:rounded-xl">
+      <div className="flex aspect-258/300 items-center justify-center bg-surface max-md:rounded-xl">
         <Skeleton className="aspect-square w-[calc(100%-8px)] rounded-[15px]" />
       </div>
       {/* Line boxes match the card's title (24px) and price (28px) exactly. */}

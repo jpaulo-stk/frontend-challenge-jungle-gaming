@@ -108,22 +108,28 @@ function SummaryLine({ item, issues, excluded, locked, onToggle }: SummaryLinePr
         problems.length > 0 && !excluded && "outline-[1.5px] outline-danger outline-solid",
       )}
     >
-      <div className={cn("flex items-center gap-2 p-1 pr-3", excluded && "opacity-60")}>
+      {/* Narrow screens: quantity and subtotal go to a second line, so the name fits. */}
+      <div
+        className={cn(
+          "grid grid-cols-[70px_minmax(0,1fr)_auto] items-center gap-x-3 p-1 pr-3 sm:grid-cols-[70px_minmax(0,1fr)_auto_auto]",
+          excluded && "opacity-60",
+        )}
+      >
         <img
           src={item.image.src}
           alt={item.image.alt}
           width={70}
           height={70}
-          className="size-[70px] shrink-0 rounded-md object-cover"
+          className="row-span-2 size-17.5 rounded-md object-cover sm:row-span-1"
         />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-bold text-text">{item.name}</p>
+        <div className="col-span-2 min-w-0 sm:col-span-1">
+          <p className="text-base font-bold text-text sm:truncate">{item.name}</p>
           <p className="truncate text-sm text-text-muted">ID do token: {item.tokenId}</p>
         </div>
-        <span className="shrink-0 text-sm text-text-muted">
+        <span className="text-sm text-text-muted">
           <span className="sr-only">Quantidade: </span>(x {item.quantity})
         </span>
-        <span className="shrink-0 text-right text-lg font-bold text-primary-hi">
+        <span className="text-right text-lg font-bold whitespace-nowrap text-primary-hi">
           {excluded ? <span className="sr-only">Fora desta compra: </span> : null}
           {formatEth(item.lineTotal)}
         </span>

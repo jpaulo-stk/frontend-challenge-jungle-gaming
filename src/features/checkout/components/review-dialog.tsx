@@ -34,7 +34,7 @@ export function ReviewDialog({ review, busy, onAccept, onClose, children }: Revi
       }}
     >
       {review && (
-        <DialogContent className="sm:max-w-[560px]">
+        <DialogContent className="sm:max-w-140">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <TriangleAlert aria-hidden="true" className="size-5 text-primary-hi" />

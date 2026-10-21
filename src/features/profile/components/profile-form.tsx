@@ -166,7 +166,7 @@ export function ProfileFormView({ profile }: { profile: Profile }) {
       <Button
         type="submit"
         size="sm"
-        className="mt-8 h-10 w-[131px] text-base"
+        className="mt-8 h-10 w-32.75 text-base"
         disabled={isSubmitting}
       >
         {isSubmitting ? "Salvando…" : "Salvar"}

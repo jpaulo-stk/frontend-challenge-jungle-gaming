@@ -55,8 +55,12 @@ test.describe("catálogo — estado na URL", { tag: "@desktop" }, () => {
     await openWithScenario(page, { scenario: "jitter", latency: null });
     const search = page.getByRole("searchbox", { name: "Buscar NFTs" });
 
+    // Type "ivory" only once the "golden" request is in flight (past the debounce).
+    const goldenSent = page.waitForRequest(
+      (request) => request.url().includes("/api/nfts?") && request.url().includes("q=golden"),
+    );
     await search.fill("golden");
-    await page.waitForTimeout(400); // past the debounce: the "golden" request is in flight
+    await goldenSent;
     await search.fill("ivory");
     await expect(page).toHaveURL(/q=ivory/);
 
@@ -133,6 +137,8 @@ test.describe("favoritos", { tag: "@desktop" }, () => {
 
     await heart.click({ force: true });
     await expect(heart).toHaveAttribute("aria-pressed", "true");
+    // Success is announced to screen readers only (live region), with no toast.
+    await expect(page.getByText("Sage Nomad #009 foi favoritado.")).toHaveCount(1);
     await page.reload();
     await expect(page.getByRole("button", { name: "Favoritar Sage Nomad #009" })).toHaveAttribute(
       "aria-pressed",
@@ -141,7 +147,24 @@ test.describe("favoritos", { tag: "@desktop" }, () => {
   });
 });
 
+test("coleção do rodapé abre o catálogo filtrado", { tag: "@desktop" }, async ({ page }) => {
+  await openWithScenario(page);
+  await page.getByRole("contentinfo").getByRole("link", { name: "Fotografia" }).click();
+  await expect(page).toHaveURL(/collection=fotografia/);
+  await expect(page.getByRole("checkbox", { name: /Fotografia/ })).toBeChecked();
+});
+
 test.describe("catálogo mobile", { tag: "@mobile" }, () => {
+  test("ação central da tab bar leva à busca com o campo focado", async ({ page }) => {
+    await openWithScenario(page);
+    await page.goto("/carrinho");
+    await page
+      .getByRole("navigation", { name: "Principal" })
+      .getByRole("link", { name: "Explorar coleções" })
+      .click();
+    await expect(page.locator("#busca-mobile")).toBeFocused();
+  });
+
   test("filtros no drawer combinam e refletem na URL", async ({ page }) => {
     await openWithScenario(page);
     await page.getByRole("button", { name: /^Filtros/ }).click();

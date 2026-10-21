@@ -12,7 +12,7 @@ export function FeaturedNftCard() {
   return (
     <section
       aria-labelledby="featured-title"
-      className="flex h-[470px] w-[310px] flex-col bg-linear-to-b from-surface-3 to-surface"
+      className="flex h-117.5 w-77.5 flex-col bg-linear-to-b from-surface-3 to-surface"
     >
       <h2 id="featured-title" className="px-5 pt-6 text-[22px] leading-7 font-bold text-primary-hi">
         NFT EM DESTAQUE
@@ -33,12 +33,12 @@ export function FeaturedNftCard() {
             height={368}
             loading="lazy"
             decoding="async"
-            className="h-[368px] w-[310px] rounded-[22px] object-cover"
+            className="h-92 w-77.5 rounded-[22px] object-cover"
           />
           <span className="sr-only">Ver {nft.name}</span>
         </Link>
       ) : (
-        <Skeleton className="mt-auto h-[368px] w-[310px] rounded-[22px]" />
+        <Skeleton className="mt-auto h-92 w-77.5 rounded-[22px]" />
       )}
     </section>
   );

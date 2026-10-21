@@ -93,7 +93,7 @@ Rotas privadas usam o guard `requireAuth` em `beforeLoad`.
 A Início é um layout sem caminho próprio (`/_catalog`) com três filhas: `/`, `/entrar` e `/criar-conta`. Assim o catálogo fica montado atrás do diálogo, e acesso direto ou refresh de `/entrar` mostram a Início ao fundo, nunca uma tela em branco.
 
 - **Tamanho:** no desktop, o diálogo tem 500 px (600/656 de altura), como nos frames. No mobile, ocupa a tela cheia com o logo.
-- **Fechar:** fechar o diálogo (Esc, X ou fundo) devolve o foco a quem o abriu e volta à página anterior. Quando há `redirect`, a página de origem exigia sessão, então o destino ao fechar é a Início.
+- **Fechar:** fechar o diálogo (Esc, X ou fundo) devolve o foco a quem o abriu e volta à página anterior. Os guards redirecionam com `replace`, então a página privada que pediu o login não fica no histórico: fechar volta para onde o colecionador estava (o carrinho, por exemplo). Sem página anterior (acesso direto), o destino é a Início.
 - **Usuário com sessão:** um colecionador já logado que abre essas rotas segue direto para o destino.
 
 ### Estado do catálogo na URL
@@ -266,8 +266,9 @@ Toda resposta fictícia vive em `src/mocks/`. Componentes, hooks e o cliente Axi
 ### Ativação e inicialização
 
 - **Ativação:** `VITE_ENABLE_MOCKS=true` (já em `.env`) liga os mocks em desenvolvimento e no build de demonstração.
-- **Ordem de inicialização:** o `main.tsx` sobe o worker e só depois importa o app. O motivo é que o `engine.io-client` captura `globalThis.WebSocket` no momento em que o módulo é avaliado. Se o app carregasse antes, o socket escaparia da interceptação.
-- **Custo de performance:** o chunk dos mocks (~183 kB com gzip) carrega antes do app. Isso entra na análise do Lighthouse.
+- **Ordem de inicialização:** o `main.tsx` baixa o app em paralelo com a subida do worker, mas só renderiza (e só faz requisições) depois que os mocks respondem.
+- **`socket.io-client` sob demanda:** o `engine.io-client` captura `globalThis.WebSocket` no momento em que o módulo é avaliado. Por isso o app só importa o `socket.io-client` dentro de `createRealtimeSocket` (`shared/realtime/socket.ts`), depois da inicialização; importado antes, o socket escaparia da interceptação.
+- **Custo de performance:** o chunk dos mocks (~180 kB com gzip) ainda precisa subir antes da primeira renderização, mas não atrasa mais o download do app. Isso entra na análise do Lighthouse.
 
 ### Transporte do tempo real e limitações
 
@@ -341,6 +342,7 @@ O coração dos cards e do detalhe usa `useFavorites` (`shared/favorites/`). Os 
 
 - **`onMutate`:** cancela a busca em andamento, guarda a lista atual e aplica a mudança na hora.
 - **`onError`:** restaura a lista guardada e mostra um aviso de erro acessível (toast com `aria-live`).
+- **`onSuccess`:** sem toast, porque o coração já mostra o resultado. O sucesso é lido para leitores de tela pela região `aria-live` única do app (`announce()`, em `shared/lib/announce.ts`).
 - **`onSettled`:** invalida a lista.
 
 Um visitante que clica no coração vai para o login, com o retorno guardado. A falha da mutation e a recuperação são testadas com uma falha injetada (`failNextRequest`).
@@ -433,7 +435,9 @@ O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads,
 ### Decisões de navegação
 
 - **Mercado:** no Figma, "Mercado" é a listagem do catálogo, que fica na própria Início. O link leva a `/#catalogo`.
-- **Busca:** no desktop, o ícone de busca leva a `/#busca`. No mobile, a ação central da tab bar faz o mesmo.
+- **Busca:** no desktop, o ícone de busca leva a `/#busca`. No mobile, a ação central da tab bar faz o mesmo. Há um campo na barra lateral e outro acima do hero (telas menores); o que estiver visível recebe o foco.
+- **Coleções do rodapé:** cada link abre o catálogo já filtrado pela coleção (`/?collection=<slug>#catalogo`).
+- **Sair:** no desktop, além do menu do perfil, um ícone "Sair da conta" fica no header ao lado do nome.
 - **Busca no desktop:** o Figma desktop só mostra o ícone de busca no header. O campo fica no topo da barra lateral, e o ícone leva até ele e o foca. No mobile, o campo fica no topo, como no Figma.
 - **Hero:** são 3 slides trocados pelos indicadores (clique ou setas). Não há rotação automática, porque ela exigiria um controle de pausa (WCAG 2.2.2) que o Figma não tem. O título muda de slide para slide, por isso o `h1` da página é oculto visualmente.
 - **Listas do catálogo:** "Todos os NFTs / Novos lançamentos / Em alta" filtram a mesma lista. Por isso usam botões com `aria-pressed`, e não `role="tab"`, que exigiria painéis distintos.

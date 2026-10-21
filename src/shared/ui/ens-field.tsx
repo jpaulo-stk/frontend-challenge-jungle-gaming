@@ -27,7 +27,7 @@ export function EnsField({
             <select
               aria-label="Domínio ENS"
               defaultValue=".eth"
-              className={cn(fieldControlClassName, "w-[78px] appearance-none px-3 pr-7")}
+              className={cn(fieldControlClassName, "w-19.5 appearance-none px-3 pr-7")}
             >
               <option value=".eth">.eth</option>
             </select>

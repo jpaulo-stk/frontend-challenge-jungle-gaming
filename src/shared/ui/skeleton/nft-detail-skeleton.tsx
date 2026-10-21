@@ -6,7 +6,7 @@ export function NftDetailSkeleton() {
     <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[88px_minmax(0,460px)_minmax(0,1fr)]">
       <div className="hidden flex-col gap-4 lg:flex">
         {Array.from({ length: 4 }, (_, index) => (
-          <Skeleton key={index} className="size-[88px] rounded-lg" />
+          <Skeleton key={index} className="size-22 rounded-lg" />
         ))}
       </div>
       <Skeleton className="aspect-square w-full rounded-lg" />
@@ -14,7 +14,7 @@ export function NftDetailSkeleton() {
         <Skeleton className="h-11 w-2/3" />
         <Skeleton className="mt-2 h-7 w-1/4" />
         <Skeleton className="mt-6 h-6 w-1/3" />
-        <Skeleton className="mt-3 h-[72px] w-full" />
+        <Skeleton className="mt-3 h-18 w-full" />
         <Skeleton className="mt-6 h-6 w-1/4" />
         <div className="mt-3 flex gap-2">
           {Array.from({ length: 4 }, (_, index) => (

@@ -35,6 +35,10 @@ export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 export const registerFormSchema = registerRequestSchema
   .extend({ confirmPassword: z.string().min(1, "Confirme sua senha.") })
   .refine((values) => values.password === values.confirmPassword, {
+    // Also checked while other fields are still invalid (see profileFormSchema).
+    when: (payload) =>
+      z.object({ password: z.string(), confirmPassword: z.string() }).safeParse(payload.value)
+        .success,
     path: ["confirmPassword"],
     message: "As senhas não coincidem.",
   });

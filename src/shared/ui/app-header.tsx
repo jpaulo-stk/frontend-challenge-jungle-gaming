@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LogIn, Search, ShoppingCart, UserRound } from "lucide-react";
+import { LogIn, LogOut, Search, ShoppingCart, UserRound } from "lucide-react";
 
 import { buttonVariants } from "@/shared/ui/button";
 import { UnavailableAction } from "@/shared/ui/unavailable-action";
@@ -8,6 +8,8 @@ type AppHeaderProps = {
   cartCount: number;
   /** Signed-in collector, or null for visitors. */
   user: { name: string } | null;
+  onLogout: () => void;
+  loggingOut: boolean;
 };
 
 const navItemClassName =
@@ -16,11 +18,11 @@ const navItemClassName =
 const iconLinkClassName =
   "relative inline-flex size-10 items-center justify-center rounded-md text-text transition-colors hover:text-primary-hi [&_svg]:size-6";
 
-export function AppHeader({ cartCount, user }: AppHeaderProps) {
+export function AppHeader({ cartCount, user, onLogout, loggingOut }: AppHeaderProps) {
   return (
     <header className="hidden md:block">
       <div className="page-container">
-        <div className="flex h-[70px] items-center justify-between gap-6 border-b border-border">
+        <div className="flex h-17.5 items-center justify-between gap-6 border-b border-border">
           <Link to="/" className="text-sm font-bold tracking-[0.18em] text-text">
             KURIO
           </Link>
@@ -79,19 +81,31 @@ export function AppHeader({ cartCount, user }: AppHeaderProps) {
               )}
             </Link>
             {user ? (
-              <Link
-                to="/perfil"
-                className={buttonVariants({ variant: "outline", size: "sm", className: "ml-2" })}
-              >
-                <UserRound aria-hidden="true" className="size-4" />
-                <span className="max-w-32 truncate">{user.name}</span>
-              </Link>
+              <>
+                <Link
+                  to="/perfil"
+                  className={buttonVariants({ variant: "outline", size: "sm", className: "ml-2" })}
+                >
+                  <UserRound aria-hidden="true" className="size-4" />
+                  <span className="max-w-32 truncate">{user.name}</span>
+                </Link>
+                <button
+                  type="button"
+                  title="Sair da conta"
+                  disabled={loggingOut}
+                  onClick={onLogout}
+                  className={`${iconLinkClassName} disabled:opacity-50`}
+                >
+                  <LogOut aria-hidden="true" />
+                  <span className="sr-only">Sair da conta</span>
+                </button>
+              </>
             ) : (
               <Link
                 to="/entrar"
                 className={buttonVariants({
                   size: "sm",
-                  className: "ml-2 h-[34px] gap-1.5 px-2.5 text-base [&_svg]:size-5",
+                  className: "ml-2 h-8.5 gap-1.5 px-2.5 text-base [&_svg]:size-5",
                 })}
               >
                 <LogIn aria-hidden="true" />

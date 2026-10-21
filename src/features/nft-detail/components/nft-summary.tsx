@@ -72,7 +72,7 @@ export function NftSummary({ nft, purchase, isFavorite, onToggleFavorite }: NftS
         <div className="flex gap-2">
           <Button
             size="sm"
-            className="h-10 w-[130px] uppercase"
+            className="h-10 w-32.5 uppercase"
             disabled={!purchase.canBuy}
             onClick={purchase.buy}
           >
@@ -81,7 +81,7 @@ export function NftSummary({ nft, purchase, isFavorite, onToggleFavorite }: NftS
           <Button
             size="sm"
             variant="outline"
-            className="h-10 w-[130px] font-normal"
+            className="h-10 w-32.5 font-normal"
             aria-pressed={isFavorite}
             onClick={onToggleFavorite}
           >

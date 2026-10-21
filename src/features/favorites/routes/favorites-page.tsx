@@ -11,7 +11,7 @@ import { PageShell } from "@/shared/ui/page-shell";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
 
 const gridClassName =
-  "mt-8 grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-[34px]";
+  "mt-8 grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8.5";
 
 /** "Lista de interesse": the collector's favorited NFTs. */
 export function FavoritesPage() {

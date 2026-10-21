@@ -288,6 +288,10 @@ test.describe("pagamento no mobile", { tag: "@mobile" }, () => {
     await openCheckout(page, { settle: "manual" });
     await expect(page.getByRole("heading", { name: "Pagamento com carteira" })).toBeVisible();
     await expect(page.getByRole("radio", { name: /Cofre principal/ })).toBeChecked();
+    await expect(page.getByRole("link", { name: "Trocar carteira" })).toHaveAttribute(
+      "href",
+      "/perfil/carteiras",
+    );
     await expect(page.getByRole("radio", { name: "MetaMask" })).toBeChecked();
     await connectWallet(page);
     await confirmButton(page).click();

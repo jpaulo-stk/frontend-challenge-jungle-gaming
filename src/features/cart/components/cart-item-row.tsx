@@ -31,13 +31,13 @@ export function CartItemRow({ item, issues }: CartItemRowProps) {
         (soldOut || shortage) && "outline-[1.5px] outline-danger outline-solid",
       )}
     >
-      <div className="grid grid-cols-[76px_1fr_auto] items-center gap-x-3 p-0 md:min-h-[70px] md:grid-cols-[56px_minmax(0,1fr)_120px_130px_110px_40px] md:gap-x-4 md:px-1">
+      <div className="grid grid-cols-[76px_1fr_auto] items-center gap-x-3 p-0 md:min-h-17.5 md:grid-cols-[56px_minmax(0,1fr)_120px_130px_110px_40px] md:gap-x-4 md:px-1">
         <img
           src={item.image.src}
           alt={item.image.alt}
           width={76}
           height={76}
-          className="row-span-2 size-[96px] rounded-l-lg object-cover md:row-span-1 md:size-14 md:rounded-md"
+          className="row-span-2 size-24 rounded-l-lg object-cover md:row-span-1 md:size-14 md:rounded-md"
         />
         <div className="min-w-0 py-3 md:py-0">
           <Link

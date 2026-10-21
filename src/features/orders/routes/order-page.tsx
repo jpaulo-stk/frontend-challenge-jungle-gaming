@@ -69,7 +69,7 @@ export function OrderPage() {
 
 function OrderLines({ order }: { order: Order }) {
   return (
-    <div className="w-full max-w-[560px] text-left">
+    <div className="w-full max-w-140 text-left">
       <ul className="flex flex-col gap-2">
         {order.lines.map((line) => (
           <li
@@ -105,7 +105,7 @@ function PendingOrder({ order, refreshing, onRefresh }: PendingOrderProps) {
   return (
     <section
       aria-labelledby="order-title"
-      className="mx-auto flex max-w-[640px] flex-col items-center gap-5 text-center"
+      className="mx-auto flex max-w-160 flex-col items-center gap-5 text-center"
     >
       <LoaderCircle
         aria-hidden="true"
@@ -135,7 +135,7 @@ function RejectedOrder({ order }: { order: Order }) {
   return (
     <section
       aria-labelledby="order-title"
-      className="mx-auto flex max-w-[640px] flex-col items-center gap-5 text-center"
+      className="mx-auto flex max-w-160 flex-col items-center gap-5 text-center"
     >
       <CircleX aria-hidden="true" className="size-12 text-danger" />
       <h1 id="order-title" className="text-2xl font-bold text-text">

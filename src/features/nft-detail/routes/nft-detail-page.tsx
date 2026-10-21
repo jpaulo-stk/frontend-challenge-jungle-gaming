@@ -24,7 +24,7 @@ export function NftDetailPage() {
   const detail = useQuery(nftDetailQueryOptions(nftId));
 
   return (
-    <div className="page-container pt-6 pb-[200px] lg:pt-10 lg:pb-0">
+    <div className="page-container pt-6 pb-50 lg:pt-10 lg:pb-0">
       <nav
         aria-label="Trilha de navegação"
         className="hidden text-[15px] font-bold text-text lg:block"
@@ -69,7 +69,7 @@ function NftDetailContent({ nft }: { nft: NftDetail }) {
 
   return (
     <>
-      <div className="mt-4 grid gap-8 lg:grid-cols-[572px_1fr] lg:gap-[33px]">
+      <div className="mt-4 grid gap-8 lg:grid-cols-[572px_1fr] lg:gap-8.25">
         <div className="relative">
           <button
             type="button"

@@ -42,16 +42,16 @@ export function RelatedCarousel({ currentId }: RelatedCarouselProps) {
         onScroll={(event) => {
           setPage(Math.round(event.currentTarget.scrollLeft / (PER_PAGE * (CARD + GAP))));
         }}
-        className="mt-8 flex snap-x snap-mandatory gap-[26px] overflow-x-auto pb-2 [scrollbar-width:none] motion-safe:scroll-smooth"
+        className="mt-8 flex snap-x snap-mandatory gap-6.5 overflow-x-auto pb-2 [scrollbar-width:none] motion-safe:scroll-smooth"
       >
         {related.data
           ? items.map((nft) => (
-              <li key={nft.id} className="w-[219px] shrink-0 snap-start">
+              <li key={nft.id} className="w-54.75 shrink-0 snap-start">
                 <NftCard nft={nft} />
               </li>
             ))
           : Array.from({ length: PER_PAGE }, (_, index) => (
-              <li key={index} className="w-[219px] shrink-0">
+              <li key={index} className="w-54.75 shrink-0">
                 <NftCardSkeleton />
               </li>
             ))}

@@ -9,7 +9,7 @@ type PaginationProps = {
 };
 
 const square =
-  "inline-flex size-[34px] items-center justify-center rounded-sm border border-border text-base text-text transition-colors hover:border-primary disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-5";
+  "inline-flex size-8.5 items-center justify-center rounded-sm border border-border text-base text-text transition-colors hover:border-primary disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-5";
 
 /** Numbered pages plus previous/next arrows (34px squares, 8px apart). */
 export function Pagination({ page, totalPages, onPageChange, className }: PaginationProps) {
@@ -41,7 +41,7 @@ export function Pagination({ page, totalPages, onPageChange, className }: Pagina
               className={cn(
                 square,
                 number === page &&
-                  "size-[35px] border-primary bg-primary font-bold text-primary-foreground",
+                  "size-8.75 border-primary bg-primary font-bold text-primary-foreground",
               )}
               onClick={() => {
                 onPageChange(number);

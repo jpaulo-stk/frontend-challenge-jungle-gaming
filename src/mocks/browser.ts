@@ -10,8 +10,8 @@ import { seedRandom } from "@/mocks/lib/random";
 /**
  * Boots the simulated backend: configuration from the URL, database from
  * storage (or a fresh scenario seed), then the service worker. Must resolve
- * before the app is imported, so socket.io-client picks up the intercepted
- * WebSocket.
+ * before the app renders (its first requests) and before socket.io-client is
+ * imported, so it picks up the intercepted WebSocket.
  */
 export async function startMocks(): Promise<void> {
   const { config, resetRequested } = loadConfig(window.location);

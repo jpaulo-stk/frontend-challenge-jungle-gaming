@@ -13,7 +13,7 @@ export function AppTabBar({ cartCount }: AppTabBarProps) {
   return (
     <nav
       aria-label="Principal"
-      className="fixed inset-x-0 bottom-0 z-40 h-[72px] rounded-t-3xl border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 h-18 rounded-t-3xl border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="mx-auto grid h-full max-w-md grid-cols-5 items-center justify-items-center px-4">
         <li>

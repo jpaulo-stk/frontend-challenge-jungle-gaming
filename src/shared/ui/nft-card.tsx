@@ -23,7 +23,7 @@ type NftCardProps = {
 };
 
 const actionButton =
-  "inline-flex size-9 items-center justify-center rounded-full bg-bg/85 text-primary-hi transition-colors outline-none hover:bg-bg focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-[18px]";
+  "inline-flex size-9 items-center justify-center rounded-full bg-bg/85 text-primary-hi transition-colors outline-none hover:bg-bg focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4.5";
 
 export function NftCard({
   nft,
@@ -38,7 +38,7 @@ export function NftCard({
 
   return (
     <article className={cn("group relative flex flex-col", className)}>
-      <div className="relative flex aspect-[258/300] items-center justify-center overflow-hidden bg-surface max-md:rounded-xl">
+      <div className="relative flex aspect-258/300 items-center justify-center overflow-hidden bg-surface max-md:rounded-xl">
         <img
           src={nft.image.src}
           srcSet={nft.image.srcSet}

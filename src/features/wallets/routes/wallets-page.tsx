@@ -16,7 +16,7 @@ export function WalletsPage() {
     return (
       <div aria-busy="true" aria-label="Carregando carteiras" className="grid gap-6 md:grid-cols-2">
         {Array.from({ length: 10 }, (_, index) => (
-          <Skeleton key={index} className="h-[78px]" />
+          <Skeleton key={index} className="h-19.5" />
         ))}
       </div>
     );
@@ -98,7 +98,7 @@ function SecondaryWallet({ primary, secondary }: SecondaryWalletProps) {
                 onChange={(event) => {
                   setSameAsPrimary(event.target.checked);
                 }}
-                className="size-4 appearance-none rounded-full border-[1.5px] border-primary checked:border-[5px] disabled:opacity-40"
+                className="size-4 appearance-none rounded-full border-[1.5px] border-primary checked:border-5 disabled:opacity-40"
               />
               Igual à carteira principal
             </label>

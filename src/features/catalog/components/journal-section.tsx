@@ -37,7 +37,7 @@ export function JournalSection() {
   return (
     <section aria-labelledby="journal-title" className="page-container mt-24">
       <div className="text-center">
-        <h2 id="journal-title" className="text-[28px] leading-[44px] font-bold text-text">
+        <h2 id="journal-title" className="text-[28px] leading-11 font-bold text-text">
           Diário da Cunhagem
         </h2>
         <p className="mt-2 text-sm text-text-muted">
@@ -54,14 +54,14 @@ export function JournalSection() {
                 width={268}
                 height={195}
                 loading="lazy"
-                className="h-[195px] w-full object-cover"
+                className="h-48.75 w-full object-cover"
               />
               <div className="flex flex-1 flex-col p-4">
                 <p className="text-xs text-text-muted">
                   {post.date} <span aria-hidden="true">|</span>
                   <span className="sr-only">,</span> Leitura de {post.minutes} min
                 </p>
-                <h3 className="mt-3 text-base leading-[21px] font-bold text-text">{post.title}</h3>
+                <h3 className="mt-3 text-base leading-5.25 font-bold text-text">{post.title}</h3>
                 <p className="mt-3 text-xs leading-4 text-text-muted">{post.text}</p>
                 <UnavailableAction
                   feature="O Diário da Cunhagem"

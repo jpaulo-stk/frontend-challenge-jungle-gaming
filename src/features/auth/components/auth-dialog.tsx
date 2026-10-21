@@ -19,7 +19,9 @@ const tabClassName =
 /**
  * Login/register dialog over the home: 500px wide on desktop (as in the
  * frames), full screen with the logo on mobile. Focus is trapped while open;
- * closing goes back, or home when the page that sent us here needs a session.
+ * closing goes back, or home when there is no previous page. A private page
+ * that sent the collector here is not in the history (guards redirect with
+ * replace), so "back" is the page before it, such as the cart.
  */
 export function AuthDialog({ mode, redirect, title, description, children }: AuthDialogProps) {
   const router = useRouter();
@@ -29,7 +31,7 @@ export function AuthDialog({ mode, redirect, title, description, children }: Aut
   const opener = useRef<HTMLElement | null>(null);
 
   const leave = () => {
-    if (!redirect && router.history.canGoBack()) {
+    if (router.history.canGoBack()) {
       router.history.back();
       return;
     }
@@ -52,8 +54,8 @@ export function AuthDialog({ mode, redirect, title, description, children }: Aut
           leave();
         }}
         className={cn(
-          "gap-0 overflow-y-auto px-6 pt-10 pb-8 md:border-b-[10px] md:border-b-primary md:px-[78px] md:pt-8 md:pb-10",
-          mode === "login" ? "md:min-h-[600px]" : "md:min-h-[656px]",
+          "gap-0 overflow-y-auto px-6 pt-10 pb-8 md:border-b-10 md:border-b-primary md:px-19.5 md:pt-8 md:pb-10",
+          mode === "login" ? "md:min-h-150" : "md:min-h-164",
           "max-md:inset-0 max-md:top-0 max-md:left-0 max-md:h-dvh max-md:max-w-none max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-none max-md:border-0",
         )}
       >

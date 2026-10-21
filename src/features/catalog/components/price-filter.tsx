@@ -55,7 +55,7 @@ export function PriceFilter({ bounds, value, onApply }: PriceFilterProps) {
       <p className="mt-3 px-3 text-[15px] text-text-muted" aria-live="polite">
         Preço: {formatBr(from)} - {formatBr(to)} ETH
       </p>
-      <Button size="sm" className="mt-3 ml-3 h-9 w-[92px] text-base" onClick={apply}>
+      <Button size="sm" className="mt-3 ml-3 h-9 w-23 text-base" onClick={apply}>
         Aplicar
       </Button>
     </fieldset>

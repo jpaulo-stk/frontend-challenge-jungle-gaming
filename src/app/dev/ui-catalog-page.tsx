@@ -25,7 +25,7 @@ export function UiCatalogPage() {
         <div
           aria-busy="true"
           aria-label="Carregando NFTs"
-          className="grid w-full grid-cols-2 gap-x-3 md:grid-cols-3 lg:w-auto lg:grid-cols-[repeat(3,258px)] md:gap-x-[34px]"
+          className="grid w-full grid-cols-2 gap-x-3 md:grid-cols-3 lg:w-auto lg:grid-cols-[repeat(3,258px)] md:gap-x-8.5"
         >
           <NftCardSkeleton />
           <NftCardSkeleton />
@@ -34,10 +34,10 @@ export function UiCatalogPage() {
         <div className="w-full">
           <NftDetailSkeleton />
         </div>
-        <div className="w-full max-w-[782px]">
+        <div className="w-full max-w-195.5">
           <TableRowsSkeleton />
         </div>
-        <div className="w-full max-w-[380px]">
+        <div className="w-full max-w-95">
           <CartSummarySkeleton />
         </div>
       </UiCatalogSection>

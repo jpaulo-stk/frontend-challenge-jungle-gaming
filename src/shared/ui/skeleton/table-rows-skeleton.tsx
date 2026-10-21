@@ -11,9 +11,9 @@ export function TableRowsSkeleton({ rows = 3 }: TableRowsSkeletonProps) {
       {Array.from({ length: rows }, (_, index) => (
         <div
           key={index}
-          className="flex h-[96px] items-center gap-4 rounded-lg bg-surface px-3 md:h-[70px] md:bg-transparent md:px-0"
+          className="flex h-24 items-center gap-4 rounded-lg bg-surface px-3 md:h-17.5 md:bg-transparent md:px-0"
         >
-          <Skeleton className="size-[76px] shrink-0 rounded-lg md:size-14 md:rounded-md" />
+          <Skeleton className="size-19 shrink-0 rounded-lg md:size-14 md:rounded-md" />
           <div className="flex flex-1 flex-col gap-2">
             <Skeleton className="h-5 w-1/2" />
             <Skeleton className="h-4 w-1/4" />

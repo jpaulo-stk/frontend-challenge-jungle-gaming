@@ -36,6 +36,23 @@ export const changePasswordRequestSchema = z.object({
 });
 export type ChangePasswordRequest = z.infer<typeof changePasswordRequestSchema>;
 
+const passwordBlockSchema = z.object({
+  currentPassword: z.string(),
+  newPassword: z.string(),
+  confirmPassword: z.string(),
+});
+type PasswordBlock = z.infer<typeof passwordBlockSchema>;
+
+const passwordTyped = (values: PasswordBlock) =>
+  Boolean(values.currentPassword || values.newPassword || values.confirmPassword);
+
+// Zod skips refinements while other fields are invalid; `when` runs these as
+// soon as the password fields themselves are strings, so a submit shows the
+// errors of both blocks at once instead of in two rounds.
+const passwordCheck = {
+  when: (payload: { value: unknown }) => passwordBlockSchema.safeParse(payload.value).success,
+};
+
 /**
  * "Perfil do colecionador" form: profile data plus the optional "Alterar senha"
  * block, validated only when one of its fields is filled.
@@ -51,32 +68,21 @@ export const profileFormSchema = z
     email: z.email("Informe um e-mail válido."),
     ensName: z.string().trim().min(1, "Informe o nome ENS."),
     walletNickname: z.string().trim().min(1, "Informe o apelido da carteira."),
-    currentPassword: z.string(),
-    newPassword: z.string(),
-    confirmPassword: z.string(),
+    ...passwordBlockSchema.shape,
   })
-  .superRefine((values, context) => {
-    if (!values.currentPassword && !values.newPassword && !values.confirmPassword) return;
-    if (!values.currentPassword) {
-      context.addIssue({
-        code: "custom",
-        path: ["currentPassword"],
-        message: "Informe a senha atual.",
-      });
-    }
-    if (values.newPassword.length < 8) {
-      context.addIssue({
-        code: "custom",
-        path: ["newPassword"],
-        message: "Use pelo menos 8 caracteres.",
-      });
-    }
-    if (values.confirmPassword !== values.newPassword) {
-      context.addIssue({
-        code: "custom",
-        path: ["confirmPassword"],
-        message: "As senhas não coincidem.",
-      });
-    }
+  .refine((values) => !passwordTyped(values) || values.currentPassword.length > 0, {
+    ...passwordCheck,
+    path: ["currentPassword"],
+    message: "Informe a senha atual.",
+  })
+  .refine((values) => !passwordTyped(values) || values.newPassword.length >= 8, {
+    ...passwordCheck,
+    path: ["newPassword"],
+    message: "Use pelo menos 8 caracteres.",
+  })
+  .refine((values) => values.confirmPassword === values.newPassword, {
+    ...passwordCheck,
+    path: ["confirmPassword"],
+    message: "As senhas não coincidem.",
   });
 export type ProfileForm = z.infer<typeof profileFormSchema>;

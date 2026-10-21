@@ -19,7 +19,7 @@ export function NftGallery({ name, gallery }: NftGalleryProps) {
 
   return (
     <div className="flex gap-7">
-      <ul aria-label="Miniaturas" className="hidden w-[100px] shrink-0 flex-col gap-4 lg:flex">
+      <ul aria-label="Miniaturas" className="hidden w-25 shrink-0 flex-col gap-4 lg:flex">
         {gallery.map((image, index) => (
           <li key={image.alt}>
             <button
@@ -40,14 +40,14 @@ export function NftGallery({ name, gallery }: NftGalleryProps) {
                 width={100}
                 height={100}
                 loading="lazy"
-                className="size-[100px] object-cover"
+                className="size-25 object-cover"
               />
             </button>
           </li>
         ))}
       </ul>
 
-      <div className="relative flex w-full items-center justify-center rounded-3xl bg-surface p-2 max-md:rounded-b-none lg:size-[444px] lg:rounded-lg lg:p-5">
+      <div className="relative flex w-full items-center justify-center rounded-3xl bg-surface p-2 max-md:rounded-b-none lg:size-111 lg:rounded-lg lg:p-5">
         <img
           src={main.src}
           srcSet={main.srcSet}

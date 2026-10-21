@@ -37,23 +37,35 @@ export function WalletSelector(props: WalletSelectorProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <fieldset>
-        <legend className="mb-3 text-[15px] font-bold text-text">Carteira cadastrada</legend>
+      {/* The floated legend lays out as a normal block, beside "Trocar carteira". */}
+      <fieldset className="flow-root">
+        <legend className="float-left mb-3 text-[15px] font-bold text-text">
+          Carteira cadastrada
+        </legend>
+        {registered.length > 0 && (
+          // "Trocar carteira" of the mobile frame: the wallets are managed in the profile.
+          <Link
+            to="/perfil/carteiras"
+            className="float-right text-[15px] font-bold text-primary-hi hover:underline"
+          >
+            Trocar carteira
+          </Link>
+        )}
         {registered.length === 0 ? (
-          <p className="text-sm text-text-muted">
+          <p className="clear-both text-sm text-text-muted">
             Você ainda não tem carteiras.{" "}
             <Link to="/perfil/carteiras" className="text-primary-hi underline">
               Cadastrar carteira
             </Link>
           </p>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="clear-both flex flex-col gap-3">
             {registered.map((wallet) => (
               <label key={wallet.id} className={option}>
                 <input
                   type="radio"
                   name="wallet"
-                  className="size-4 shrink-0 appearance-none rounded-full border-[1.5px] border-primary checked:border-[5px]"
+                  className="size-4 shrink-0 appearance-none rounded-full border-[1.5px] border-primary checked:border-5"
                   checked={walletId === wallet.id}
                   onChange={() => {
                     onWalletChange(wallet);
@@ -92,7 +104,7 @@ export function WalletSelector(props: WalletSelectorProps) {
               <input
                 type="radio"
                 name="provider"
-                className="size-4 shrink-0 appearance-none rounded-full border-[1.5px] border-primary checked:border-[5px] md:order-first"
+                className="size-4 shrink-0 appearance-none rounded-full border-[1.5px] border-primary checked:border-5 md:order-first"
                 checked={provider === item.value}
                 onChange={() => {
                   onProviderChange(item.value);

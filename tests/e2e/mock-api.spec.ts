@@ -22,7 +22,7 @@ type SocketLike = {
   connect: () => void;
   disconnect: () => void;
 };
-type SocketModule = { createRealtimeSocket: (token: string | null) => SocketLike };
+type SocketModule = { createRealtimeSocket: (token: string | null) => Promise<SocketLike> };
 
 const buyer = {
   displayName: "Colecionador Kurio",
@@ -273,7 +273,7 @@ test.describe("API simulada", { tag: "@api" }, () => {
       const { createRealtimeSocket } = (await import(
         /* @vite-ignore */ modulePath
       )) as SocketModule;
-      const socket = createRealtimeSocket(null);
+      const socket = await createRealtimeSocket(null);
       return new Promise<unknown[]>((resolve) => {
         const events: unknown[] = [];
         socket.on("connect", () => {
@@ -320,8 +320,8 @@ test.describe("API simulada", { tag: "@api" }, () => {
           /* @vite-ignore */ modulePath
         )) as SocketModule;
         const sockets = {
-          owner: createRealtimeSocket(ownerToken),
-          other: createRealtimeSocket(otherToken),
+          owner: await createRealtimeSocket(ownerToken),
+          other: await createRealtimeSocket(otherToken),
         };
         const got: Record<string, unknown[]> = { owner: [], other: [] };
         // Resolves once the owner hears about the order, plus a grace period in

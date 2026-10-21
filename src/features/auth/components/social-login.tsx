@@ -11,7 +11,7 @@ const socialButton =
 export function SocialLogin() {
   return (
     <div className="mt-8">
-      <div className="relative flex items-center justify-center md:-mx-[78px]">
+      <div className="relative flex items-center justify-center md:-mx-19.5">
         <span aria-hidden="true" className="absolute inset-x-0 top-1/2 h-px bg-border" />
         <p className="relative bg-surface px-3 text-[15px] text-text">Ou continue com</p>
       </div>
