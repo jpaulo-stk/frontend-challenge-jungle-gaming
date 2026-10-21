@@ -8,7 +8,10 @@ import { clearSessionToken, writeSessionToken } from "@/shared/api/session-token
 // query cache before the new identity is applied: no favorite, cart, profile
 // or order of the previous collector can render, not even for one frame.
 
-type Listener = (session: Session | null) => void;
+/** Why the identity changed: an expired session keeps the checkout draft for the same user. */
+export type IdentityChange = "login" | "logout" | "expired";
+
+type Listener = (session: Session | null, reason: IdentityChange) => void;
 const listeners = new Set<Listener>();
 
 /** Notified on every identity change (the realtime client reconnects on it). */
@@ -23,12 +26,15 @@ export function startSession(queryClient: QueryClient, session: Session, token: 
   queryClient.clear();
   writeSessionToken(token);
   queryClient.setQueryData(sessionKeys.current(), session);
-  for (const listener of listeners) listener(session);
+  for (const listener of listeners) listener(session, "login");
 }
 
-export function endSession(queryClient: QueryClient): void {
+export function endSession(
+  queryClient: QueryClient,
+  reason: Exclude<IdentityChange, "login"> = "logout",
+): void {
   clearSessionToken();
   queryClient.clear();
   queryClient.setQueryData(sessionKeys.current(), null);
-  for (const listener of listeners) listener(null);
+  for (const listener of listeners) listener(null, reason);
 }

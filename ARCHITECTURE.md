@@ -126,6 +126,37 @@ A Início é um layout sem caminho próprio (`/_catalog`) com três filhas: `/`,
 - **Carteiras:** a principal e a secundária usam o mesmo formulário. A secundária começa vazia, com a opção de copiar os dados da principal. A consulta fica em `shared/wallets/` porque o checkout também usa.
 - **Mobile:** o perfil não tem frame no Figma. `/perfil` vira a lista de seções, e `/perfil/dados` e `/perfil/carteiras` abrem cada uma com um link para voltar.
 
+## Carrinho, checkout e pedido
+
+### Onde fica cada estado
+
+| Estado                                                                                                 | Onde                                                                                   | Por quê                                                                  |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Itens do carrinho, cotação, pedidos, carteiras                                                         | TanStack Query (API)                                                                   | São dados de servidor; o carrinho persiste e é isolado por usuário lá.   |
+| Cupom escolhido, itens deixados para depois, formulário, carteira, tentativa de envio, pedido pendente | Rascunho do checkout (`shared/checkout/checkout-draft.ts`, Zustand + `sessionStorage`) | Só o cliente sabe; precisa sobreviver a refresh e a uma sessão expirada. |
+
+O rascunho é descartado no logout ou quando outro colecionador entra. Uma sessão que só expirou, retomada pelo mesmo colecionador, mantém tudo, e o checkout volta preenchido.
+
+### Valores
+
+- **A cotação manda.** Subtotal, desconto, taxa e total vêm de `POST /cart/quote` (`useCartQuote`). Enquanto uma nova cotação não volta (mudança de quantidade, por exemplo), o resumo mostra uma estimativa local com big.js, marcada como "Atualizando…" e com `aria-busy`. Ela é substituída pela resposta.
+- **Compra parcial.** "Deixar para depois" tira um item da cotação (`itemIds`) sem tirá-lo do carrinho. A confirmação de um pedido remove do carrinho, no servidor, só os itens e as quantidades comprados.
+- **Cupom.** Validado no carrinho; a cotação devolvida pela validação é reaproveitada no cache. Se o cupom cair depois (expirado no checkout), a cotação é refeita sem ele e o colecionador é avisado.
+
+### Envio do pedido
+
+1. "Confirmar compra" valida o formulário (zod) e exige carteira conectada. A conexão é simulada (`POST /wallet-connections`) e só vale para a carteira, o provedor e a rede com que foi feita.
+2. Antes de enviar, a cotação é pedida de novo. Se preço, quantidade, disponibilidade, cupom, taxa ou total mudaram em relação ao que estava na tela, nada é enviado: um diálogo lista as diferenças e pede uma nova confirmação explícita. Item esgotado ou sem estoque bloqueia o envio.
+3. Cada tentativa recebe uma `Idempotency-Key` (UUID), guardada no rascunho junto com o corpo antes do envio. Se a resposta não chega (timeout, rede, 5xx), "Tentar novamente" reenvia a mesma chave com o mesmo corpo, e a API devolve o mesmo pedido. Isso vale também depois de um refresh.
+4. Cliques repetidos não criam um segundo pedido: uma trava síncrona cobre toda a sequência (cotação e envio), o botão fica desabilitado, a mutation não tem retry e a API deduplica pela chave.
+
+### Estados do pedido
+
+- **`pending`:** `/pedido/:id` mostra o processamento e consulta `GET /orders/:id` a cada 2 s (a fase 7 troca o polling pelo evento `order.updated`). A página sobrevive a refresh.
+- **`confirmed`:** o recibo abre como modal no desktop e em tela cheia no mobile. Todos os valores são a cópia congelada do pedido; mudar o catálogo depois não altera o recibo. O link do Etherscan é rotulado como simulado.
+- **`rejected`:** mostra o motivo e avisa que o carrinho ficou como estava, com caminhos para o pagamento e o carrinho.
+- Um pedido de outro colecionador responde 404 e cai na página de não encontrado.
+
 ## Cliente HTTP e erros
 
 - `shared/api/axios.ts` contém a única instância Axios: `baseURL: /api` e `timeout` de 15 s.
@@ -295,6 +326,8 @@ Ajustes por domínio:
 | Carrinho            | 15 s          | Atualizado pelas mutations; uma janela curta cobre mudanças vindas de outra aba.                        |
 | Perfil              | 60 s          | Muda só por edição do próprio colecionador, que grava a resposta no cache.                              |
 | Carteiras           | 60 s          | Idem; a mesma consulta abastece o checkout.                                                             |
+| Cotação             | 30 s          | A chave inclui cupom, itens e versão do carrinho. Antes de enviar o pedido ela é sempre pedida de novo. |
+| Pedido              | 0 / ∞         | Pendente: consultado a cada 2 s até liquidar. Confirmado ou recusado: nunca muda, nunca é refeito.      |
 
 Regras que valem para todo o projeto:
 
@@ -409,19 +442,24 @@ O enunciado exclui páginas editoriais, suporte, atividade, ofertas e downloads,
 
 ## Desvios do Figma
 
-| Onde                                      | Figma                                        | Implementação                                                                               | Motivo                                              |
-| ----------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Busca no desktop                          | Só o ícone no header                         | Campo no topo da barra lateral; o ícone leva até ele e o foca                               | A busca é um requisito e precisa de um campo        |
-| Hero                                      | 1 slide desenhado com 3 indicadores          | 3 slides com textos do próprio Figma (desktop, mobile e banner)                             | O conteúdo dos outros dois slides não foi desenhado |
-| Hero mobile                               | Texto curto                                  | Mesmo slide, com a variante curta abaixo de `md`                                            | Fidelidade aos dois frames                          |
-| Detalhe: "Contrato" e "Direitos autorais" | Os textos dos dois rótulos aparecem trocados | Cada rótulo com o seu texto (endereço no contrato, percentual nos direitos)                 | Erro de conteúdo no layout                          |
-| Detalhe: aba "Avaliações"                 | Não desenhada                                | Resumo da nota e da quantidade, avisando que os comentários não fazem parte da demonstração | Não há conteúdo de avaliações no Figma nem na API   |
-| Banner "Arte digital selecionada"         | Texto cortado no frame ("…que definem a")    | Frase completa ("…a cultura da rede."); o banner cresce para não cortar                     | Conteúdo cortado no layout                          |
-| Contagens da barra lateral                | 33, 12, 65…                                  | Contagens reais dos 36 NFTs das fixtures                                                    | Os números do Figma são ilustrativos                |
-| Ordenação no mobile                       | Não aparece                                  | "Ordenar por" visível também no mobile                                                      | A ordenação é um requisito em qualquer largura      |
-| Card no mobile                            | Só o coração                                 | Só o coração; carrinho e zoom ficam no detalhe                                              | Fidelidade ao frame mobile                          |
-| Preços                                    | "1.19", "0.016", "26.846"                    | Mínimo de 2 e máximo de 3 casas decimais                                                    | Mesmo formato do layout para qualquer valor         |
-| Estrelas                                  | 4 cheias para 4,8                            | Arredondamento para baixo                                                                   | Fidelidade ao frame                                 |
+| Onde                                      | Figma                                        | Implementação                                                                               | Motivo                                                  |
+| ----------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Busca no desktop                          | Só o ícone no header                         | Campo no topo da barra lateral; o ícone leva até ele e o foca                               | A busca é um requisito e precisa de um campo            |
+| Hero                                      | 1 slide desenhado com 3 indicadores          | 3 slides com textos do próprio Figma (desktop, mobile e banner)                             | O conteúdo dos outros dois slides não foi desenhado     |
+| Hero mobile                               | Texto curto                                  | Mesmo slide, com a variante curta abaixo de `md`                                            | Fidelidade aos dois frames                              |
+| Detalhe: "Contrato" e "Direitos autorais" | Os textos dos dois rótulos aparecem trocados | Cada rótulo com o seu texto (endereço no contrato, percentual nos direitos)                 | Erro de conteúdo no layout                              |
+| Detalhe: aba "Avaliações"                 | Não desenhada                                | Resumo da nota e da quantidade, avisando que os comentários não fazem parte da demonstração | Não há conteúdo de avaliações no Figma nem na API       |
+| Banner "Arte digital selecionada"         | Texto cortado no frame ("…que definem a")    | Frase completa ("…a cultura da rede."); o banner cresce para não cortar                     | Conteúdo cortado no layout                              |
+| Contagens da barra lateral                | 33, 12, 65…                                  | Contagens reais dos 36 NFTs das fixtures                                                    | Os números do Figma são ilustrativos                    |
+| Ordenação no mobile                       | Não aparece                                  | "Ordenar por" visível também no mobile                                                      | A ordenação é um requisito em qualquer largura          |
+| Card no mobile                            | Só o coração                                 | Só o coração; carrinho e zoom ficam no detalhe                                              | Fidelidade ao frame mobile                              |
+| Preços                                    | "1.19", "0.016", "26.846"                    | Mínimo de 2 e máximo de 3 casas decimais                                                    | Mesmo formato do layout para qualquer valor             |
+| Estrelas                                  | 4 cheias para 4,8                            | Arredondamento para baixo                                                                   | Fidelidade ao frame                                     |
+| Carrinho: "Colecionadores também viram"   | Carrossel abaixo da tabela                   | Não implementado                                                                            | Vitrine secundária, cortada por prioridade              |
+| Pagamento desktop                         | Só os provedores em "Carteira e rede"        | "Carteira cadastrada" (do frame mobile) acima dos provedores, mais conectar/desconectar     | O pedido precisa de uma carteira cadastrada e conectada |
+| Pagamento mobile                          | Só carteira, provedores e total              | Mesma ordem, seguida do resumo e do formulário do colecionador                              | O formulário é obrigatório para o pedido                |
+| Resumo do pagamento                       | Itens fixos                                  | "Deixar para depois" / "Incluir nesta compra" por item                                      | Compra parcial é um requisito                           |
+| Recibo                                    | Sem linha de desconto                        | Linha de desconto quando houve cupom; aviso de link simulado abaixo do Etherscan            | O total precisa fechar; o link não é real               |
 
 ## Ferramentas
 

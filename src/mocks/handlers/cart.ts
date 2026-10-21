@@ -110,8 +110,8 @@ export const cartHandlers = [
 
   http.post(`${API}/cart/quote`, async ({ request }) => {
     const owner = resolveOwner(request);
-    const { couponCode } = await readBody(request, quoteRequestSchema);
-    const quote = createQuote(owner, couponCode);
+    const { couponCode, itemIds } = await readBody(request, quoteRequestSchema);
+    const quote = createQuote(owner, couponCode, itemIds ?? null);
     scheduleScenarioEvent(owner);
     return HttpResponse.json(quote);
   }),

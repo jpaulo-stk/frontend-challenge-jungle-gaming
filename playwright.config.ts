@@ -10,6 +10,10 @@ export default defineConfig({
   retries: isCI ? 1 : 0,
   // The app renders after the MSW worker starts (~1s in dev, more under parallel load).
   expect: { timeout: 10_000 },
+  // On a cold start the dev server compiles modules on demand: the first page
+  // of a worker can take several seconds, and flows that cross many pages
+  // (login, logout, login again) go past the default 30s.
+  timeout: 45_000,
   reporter: [["html", { open: "never" }], ["list"]],
   use: {
     baseURL: `http://localhost:${PORT}`,

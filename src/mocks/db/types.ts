@@ -73,6 +73,8 @@ export type DbFavorite = {
 export type DbQuote = {
   id: string;
   owner: OwnerKey;
+  /** Items covered by the quote; null means the whole cart. */
+  itemIds: string[] | null;
   couponCode: string | null;
   percentOff: number | null;
   lines: QuoteLine[];

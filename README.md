@@ -35,6 +35,14 @@ Senhas novas precisam de pelo menos 8 caracteres. Os botões "Continuar com Goog
 
 Cupons: `KURIO10` (10% de desconto), `EXPIRADO2025` (expirado); qualquer outro código é inválido.
 
+### Fluxo de compra
+
+1. Entre como `colecionador@kurio.test` e abra o carrinho: o total é 26.846 ETH, como no Figma.
+2. Em "Conectar e finalizar", o formulário vem preenchido com a carteira cadastrada. Conecte a carteira e confirme.
+3. O pedido fica em processamento por ~2,5 s e o recibo abre. Com `?settle=manual`, ele só sai de `pending` pelo painel.
+
+Para ver as recuperações, use os cenários abaixo: `order-timeout` (o envio fica sem resposta por 15 s, até o timeout do cliente; "Tentar novamente" recupera o mesmo pedido), `payment-rejected`, `coupon-expired`, `wallet-rejected` e `session-expired`. Pelo painel, subir o preço ou esgotar uma edição durante o pagamento faz a confirmação mostrar o que mudou.
+
 ## Cenários da API simulada
 
 O cenário é escolhido pela URL (`?scenario=<id>`) ou pelo painel de simulação (botão com ícone de frasco no canto inferior esquerdo; no build publicado, abra com `?painel=1`). Trocar de cenário **restaura os dados** a partir das fixtures. A escolha fica salva no navegador.

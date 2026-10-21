@@ -49,6 +49,8 @@ export type UpdateCartItemRequest = z.infer<typeof updateCartItemRequestSchema>;
 
 export const quoteRequestSchema = z.object({
   couponCode: z.string().trim().min(1).nullable(),
+  /** Cart items to price; omitted means the whole cart (partial checkout). */
+  itemIds: z.array(z.string()).min(1).optional(),
 });
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>;
 

@@ -10,7 +10,7 @@ import {
   fixtureWallets,
 } from "@/mocks/fixtures/users";
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /** Fresh database for a scenario. Deep copies, so fixtures are never mutated. */
 export function buildSeed(scenario: ScenarioId): Db {

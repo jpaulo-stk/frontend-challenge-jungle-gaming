@@ -25,6 +25,7 @@ import { CheckoutPage } from "@/features/checkout/routes/checkout-page";
 import { loadNftDetail } from "@/features/nft-detail/routes/nft-detail-loader";
 import { NftDetailPending } from "@/features/nft-detail/routes/nft-detail-pending";
 import { NftDetailPage } from "@/features/nft-detail/routes/nft-detail-page";
+import { loadOrder } from "@/features/orders/routes/order-loader";
 import { OrderPage } from "@/features/orders/routes/order-page";
 import { ProfileDataPage, ProfileIndexPage } from "@/features/profile/routes/profile-data-page";
 import { ProfileLayout } from "@/features/profile/routes/profile-layout";
@@ -78,6 +79,7 @@ const orderRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pedido/$orderId",
   beforeLoad: requireAuth,
+  loader: loadOrder,
   component: OrderPage,
 });
 

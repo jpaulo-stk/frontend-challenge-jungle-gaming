@@ -4,6 +4,11 @@ import Big from "big.js";
 
 export const addEth = (a: string, b: string): string => new Big(a).plus(b).toFixed();
 
+export const subEth = (a: string, b: string): string => new Big(a).minus(b).toFixed();
+
+export const sumEth = (values: readonly string[]): string =>
+  values.reduce((total, value) => total.plus(value), new Big(0)).toFixed();
+
 export const mulEth = (a: string, quantity: number): string => {
   if (!Number.isInteger(quantity)) throw new RangeError("Quantity must be an integer");
   return new Big(a).times(quantity).toFixed();

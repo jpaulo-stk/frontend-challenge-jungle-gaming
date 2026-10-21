@@ -30,7 +30,7 @@ export function useSessionExpiry(): void {
       handling = true;
 
       const destination = router.state.location.href;
-      endSession(queryClient);
+      endSession(queryClient, "expired");
       toast.warning("Sua sessão expirou. Entre novamente para continuar de onde parou.");
       void router
         .navigate({ to: "/entrar", search: { redirect: destination }, replace: true })

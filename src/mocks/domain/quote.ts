@@ -42,14 +42,20 @@ function validateCoupon(rawCode: string | null): CouponResult {
   return { code: coupon.code, percentOff: coupon.percentOff };
 }
 
-type Computed = Omit<DbQuote, "id" | "owner" | "createdAt" | "expiresAt"> & {
+type Computed = Omit<DbQuote, "id" | "owner" | "itemIds" | "createdAt" | "expiresAt"> & {
   issues: QuoteIssue[];
 };
 
-/** Prices the owner's cart with the catalog as it is now. */
-export function computeQuote(owner: OwnerKey, couponCode: string | null): Computed {
+/** Prices the owner's cart (or the chosen items of it) with the catalog as it is now. */
+export function computeQuote(
+  owner: OwnerKey,
+  couponCode: string | null,
+  itemIds: string[] | null = null,
+): Computed {
   const db = getDb();
-  const items = db.cartItems.filter((item) => item.owner === owner);
+  const items = db.cartItems.filter(
+    (item) => item.owner === owner && (itemIds === null || itemIds.includes(item.id)),
+  );
   if (items.length === 0) {
     throw apiError(422, "CART_EMPTY", "Seu carrinho está vazio.");
   }
@@ -113,12 +119,17 @@ export function computeQuote(owner: OwnerKey, couponCode: string | null): Comput
   };
 }
 
-export function createQuote(owner: OwnerKey, couponCode: string | null): Quote {
-  const computed = computeQuote(owner, couponCode);
+export function createQuote(
+  owner: OwnerKey,
+  couponCode: string | null,
+  itemIds: string[] | null = null,
+): Quote {
+  const computed = computeQuote(owner, couponCode, itemIds);
   const now = Date.now();
   const quote: DbQuote = {
     id: newId("quote"),
     owner,
+    itemIds,
     couponCode: computed.couponCode,
     percentOff: computed.percentOff,
     lines: computed.lines,

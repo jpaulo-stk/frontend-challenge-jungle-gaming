@@ -18,6 +18,7 @@ export type MockHandle = {
   connectedClients: () => number;
   orderCount: () => number;
   pendingOrders: () => string[];
+  cartOf: (userId: string) => { nftId: string; editionId: string; quantity: number }[];
 };
 
 declare global {
@@ -85,11 +86,20 @@ export async function api(page: Page, input: RequestInput): Promise<ApiResult> {
 }
 
 export async function login(page: Page, email = "colecionador@kurio.test"): Promise<string> {
-  const result = await api(page, {
-    method: "POST",
-    path: "/auth/login",
-    body: { email, password: "kurio123" },
-  });
-  const { token } = result.body as { token: string };
-  return token;
+  // Setup step: right after the worker starts, under parallel load, a request
+  // can fail before reaching the mock (status 0). Retry it instead of storing
+  // an undefined token; any answer from the API is final.
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const result = await api(page, {
+      method: "POST",
+      path: "/auth/login",
+      body: { email, password: "kurio123" },
+    });
+    if (result.status === 0) continue;
+    const token = (result.body as { token?: unknown } | null)?.token;
+    if (typeof token !== "string")
+      throw new Error(`Login failed with status ${String(result.status)}`);
+    return token;
+  }
+  throw new Error("Login request never reached the mock API");
 }

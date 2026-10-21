@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 
 import { queryClient } from "@/app/query-client";
 import { router } from "@/app/router";
+// Registers the checkout draft's identity listener before any login/logout.
+import "@/shared/checkout/checkout-draft";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 
 // Loaded on demand and only in development, so it never ships in the build.

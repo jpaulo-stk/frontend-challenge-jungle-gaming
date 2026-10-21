@@ -54,7 +54,7 @@ export function createOrder(
       "A cotação expirou. Revise os valores e confirme novamente.",
     );
   }
-  const fresh = computeQuote(owner, quote.couponCode);
+  const fresh = computeQuote(owner, quote.couponCode, quote.itemIds);
   if (fresh.hasIssues) {
     throw apiError(409, "QUOTE_HAS_ISSUES", "Há itens indisponíveis no carrinho.");
   }
