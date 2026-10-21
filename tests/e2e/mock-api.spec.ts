@@ -341,7 +341,11 @@ test.describe("API simulada", { tag: "@api" }, () => {
       { ownerToken: owner, otherToken: other, modulePath: SOCKET_MODULE },
     );
 
-    await page.waitForFunction(() => window.__kurioMock?.connectedClients() === 2);
+    // The app keeps its own connection too: wait for the two collectors.
+    await page.waitForFunction(() => {
+      const users = window.__kurioMock?.realtimeClients().map((client) => client.userId) ?? [];
+      return users.includes("user_colecionador") && users.includes("user_nova");
+    });
     await api(page, {
       method: "POST",
       path: "/orders",

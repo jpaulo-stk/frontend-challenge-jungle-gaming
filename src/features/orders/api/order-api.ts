@@ -5,12 +5,12 @@ import { orderSchema } from "@/shared/api/contracts/order";
 import { parseContract } from "@/shared/api/parse-contract";
 import { orderKeys } from "@/shared/api/query-keys";
 
-/** Polling interval while the simulation has not settled the order. */
+/** Fallback polling of a pending order while the realtime connection is down. */
 export const PENDING_POLL_MS = 2_000;
 
 /**
  * One order of the signed-in collector. Terminal orders never change, so they
- * are never refetched; a pending one is polled until it settles.
+ * are never refetched. A pending one settles through `order.updated`.
  */
 export const orderQueryOptions = (orderId: string) =>
   queryOptions({
@@ -18,5 +18,4 @@ export const orderQueryOptions = (orderId: string) =>
     queryFn: async ({ signal }) =>
       parseContract(orderSchema, (await http.get(`/orders/${orderId}`, { signal })).data),
     staleTime: (query) => (query.state.data?.status === "pending" ? 0 : Infinity),
-    refetchInterval: (query) => (query.state.data?.status === "pending" ? PENDING_POLL_MS : false),
   });

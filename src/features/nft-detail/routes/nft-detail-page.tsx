@@ -13,6 +13,7 @@ import { usePurchase } from "@/features/nft-detail/hooks/use-purchase";
 import { useFavorites } from "@/shared/favorites/use-favorites";
 import { ErrorState } from "@/shared/ui/error-state";
 import { NftDetailSkeleton } from "@/shared/ui/skeleton/nft-detail-skeleton";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 const routeApi = getRouteApi("/nft/$nftId");
 
@@ -22,6 +23,7 @@ const overlayButton =
 export function NftDetailPage() {
   const { nftId } = routeApi.useParams();
   const detail = useQuery(nftDetailQueryOptions(nftId));
+  useNftSubscription([nftId]);
 
   return (
     <div className="page-container pt-6 pb-50 lg:pt-10 lg:pb-0">

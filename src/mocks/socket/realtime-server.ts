@@ -107,3 +107,11 @@ export function dropRealtimeConnections(): number {
 export function realtimeClientCount(): number {
   return clients.size;
 }
+
+/** Who is connected and which NFT rooms each connection is in (orphan subscriptions show here). */
+export function realtimeClients(): { userId: string | null; rooms: string[] }[] {
+  return [...clients].map((client) => ({
+    userId: client.userId,
+    rooms: [...client.nftRooms].sort(),
+  }));
+}

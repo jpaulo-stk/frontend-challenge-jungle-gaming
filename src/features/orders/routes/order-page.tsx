@@ -1,14 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { CircleX, LoaderCircle, RotateCw } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-import { orderQueryOptions } from "@/features/orders/api/order-api";
+import { orderQueryOptions, PENDING_POLL_MS } from "@/features/orders/api/order-api";
 import { ReceiptDialog } from "@/features/orders/components/receipt-dialog";
 import type { Order } from "@/shared/api/contracts/order";
 import { cartKeys } from "@/shared/api/query-keys";
 import { useCheckoutDraft } from "@/shared/checkout/checkout-draft";
+import { announce } from "@/shared/lib/announce";
 import { formatEth } from "@/shared/lib/eth";
+import { useRealtimeState } from "@/shared/realtime/use-realtime";
 import { Button, buttonVariants } from "@/shared/ui/button";
 import { ErrorState } from "@/shared/ui/error-state";
 
@@ -18,13 +20,29 @@ export function OrderPage() {
   const { orderId } = routeApi.useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const order = useQuery(orderQueryOptions(orderId));
+  const realtime = useRealtimeState();
+  const order = useQuery({
+    ...orderQueryOptions(orderId),
+    // `order.updated` settles it; polling only covers a realtime link that is down.
+    refetchInterval: (query) =>
+      query.state.data?.status === "pending" && realtime.status !== "online"
+        ? PENDING_POLL_MS
+        : false,
+  });
   const status = order.data?.status;
+  const previousStatus = useRef(status);
 
   // The order this tab is waiting for settled: a confirmation took the bought
   // units out of the cart (server side), a rejection left the cart as it was.
   useEffect(() => {
+    const wasPending = previousStatus.current === "pending";
+    previousStatus.current = status;
     if (!status || status === "pending") return;
+    // Seen live: the receipt opens as a dialog; say it too. A rejection renders
+    // its own role="alert".
+    if (wasPending && status === "confirmed") {
+      announce("Pedido confirmado. Seus NFTs agora estão na sua carteira.");
+    }
     const draft = useCheckoutDraft.getState();
     if (draft.pendingOrderId !== orderId) return;
     if (status === "confirmed") {

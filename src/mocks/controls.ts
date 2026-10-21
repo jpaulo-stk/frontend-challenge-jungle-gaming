@@ -7,7 +7,11 @@ import { cancelSettlements, settleOrder } from "@/mocks/domain/orders";
 import { seedRandom } from "@/mocks/lib/random";
 import { clearFaults, queueFault } from "@/mocks/scenarios/faults";
 import { nftUpdatedEvent, publish, republishLast } from "@/mocks/socket/bus";
-import { dropRealtimeConnections, realtimeClientCount } from "@/mocks/socket/realtime-server";
+import {
+  dropRealtimeConnections,
+  realtimeClientCount,
+  realtimeClients,
+} from "@/mocks/socket/realtime-server";
 import type { EditionId } from "@/shared/api/contracts/nft";
 
 // Control surface of the simulated backend, used by the dev panel and by the
@@ -82,6 +86,9 @@ export const mockControls = {
   dropConnections: () => dropRealtimeConnections(),
 
   connectedClients: () => realtimeClientCount(),
+
+  /** Connected realtime clients: identity and subscribed NFT rooms. */
+  realtimeClients: () => realtimeClients(),
 
   /** The next private request ends the current session with a 401. */
   expireSessionOnNextRequest(): void {

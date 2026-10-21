@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { relatedNftsQueryOptions } from "@/features/nft-detail/api/nft-detail-api";
 import { NftCard } from "@/shared/ui/nft-card";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 const PER_PAGE = 5;
 const CARD = 219;
@@ -21,6 +22,7 @@ export function RelatedCarousel({ currentId }: RelatedCarouselProps) {
   const [page, setPage] = useState(0);
 
   const items = (related.data?.items ?? []).filter((nft) => nft.id !== currentId).slice(0, 15);
+  useNftSubscription(items.map((nft) => nft.id));
   const pages = Math.ceil(items.length / PER_PAGE);
 
   const goTo = (target: number) => {

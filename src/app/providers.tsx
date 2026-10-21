@@ -7,6 +7,7 @@ import { queryClient } from "@/app/query-client";
 import { router } from "@/app/router";
 // Registers the checkout draft's identity listener before any login/logout.
 import "@/shared/checkout/checkout-draft";
+import { RealtimeProvider } from "@/shared/realtime/realtime-provider";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 
 // Loaded on demand and only in development, so it never ships in the build.
@@ -21,9 +22,11 @@ const ReactQueryDevtools = import.meta.env.DEV
 export function AppProviders() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider delayDuration={300}>
-        <RouterProvider router={router} />
-      </TooltipProvider>
+      <RealtimeProvider>
+        <TooltipProvider delayDuration={300}>
+          <RouterProvider router={router} />
+        </TooltipProvider>
+      </RealtimeProvider>
       <Toaster position="bottom-right" theme="dark" closeButton />
       {ReactQueryDevtools && (
         <Suspense fallback={null}>

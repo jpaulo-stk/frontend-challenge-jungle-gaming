@@ -19,5 +19,8 @@ export async function createRealtimeSocket(token: string | null): Promise<Socket
     autoConnect: false,
     reconnectionDelay: 500,
     reconnectionDelayMax: 4000,
+    // A handshake that never completes counts as a failure after 5s (default 20s),
+    // so the interface can say the realtime link is down.
+    timeout: 5000,
   });
 }

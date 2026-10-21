@@ -9,6 +9,7 @@ import { AppFooter } from "@/shared/ui/app-footer";
 import { AppHeader } from "@/shared/ui/app-header";
 import { AppTabBar } from "@/shared/ui/app-tab-bar";
 import { LiveAnnouncer } from "@/shared/ui/live-announcer";
+import { RealtimeStatus } from "@/shared/ui/realtime-status";
 
 export function RootLayout() {
   useSessionExpiry();
@@ -42,6 +43,7 @@ export function RootLayout() {
       <AppFooter />
       {!onDetail && <AppTabBar cartCount={cartCount} />}
       <LiveAnnouncer />
+      <RealtimeStatus />
     </div>
   );
 }

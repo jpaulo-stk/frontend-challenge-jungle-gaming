@@ -16,6 +16,7 @@ export type MockHandle = {
   failNextRequest: (method: string, path: string, status?: number) => void;
   expireSessionOnNextRequest: () => void;
   connectedClients: () => number;
+  realtimeClients: () => { userId: string | null; rooms: string[] }[];
   orderCount: () => number;
   pendingOrders: () => string[];
   cartOf: (userId: string) => { nftId: string; editionId: string; quantity: number }[];

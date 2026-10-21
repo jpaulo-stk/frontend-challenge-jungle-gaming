@@ -146,13 +146,14 @@ O rascunho é descartado no logout ou quando outro colecionador entra. Uma sess�
 ### Envio do pedido
 
 1. "Confirmar compra" valida o formulário (zod) e exige carteira conectada. A conexão é simulada (`POST /wallet-connections`) e só vale para a carteira, o provedor e a rede com que foi feita.
-2. Antes de enviar, a cotação é pedida de novo. Se preço, quantidade, disponibilidade, cupom, taxa ou total mudaram em relação ao que estava na tela, nada é enviado: um diálogo lista as diferenças e pede uma nova confirmação explícita. Item esgotado ou sem estoque bloqueia o envio.
+2. Antes de enviar, a cotação é pedida de novo. Se preço, quantidade, disponibilidade, cupom, taxa ou total mudaram em relação ao que o colecionador viu, nada é enviado: um diálogo lista as diferenças e pede uma nova confirmação explícita. Item esgotado ou sem estoque bloqueia o envio.
+   - **Cotação vista:** o checkout guarda a cotação que o colecionador já viu (`useAcknowledgedQuote`). Uma cotação nova causada por ele (cupom, item deixado para depois) é aceita ao chegar. Uma que mudou por evento (preço, disponibilidade) atualiza o resumo na hora, mas não substitui a vista: um aviso lista o que mudou e a confirmação compara com a cotação vista, exigindo o "sim" de novo.
 3. Cada tentativa recebe uma `Idempotency-Key` (UUID), guardada no rascunho junto com o corpo antes do envio. Se a resposta não chega (timeout, rede, 5xx), "Tentar novamente" reenvia a mesma chave com o mesmo corpo, e a API devolve o mesmo pedido. Isso vale também depois de um refresh.
 4. Cliques repetidos não criam um segundo pedido: uma trava síncrona cobre toda a sequência (cotação e envio), o botão fica desabilitado, a mutation não tem retry e a API deduplica pela chave.
 
 ### Estados do pedido
 
-- **`pending`:** `/pedido/:id` mostra o processamento e consulta `GET /orders/:id` a cada 2 s (a fase 7 troca o polling pelo evento `order.updated`). A página sobrevive a refresh.
+- **`pending`:** `/pedido/:id` mostra o processamento e se resolve pelo evento `order.updated`. Enquanto o tempo real estiver fora, a página consulta `GET /orders/:id` a cada 2 s como reserva. Ela sobrevive a refresh e nunca cria outro pedido.
 - **`confirmed`:** o recibo abre como modal no desktop e em tela cheia no mobile. Todos os valores são a cópia congelada do pedido; mudar o catálogo depois não altera o recibo. O link do Etherscan é rotulado como simulado.
 - **`rejected`:** mostra o motivo e avisa que o carrinho ficou como estava, com caminhos para o pagamento e o carrinho.
 - Um pedido de outro colecionador responde 404 e cai na página de não encontrado.
@@ -259,6 +260,25 @@ Todo evento carrega:
 
 O cliente descarta eventos com `version` menor ou igual à que já tem.
 
+### Cliente (`shared/realtime/`)
+
+| Arquivo                                     | Papel                                                                             |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| `socket.ts`                                 | Cria o `socket.io-client` (só WebSocket, token no `auth`), importado sob demanda. |
+| `realtime-client.ts`                        | Conexão única fora do React: identidade, inscrições, status e reconciliação.      |
+| `apply-events.ts`                           | Único lugar em que evento toca o cache do Query, sempre com guarda de versão.     |
+| `realtime-provider.tsx` / `use-realtime.ts` | Liga o cliente à sessão; `useNftSubscription(ids)` e `useRealtimeState()`.        |
+
+- **Conexão:** abre quando a sessão é conhecida (visitante também conecta, para o catálogo). O provider lê a sessão do cache sem criar observador próprio: um observador acima do router, sob a montagem dupla do StrictMode, cancelaria o fetch que um guard está aguardando.
+- **Troca de identidade:** login, logout ou expiração derrubam a conexão e abrem outra com a nova identidade. Além disso, cada conexão só aplica eventos se a sessão atual ainda for a dela: um evento que chegue pela conexão antiga é descartado.
+- **Inscrição por tela:** catálogo, card em destaque, detalhe, "Mais desta coleção", favoritos, carrinho e pagamento inscrevem os NFTs que exibem e saem ao desmontar. As inscrições têm contagem de referência (duas telas no mesmo NFT, ou o StrictMode, não duplicam nem cancelam a sala da outra) e são reenviadas a cada conexão.
+- **Guarda de versão:** `nft.updated` só é aplicado se a versão for maior que a maior conhecida (detalhe, listas, favoritos e as já aplicadas). Detalhe, listas e favoritos são atualizados no cache. Carrinho e cotação não têm versão: são recarregados da API, uma vez por evento aplicado. Duplicata e evento antigo não mudam nada nem repetem aviso.
+- **Pedido:** `order.updated` só vale para um pedido que já está no cache do colecionador. O evento traz só o status, então o pedido completo (transação, recibo) vem de novo do REST.
+- **Reconexão:** ao voltar, o que estiver na tela (NFTs, carrinho, cotação, pedidos, favoritos) é refeito via REST, em vez de confiar no que chegou ou deixou de chegar enquanto esteve fora.
+- **Status:** `connecting | online | offline`. A interface fica quieta enquanto tudo funciona; depois de uma falha mostra um aviso discreto (`role="status"`) de que preços e pedidos podem estar desatualizados e, ao voltar, que a conexão foi restabelecida. Um handshake que não se completa conta como falha depois de 5 s.
+- **Avisos:** mudança de preço ou disponibilidade de item do carrinho é anunciada por `aria-live="polite"` e aparece na linha do carrinho e no aviso do pagamento. Pedido confirmado ao vivo é anunciado; recusa usa `role="alert"`.
+- **Disparo manual:** o painel de simulação e `window.__kurioMock` mudam o banco simulado (subir preço, esgotar edição, repetir o último evento, evento antigo, liquidar pedido, derrubar a conexão). O evento sempre chega pelo `socket.io-client`; `realtimeClients()` mostra as conexões e as salas de cada uma.
+
 ## API simulada (MSW)
 
 Toda resposta fictícia vive em `src/mocks/`. Componentes, hooks e o cliente Axios não contêm dados nem caminhos alternativos, e um grep sem resultados fora de `src/mocks/` confirma isso.
@@ -316,19 +336,19 @@ Defaults globais em `src/app/query-client.ts`. Cada domínio ajusta `staleTime`/
 
 Ajustes por domínio:
 
-| Domínio             | `staleTime`   | Por quê                                                                                                 |
-| ------------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
-| Favoritos           | 60 s          | Dado privado que só muda por ação do próprio colecionador, e essa ação invalida a lista.                |
-| Catálogo (lista)    | 30 s (padrão) | Preço e disponibilidade chegam por evento; ao mudar de filtro ou página, a lista anterior fica visível. |
-| Filtros (`/facets`) | 5 min         | As contagens quase não mudam.                                                                           |
-| Detalhe do NFT      | 30 s          | Também atualizado por evento. Sem nova tentativa automática para `NFT_NOT_FOUND`.                       |
-| Relacionados        | 60 s          | Vitrine secundária.                                                                                     |
-| Sessão              | 5 min         | Revalidada no login, no logout e em respostas 401; não precisa de polling.                              |
-| Carrinho            | 15 s          | Atualizado pelas mutations; uma janela curta cobre mudanças vindas de outra aba.                        |
-| Perfil              | 60 s          | Muda só por edição do próprio colecionador, que grava a resposta no cache.                              |
-| Carteiras           | 60 s          | Idem; a mesma consulta abastece o checkout.                                                             |
-| Cotação             | 30 s          | A chave inclui cupom, itens e versão do carrinho. Antes de enviar o pedido ela é sempre pedida de novo. |
-| Pedido              | 0 / ∞         | Pendente: consultado a cada 2 s até liquidar. Confirmado ou recusado: nunca muda, nunca é refeito.      |
+| Domínio             | `staleTime`   | Por quê                                                                                                     |
+| ------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| Favoritos           | 60 s          | Dado privado que só muda por ação do próprio colecionador, e essa ação invalida a lista.                    |
+| Catálogo (lista)    | 30 s (padrão) | Preço e disponibilidade chegam por evento; ao mudar de filtro ou página, a lista anterior fica visível.     |
+| Filtros (`/facets`) | 5 min         | As contagens quase não mudam.                                                                               |
+| Detalhe do NFT      | 30 s          | Também atualizado por evento. Sem nova tentativa automática para `NFT_NOT_FOUND`.                           |
+| Relacionados        | 60 s          | Vitrine secundária.                                                                                         |
+| Sessão              | 5 min         | Revalidada no login, no logout e em respostas 401; não precisa de polling.                                  |
+| Carrinho            | 15 s          | Atualizado pelas mutations; uma janela curta cobre mudanças vindas de outra aba.                            |
+| Perfil              | 60 s          | Muda só por edição do próprio colecionador, que grava a resposta no cache.                                  |
+| Carteiras           | 60 s          | Idem; a mesma consulta abastece o checkout.                                                                 |
+| Cotação             | 30 s          | A chave inclui cupom, itens e versão do carrinho. Antes de enviar o pedido ela é sempre pedida de novo.     |
+| Pedido              | 0 / ∞         | Pendente: liquidado por `order.updated` (consulta a cada 2 s só sem tempo real). Terminal: nunca é refeito. |
 
 Regras que valem para todo o projeto:
 

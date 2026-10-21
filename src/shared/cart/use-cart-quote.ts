@@ -7,6 +7,7 @@ import { cartQueryOptions } from "@/shared/cart/cart-api";
 import { quoteQueryOptions } from "@/shared/cart/quote-api";
 import { useCheckoutDraft } from "@/shared/checkout/checkout-draft";
 import { addEth, subEth, sumEth } from "@/shared/lib/eth";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 const couponErrors = new Set(["COUPON_EXPIRED", "COUPON_INVALID"]);
 const blockingCodes = new Set<QuoteIssue["code"]>([
@@ -30,6 +31,8 @@ export function useCartQuote({ excludedItemIds = [] }: Options = {}) {
   const setCoupon = useCheckoutDraft((draft) => draft.setCoupon);
 
   const allItems: CartItem[] = cart.data?.items ?? [];
+  // Price and availability of what is in the cart arrive by event (cart page and checkout).
+  useNftSubscription(allItems.map((item) => item.nftId));
   const items = allItems.filter((item) => !excludedItemIds.includes(item.id));
   // The whole cart is quoted without itemIds, sharing the cart page's quote.
   const itemIds = items.length < allItems.length ? items.map((item) => item.id) : undefined;

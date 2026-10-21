@@ -12,12 +12,14 @@ import {
 } from "@/features/checkout/api/schemas";
 import { BuyerForm } from "@/features/checkout/components/buyer-form";
 import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
+import { QuoteChangedNotice } from "@/features/checkout/components/quote-changed-notice";
 import { ReviewDialog } from "@/features/checkout/components/review-dialog";
 import { WalletSelector } from "@/features/checkout/components/wallet-selector";
 import {
   useCheckoutSubmit,
   type CheckoutSubmit,
 } from "@/features/checkout/hooks/use-checkout-submit";
+import { useAcknowledgedQuote } from "@/features/checkout/hooks/use-acknowledged-quote";
 import { useWalletConnection } from "@/features/checkout/hooks/use-wallet-connection";
 import { initialBuyer, toBuyer, walletFields } from "@/features/checkout/lib/buyer-values";
 import { networkSchema, walletProviderSchema } from "@/shared/api/contracts/common";
@@ -173,6 +175,16 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
     itemIds: state.itemIds,
     cartVersion: state.cart.data?.version ?? 0,
   });
+  const acknowledged = useAcknowledgedQuote({
+    quote: state.quote.data,
+    settled: !state.estimating && !state.quote.isPlaceholderData,
+    requestKey: JSON.stringify([
+      draft.couponCode,
+      state.itemIds ?? null,
+      state.cart.data?.version ?? 0,
+    ]),
+    items: state.items,
+  });
 
   const chooseWallet = (next: Wallet) => {
     draft.setWallet(next.id);
@@ -195,11 +207,13 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
       setGate("Há itens indisponíveis: deixe-os para depois ou ajuste no carrinho.");
       return;
     }
-    if (!state.quote.data || state.estimating) {
+    if (!acknowledged.seen || state.estimating) {
       setGate("Aguarde o resumo terminar de atualizar.");
       return;
     }
-    void submit.confirm(state.quote.data, {
+    // Revalidated against what the collector saw, not against a quote that
+    // changed underneath: any difference opens the review.
+    void submit.confirm(acknowledged.seen, {
       walletId: wallet.id,
       connectionId: connection.connection.id,
       buyer: toBuyer(values),
@@ -224,6 +238,14 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
       </form>
 
       <div className="max-lg:order-2 lg:col-start-2 lg:row-start-1">
+        {acknowledged.changes.length > 0 && state.quote.data && (
+          <QuoteChangedNotice
+            changes={acknowledged.changes}
+            onAccept={() => {
+              if (state.quote.data) acknowledged.accept(state.quote.data);
+            }}
+          />
+        )}
         <CheckoutSummary state={state} locked={submit.busy} />
       </div>
 
@@ -285,7 +307,10 @@ function CheckoutForm({ state, wallets, user }: CheckoutFormProps) {
       <ReviewDialog
         review={submit.review}
         busy={submit.busy}
-        onAccept={submit.acceptReview}
+        onAccept={() => {
+          if (submit.review) acknowledged.accept(submit.review.quote);
+          submit.acceptReview();
+        }}
         onClose={submit.closeReview}
       >
         {submit.review && <SendStatus submit={submit} gate={null} />}

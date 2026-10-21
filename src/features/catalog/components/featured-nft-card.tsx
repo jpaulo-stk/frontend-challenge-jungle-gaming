@@ -3,11 +3,13 @@ import { Link } from "@tanstack/react-router";
 
 import { featuredQueryOptions } from "@/features/catalog/api/catalog-api";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 /** "NFT em destaque — oferta limitada" card under the sidebar filters. */
 export function FeaturedNftCard() {
   const featured = useQuery(featuredQueryOptions);
   const nft = featured.data;
+  useNftSubscription(nft ? [nft.id] : []);
 
   return (
     <section

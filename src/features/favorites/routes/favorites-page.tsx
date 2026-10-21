@@ -9,6 +9,7 @@ import { ErrorState } from "@/shared/ui/error-state";
 import { NftCard } from "@/shared/ui/nft-card";
 import { PageShell } from "@/shared/ui/page-shell";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 const gridClassName =
   "mt-8 grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8.5";
@@ -16,6 +17,7 @@ const gridClassName =
 /** "Lista de interesse": the collector's favorited NFTs. */
 export function FavoritesPage() {
   const favorites = useQuery(favoritesQueryOptions);
+  useNftSubscription(favorites.data?.items.map((nft) => nft.id) ?? []);
 
   return (
     <PageShell title="Lista de interesse">

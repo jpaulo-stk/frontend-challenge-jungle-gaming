@@ -16,6 +16,7 @@ import { ImageZoomDialog } from "@/shared/ui/image-zoom-dialog";
 import { NftCard } from "@/shared/ui/nft-card";
 import { Pagination } from "@/shared/ui/pagination";
 import { NftCardSkeleton } from "@/shared/ui/skeleton/nft-card-skeleton";
+import { useNftSubscription } from "@/shared/realtime/use-realtime";
 
 const gridClassName =
   "grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-3 lg:grid-cols-[repeat(3,258px)] lg:gap-x-8.5 lg:gap-y-14";
@@ -25,6 +26,7 @@ export function CatalogResults() {
   const { search, clearFilters, goToPage } = useCatalogFilters();
   const params = toListParams(search);
   const list = useQuery(nftListQueryOptions(params));
+  useNftSubscription(list.data?.items.map((nft) => nft.id) ?? []);
   const favorites = useFavorites();
   const addToCart = useAddToCart();
   const [zoomed, setZoomed] = useState<NftSummary | null>(null);
