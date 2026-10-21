@@ -1,29 +1,22 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-
 import "@/styles/globals.css";
 
 async function bootstrap() {
-  // The app downloads while the simulated backend starts; nothing renders (so
-  // no request leaves) before the mocks answer. socket.io-client captures the
-  // WebSocket constructor when imported, so the app only loads it on demand,
-  // after this point (see shared/realtime/socket.ts).
-  const app = import("@/app/providers");
+  // The entry holds only this bootstrap: React, the app and the simulated
+  // backend are separate chunks that download in parallel from the start.
+  // Nothing renders (so no request leaves) before the mocks answer.
+  // socket.io-client captures the WebSocket constructor when imported, so the
+  // app only loads it on demand, after this point (shared/realtime/socket.ts).
+  const app = import("@/app/render");
   if (import.meta.env.VITE_ENABLE_MOCKS === "true") {
     const { startMocks } = await import("@/mocks/browser");
     await startMocks();
   }
 
-  const { AppProviders } = await app;
+  const { renderApp } = await app;
 
   const container = document.getElementById("root");
   if (!container) throw new Error("Root element #root not found in index.html");
-
-  createRoot(container).render(
-    <StrictMode>
-      <AppProviders />
-    </StrictMode>,
-  );
+  renderApp(container);
 }
 
 /** A boot that fails (a chunk that did not download, say) never leaves a blank page. */

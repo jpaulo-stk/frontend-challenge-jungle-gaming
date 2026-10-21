@@ -23,9 +23,13 @@ export function HomePage() {
 
       <section
         id="catalogo"
-        aria-label="Catálogo de NFTs"
+        aria-labelledby="catalogo-title"
         className="page-container mt-8 scroll-mt-6 lg:mt-24 lg:grid lg:grid-cols-[310px_1fr] lg:gap-12"
       >
+        {/* Heading level for the cards (h3); the section has no visible title in the layout. */}
+        <h2 id="catalogo-title" className="sr-only">
+          Catálogo de NFTs
+        </h2>
         <aside aria-label="Busca e filtros" className="hidden flex-col gap-6 lg:flex">
           <CatalogSearchField id="busca" />
           <div className="bg-surface px-5 py-6">

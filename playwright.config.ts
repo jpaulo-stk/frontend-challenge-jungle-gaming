@@ -3,8 +3,30 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 5173;
 const isCI = Boolean(process.env.CI);
 
+export const projects = [
+  {
+    name: "chromium-desktop",
+    // Tests tagged for one viewport only run in that project.
+    grepInvert: /@mobile/,
+    use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+  },
+  {
+    name: "chromium-mobile",
+    grepInvert: /@desktop|@api/,
+    use: {
+      ...devices["Desktop Chrome"],
+      viewport: { width: 390, height: 844 },
+      isMobile: true,
+      hasTouch: true,
+    },
+  },
+];
+
 export default defineConfig({
   testDir: "./tests",
+  // Screenshot comparisons depend on the OS font rendering: they run apart,
+  // against the production build (playwright.visual.config.ts).
+  testIgnore: ["visual/**"],
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
@@ -22,24 +44,7 @@ export default defineConfig({
     locale: "pt-BR",
     timezoneId: "America/Sao_Paulo",
   },
-  projects: [
-    {
-      name: "chromium-desktop",
-      // Tests tagged for one viewport only run in that project.
-      grepInvert: /@mobile/,
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
-    },
-    {
-      name: "chromium-mobile",
-      grepInvert: /@desktop|@api/,
-      use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 390, height: 844 },
-        isMobile: true,
-        hasTouch: true,
-      },
-    },
-  ],
+  projects,
   webServer: {
     command: "pnpm dev",
     url: `http://localhost:${PORT}`,

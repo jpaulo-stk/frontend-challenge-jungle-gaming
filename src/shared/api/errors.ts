@@ -39,7 +39,8 @@ const errorMessages: Readonly<Record<string, string>> = {
   COUPON_EXPIRED: "Este cupom expirou.",
   PRICE_CHANGED: "O preço de um item mudou.",
   EDITION_SOLD_OUT: "Esta edição esgotou.",
-  QUOTE_STALE: "Os valores do pedido mudaram. Revise e confirme novamente.",
+  QUOTE_STALE:
+    "A cotação deste pedido não vale mais: ela expirou ou os valores mudaram. Revise e confirme novamente.",
   IDEMPOTENCY_CONFLICT: "Este pedido já foi enviado com outro conteúdo.",
   IDEMPOTENCY_KEY_REQUIRED: "Não foi possível identificar a tentativa de compra. Tente novamente.",
   QUOTE_HAS_ISSUES: "Há itens indisponíveis no carrinho. Ajuste-os para continuar.",

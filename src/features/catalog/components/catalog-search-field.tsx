@@ -1,4 +1,4 @@
-import { useLocation } from "@tanstack/react-router";
+import { useLocation, useRouter } from "@tanstack/react-router";
 import { cn } from "cn";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -53,6 +53,17 @@ export function CatalogSearchField({ id, className }: CatalogSearchFieldProps) {
       clearTimeout(timer.current);
     },
     [],
+  );
+
+  // Leaving the home (clicking a card while the term is still pending) wins:
+  // the pending search must not pull the collector back to the catalog.
+  const router = useRouter();
+  useEffect(
+    () =>
+      router.subscribe("onBeforeNavigate", ({ toLocation }) => {
+        if (toLocation.pathname !== "/") clearTimeout(timer.current);
+      }),
+    [router],
   );
 
   return (

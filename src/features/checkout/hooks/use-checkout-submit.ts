@@ -31,6 +31,8 @@ const needsRequote = new Set([
 ]);
 const blockingCodes = new Set(["EDITION_SOLD_OUT", "INSUFFICIENT_AVAILABILITY"]);
 const outdated = "Os valores mudaram desde o envio. Revise o resumo e confirme novamente.";
+/** Why the API asked for a new quote (expired, values changed, coupon fell). */
+type Requote = { requote: string };
 
 /**
  * Review and submission of the purchase. Every confirmation asks the quote
@@ -81,7 +83,7 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
     }
   };
 
-  const send = async (attempt: OrderAttempt): Promise<"sent" | "requote"> => {
+  const send = async (attempt: OrderAttempt): Promise<"sent" | Requote> => {
     draft.setAttempt(attempt);
     try {
       const order = await createOrder.mutateAsync(attempt);
@@ -105,7 +107,7 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
         return "sent";
       }
       draft.setAttempt(null);
-      if (appError && needsRequote.has(appError.code)) return "requote";
+      if (appError && needsRequote.has(appError.code)) return { requote: appError.message };
       setProblem({ kind: "failed", message: appError?.message ?? String(error) });
       return "sent";
     }
@@ -123,7 +125,7 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
     const full: CreateOrderRequest = { ...body, quoteId: fresh.quoteId };
     const outcome = await send({ key: crypto.randomUUID(), body: full });
     // The API found the values outdated between our check and the send.
-    if (outcome !== "requote") return;
+    if (outcome === "sent") return;
     if (!retried) {
       await check(seen, body, true);
       return;
@@ -161,7 +163,9 @@ export function useCheckoutSubmit({ items, itemIds, cartVersion }: Options) {
       const attempt = draft.attempt;
       if (!attempt) return;
       void guarded(async () => {
-        if ((await send(attempt)) === "requote") setProblem({ kind: "failed", message: outdated });
+        const outcome = await send(attempt);
+        if (outcome !== "sent")
+          setProblem({ kind: "failed", message: outcome.requote || outdated });
       });
     },
     closeReview: () => {

@@ -13,23 +13,17 @@ import { RootLayout } from "@/app/root-layout";
 import { RouteError } from "@/app/route-error";
 import { parseSearch, stringifySearch } from "@/app/search-params";
 import { authSearchSchema } from "@/features/auth/routes/auth-search-schema";
-import { LoginPage } from "@/features/auth/routes/login-page";
-import { RegisterPage } from "@/features/auth/routes/register-page";
 import { redirectIfSignedIn } from "@/features/auth/routes/redirect-if-signed-in";
 import { requireAuth } from "@/features/auth/routes/require-auth";
-import { CartPage } from "@/features/cart/routes/cart-page";
 import { catalogSearchSchema } from "@/features/catalog/routes/catalog-search";
 import { HomeLayout } from "@/features/catalog/routes/home-layout";
-import { FavoritesPage } from "@/features/favorites/routes/favorites-page";
-import { CheckoutPage } from "@/features/checkout/routes/checkout-page";
 import { loadNftDetail } from "@/features/nft-detail/routes/nft-detail-loader";
 import { NftDetailPending } from "@/features/nft-detail/routes/nft-detail-pending";
-import { NftDetailPage } from "@/features/nft-detail/routes/nft-detail-page";
 import { loadOrder } from "@/features/orders/routes/order-loader";
-import { OrderPage } from "@/features/orders/routes/order-page";
-import { ProfileDataPage, ProfileIndexPage } from "@/features/profile/routes/profile-data-page";
-import { ProfileLayout } from "@/features/profile/routes/profile-layout";
-import { WalletsPage } from "@/features/wallets/routes/wallets-page";
+
+// Every screen but the home is split by route: the home (the entry point and the
+// Lighthouse target) does not download checkout, profile or detail code. The
+// router preloads a route's chunk on hover/focus of its links (defaultPreload).
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -59,20 +53,26 @@ const nftDetailRoute = createRoute({
   loader: loadNftDetail,
   pendingComponent: NftDetailPending,
   pendingMs: 200,
-  component: NftDetailPage,
+  component: lazyRouteComponent(
+    () => import("@/features/nft-detail/routes/nft-detail-page"),
+    "NftDetailPage",
+  ),
 });
 
 const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/carrinho",
-  component: CartPage,
+  component: lazyRouteComponent(() => import("@/features/cart/routes/cart-page"), "CartPage"),
 });
 
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pagamento",
   beforeLoad: requireAuth,
-  component: CheckoutPage,
+  component: lazyRouteComponent(
+    () => import("@/features/checkout/routes/checkout-page"),
+    "CheckoutPage",
+  ),
 });
 
 const orderRoute = createRoute({
@@ -80,14 +80,17 @@ const orderRoute = createRoute({
   path: "/pedido/$orderId",
   beforeLoad: requireAuth,
   loader: loadOrder,
-  component: OrderPage,
+  component: lazyRouteComponent(() => import("@/features/orders/routes/order-page"), "OrderPage"),
 });
 
 const favoritesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/favoritos",
   beforeLoad: requireAuth,
-  component: FavoritesPage,
+  component: lazyRouteComponent(
+    () => import("@/features/favorites/routes/favorites-page"),
+    "FavoritesPage",
+  ),
 });
 
 const loginRoute = createRoute({
@@ -95,7 +98,7 @@ const loginRoute = createRoute({
   path: "entrar",
   validateSearch: authSearchSchema,
   beforeLoad: redirectIfSignedIn,
-  component: LoginPage,
+  component: lazyRouteComponent(() => import("@/features/auth/routes/login-page"), "LoginPage"),
 });
 
 const registerRoute = createRoute({
@@ -103,7 +106,10 @@ const registerRoute = createRoute({
   path: "criar-conta",
   validateSearch: authSearchSchema,
   beforeLoad: redirectIfSignedIn,
-  component: RegisterPage,
+  component: lazyRouteComponent(
+    () => import("@/features/auth/routes/register-page"),
+    "RegisterPage",
+  ),
 });
 
 // Desktop shows the side menu plus the profile form on `/perfil`; mobile turns
@@ -112,25 +118,37 @@ const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/perfil",
   beforeLoad: requireAuth,
-  component: ProfileLayout,
+  component: lazyRouteComponent(
+    () => import("@/features/profile/routes/profile-layout"),
+    "ProfileLayout",
+  ),
 });
 
 const profileIndexRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: "/",
-  component: ProfileIndexPage,
+  component: lazyRouteComponent(
+    () => import("@/features/profile/routes/profile-data-page"),
+    "ProfileIndexPage",
+  ),
 });
 
 const profileDataRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: "dados",
-  component: ProfileDataPage,
+  component: lazyRouteComponent(
+    () => import("@/features/profile/routes/profile-data-page"),
+    "ProfileDataPage",
+  ),
 });
 
 const walletsRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: "carteiras",
-  component: WalletsPage,
+  component: lazyRouteComponent(
+    () => import("@/features/wallets/routes/wallets-page"),
+    "WalletsPage",
+  ),
 });
 
 // Component catalog for visual review. Development only: in production builds

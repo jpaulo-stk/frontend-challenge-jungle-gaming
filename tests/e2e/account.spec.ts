@@ -29,6 +29,24 @@ test.describe("cadastro e login", () => {
     await expect(dialog.getByText("Este e-mail já está cadastrado.")).toBeVisible();
   });
 
+  test("cadastro novo entra na conta e a sessão sobrevive ao refresh", async ({ page }) => {
+    await openWithScenario(page);
+    await page.goto("/criar-conta");
+    const dialog = page.getByRole("dialog", { name: "Criar perfil de colecionador" });
+
+    await dialog.getByLabel(/^Nome de usuário/).fill("novo.colecionador");
+    await dialog.getByLabel(/^E-mail/).fill("novo@kurio.test");
+    await dialog.getByLabel(/^Senha/).fill("segredo123");
+    await dialog.getByLabel(/^Confirmar senha/).fill("segredo123");
+    await dialog.getByRole("button", { name: "Criar conta", exact: true }).click();
+
+    await expect(page.getByText("Conta criada. Boas-vindas, novo.colecionador!")).toBeVisible();
+    await expect(dialog).toBeHidden();
+    await page.reload();
+    await page.goto("/perfil/dados");
+    await expect(page.getByLabel(/^E-mail/)).toHaveValue("novo@kurio.test");
+  });
+
   test("credencial errada avisa sem limpar o formulário", async ({ page }) => {
     await openWithScenario(page);
     await page.goto("/entrar");
@@ -59,6 +77,8 @@ test.describe("sessão", { tag: "@desktop" }, () => {
     await page.goto("/carrinho");
     await page.getByRole("contentinfo").getByRole("link", { name: "Lista de interesse" }).click();
     await expect(page).toHaveURL(/\/entrar\?redirect=%2Ffavoritos/);
+    // The dialog's code loads on demand: close it once it is on screen.
+    await expect(page.getByRole("dialog", { name: "Entrar" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page).toHaveURL("/carrinho");
   });
