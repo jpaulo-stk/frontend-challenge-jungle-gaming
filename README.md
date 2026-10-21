@@ -1,5 +1,10 @@
 # Kurio — Marketplace de NFTs
 
+| Entrega             | 21/10/2026, 14:30                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Aplicação publicada | [frontend-challenge-jungle-gaming-drab.vercel.app](https://frontend-challenge-jungle-gaming-drab.vercel.app)             |
+| Repositório         | [github.com/jpaulo-stk/frontend-challenge-jungle-gaming](https://github.com/jpaulo-stk/frontend-challenge-jungle-gaming) |
+
 Front-end do marketplace de NFTs Kurio em React + TypeScript. API, sessão, carteiras, pagamento e tempo real são simulados na camada de rede com MSW e Socket.IO, então a aplicação roda inteira a partir de um checkout limpo, sem backend.
 
 Decisões de arquitetura, contratos e estratégia de cache estão em [ARCHITECTURE.md](./ARCHITECTURE.md).
