@@ -35,6 +35,8 @@ export default defineConfig([
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-non-null-assertion": "warn",
+      // Rest destructuring is how private fields are dropped from objects.
+      "@typescript-eslint/no-unused-vars": ["error", { ignoreRestSiblings: true }],
       "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
       "@typescript-eslint/only-throw-error": [
         "error",
@@ -46,6 +48,8 @@ export default defineConfig([
               package: "@tanstack/router-core",
               name: ["Redirect", "NotFoundError"],
             },
+            // MSW resolvers may throw a mocked response to end the request early.
+            { from: "package", package: "msw", name: ["HttpResponse"] },
           ],
         },
       ],

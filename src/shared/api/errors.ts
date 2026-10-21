@@ -41,6 +41,21 @@ const errorMessages: Readonly<Record<string, string>> = {
   EDITION_SOLD_OUT: "Esta edição esgotou.",
   QUOTE_STALE: "Os valores do pedido mudaram. Revise e confirme novamente.",
   IDEMPOTENCY_CONFLICT: "Este pedido já foi enviado com outro conteúdo.",
+  IDEMPOTENCY_KEY_REQUIRED: "Não foi possível identificar a tentativa de compra. Tente novamente.",
+  QUOTE_HAS_ISSUES: "Há itens indisponíveis no carrinho. Ajuste-os para continuar.",
+  INSUFFICIENT_AVAILABILITY: "Não há unidades suficientes desta edição.",
+  CART_EMPTY: "Seu carrinho está vazio.",
+  CART_ITEM_NOT_FOUND: "Este item não está mais no carrinho.",
+  ORDER_NOT_FOUND: "Pedido não encontrado.",
+  WALLET_NOT_FOUND: "Carteira não encontrada.",
+  WALLET_EXISTS: "Esta carteira já está cadastrada.",
+  WALLET_NOT_CONNECTED: "Conecte a carteira antes de confirmar a compra.",
+  WALLET_REJECTED: "A conexão foi recusada na carteira.",
+  INVALID_ADDRESS: "Use um endereço 0x seguido de 40 caracteres hexadecimais.",
+  AVATAR_INVALID: "Use uma imagem PNG, JPEG ou WebP.",
+  AVATAR_TOO_LARGE: "A imagem deve ter até 1 MB.",
+  VISITOR_ID_REQUIRED: "Não foi possível identificar seu carrinho. Recarregue a página.",
+  BAD_REQUEST: "Não foi possível processar a requisição.",
 };
 
 export function getErrorMessage(code: string, fallback?: string): string {

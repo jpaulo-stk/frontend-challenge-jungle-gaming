@@ -3,8 +3,10 @@ import axios, { isAxiosError } from "axios";
 import { toAppError } from "@/shared/api/errors";
 import { emitSessionExpired } from "@/shared/api/session-events";
 import { readSessionToken } from "@/shared/api/session-token";
+import { getVisitorId } from "@/shared/api/visitor-id";
 
 const SESSION_HEADER = "Authorization";
+const VISITOR_HEADER = "X-Visitor-Id";
 
 /** The only HTTP client of the app. Transport concerns only — no business rules. */
 export const http = axios.create({
@@ -16,6 +18,7 @@ export const http = axios.create({
 http.interceptors.request.use((config) => {
   const token = readSessionToken();
   if (token) config.headers.set(SESSION_HEADER, `Bearer ${token}`);
+  config.headers.set(VISITOR_HEADER, getVisitorId());
   return config;
 });
 

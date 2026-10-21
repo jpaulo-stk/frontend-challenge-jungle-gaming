@@ -7,7 +7,6 @@ import { Checkbox } from "@/shared/ui/checkbox";
 import { InlineError } from "@/shared/ui/inline-error";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { Price } from "@/shared/ui/price";
 import { QuantityStepper } from "@/shared/ui/quantity-stepper";
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
@@ -112,9 +111,7 @@ export function UiCatalogControls() {
         </Tabs>
       </UiCatalogSection>
 
-      <UiCatalogSection title="Preço, quantidade e badges">
-        <Price value="1.19" />
-        <Price value="1.99" previousValue="2.29" />
+      <UiCatalogSection title="Quantidade e badges">
         <QuantityStepper value={quantity} onChange={setQuantity} max={3} label="Quantidade" />
         <QuantityStepper
           value={quantity}

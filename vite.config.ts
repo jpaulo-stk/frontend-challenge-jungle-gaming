@@ -46,6 +46,11 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  optimizeDeps: {
+    // Pre-bundled up front: discovering it on first use makes the dev server
+    // re-optimize and reload the page mid-session.
+    include: ["socket.io-client"],
+  },
   server: {
     port: 5173,
     strictPort: true,

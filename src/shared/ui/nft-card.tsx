@@ -2,21 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
 import { Heart, ShoppingCart, ZoomIn } from "lucide-react";
 
+import type { NftSummary } from "@/shared/api/contracts/nft";
 import { Badge } from "@/shared/ui/badge";
 import { Price } from "@/shared/ui/price";
 
-export type NftCardData = {
-  id: string;
-  name: string;
-  price: string;
-  previousPrice?: string | undefined;
-  rare?: boolean | undefined;
-  image: {
-    src: string;
-    srcSet?: string | undefined;
-    alt: string;
-  };
-};
+export type NftCardData = Pick<
+  NftSummary,
+  "id" | "name" | "price" | "previousPrice" | "rare" | "image"
+>;
 
 type NftCardProps = {
   nft: NftCardData;

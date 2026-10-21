@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { openApp } from "../fixtures/app.ts";
+
 /** Landmark that contains the focused element, plus whether focus is visibly drawn. */
 async function describeFocus(page: Page) {
   return page.evaluate(() => {
@@ -18,7 +20,7 @@ async function describeFocus(page: Page) {
 
 test.describe("layout desktop", { tag: "@desktop" }, () => {
   test("header mostra a marca e o item de navegação ativo", async ({ page }) => {
-    await page.goto("/");
+    await openApp(page, "/");
 
     const header = page.getByRole("banner");
     await expect(header.getByRole("link", { name: "KURIO" })).toBeVisible();
@@ -30,7 +32,7 @@ test.describe("layout desktop", { tag: "@desktop" }, () => {
   });
 
   test("Tab percorre header, conteúdo e rodapé com foco visível", async ({ page }) => {
-    await page.goto("/rota-que-nao-existe");
+    await openApp(page, "/rota-que-nao-existe");
 
     const visited: string[] = [];
     for (let step = 0; step < 40; step += 1) {
@@ -47,7 +49,7 @@ test.describe("layout desktop", { tag: "@desktop" }, () => {
   });
 
   test("skeleton do card preserva exatamente 258×300", async ({ page }) => {
-    await page.goto("/__ui");
+    await openApp(page, "/__ui");
 
     const loadingGrid = page.getByLabel("Carregando NFTs");
     const artBox = loadingGrid.locator(":scope > div > div").first();
@@ -59,7 +61,7 @@ test.describe("layout desktop", { tag: "@desktop" }, () => {
 
 test.describe("layout mobile", { tag: "@mobile" }, () => {
   test("tab bar substitui o header", async ({ page }) => {
-    await page.goto("/");
+    await openApp(page, "/");
 
     await expect(page.getByRole("banner")).toBeHidden();
     const tabBar = page.getByRole("navigation", { name: "Principal" });
@@ -72,7 +74,7 @@ test.describe("layout mobile", { tag: "@mobile" }, () => {
 });
 
 test("ação fora do escopo avisa em vez de simular sucesso", async ({ page, isMobile }) => {
-  await page.goto("/");
+  await openApp(page, "/");
 
   const action = isMobile
     ? page.getByRole("navigation", { name: "Principal" }).getByRole("button", { name: /Favoritos/ })
@@ -87,7 +89,7 @@ test("ação fora do escopo avisa em vez de simular sucesso", async ({ page, isM
 
 test.describe("movimento reduzido", () => {
   test("shimmer anima por padrão e para com prefers-reduced-motion", async ({ page }) => {
-    await page.goto("/__ui");
+    await openApp(page, "/__ui");
     const skeleton = page.getByLabel("Carregando NFTs").locator("[data-slot=skeleton]").first();
 
     await expect(skeleton).toHaveCSS("animation-name", "shimmer");
